@@ -1,24 +1,28 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f39f0948bfbcbab6f86ee69203cba21",
+    "content-hash": "47e96568fe86f6ac7736d73162d21919",
     "packages": [
         {
             "name": "scrivo/highlight.php",
-            "version": "v9.12.0.4",
+            "version": "v9.13.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrivo/highlight.php.git",
-                "reference": "d5b40c678b79ac9faffb32df601dc69e5d11da50"
+                "reference": "e453ed4bb1a7602efb334c07579be885a4ee8abb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/d5b40c678b79ac9faffb32df601dc69e5d11da50",
-                "reference": "d5b40c678b79ac9faffb32df601dc69e5d11da50",
+                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/e453ed4bb1a7602efb334c07579be885a4ee8abb",
+                "reference": "e453ed4bb1a7602efb334c07579be885a4ee8abb",
                 "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8",
@@ -51,7 +55,7 @@
                     "role": "Contributor"
                 }
             ],
-            "description": "Server side syntax highlighter that supports 176 languages. It's a PHP port of highlight.js",
+            "description": "Server side syntax highlighter that supports 185 languages. It's a PHP port of highlight.js",
             "keywords": [
                 "code",
                 "highlight",
@@ -59,7 +63,7 @@
                 "highlight.php",
                 "syntax"
             ],
-            "time": "2018-08-05T06:14:48+00:00"
+            "time": "2018-11-23T02:08:01+00:00"
         }
     ],
     "packages-dev": [],
