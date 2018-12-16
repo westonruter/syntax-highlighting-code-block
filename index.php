@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name:  Code Syntax Block
+ * Plugin Name:  Code Syntax Block (with Server-Side Highlighting)
  * Plugin URI:   https://github.com/mkaz/code-syntax-block
- * Description:  A plugin to extend Gutenberg code block with syntax highlighting
+ * Description:  A plugin to extend Gutenberg code block with syntax highlighting.
  * Version:      0.4.0
- * Author:       Marcus Kazmierczak
- * Author URI:   https://mkaz.blog/
+ * Author:       Weston Ruter
+ * Author URI:   https://weston.ruter.net/
  * License:      GPL2
  * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:  code-syntax-block
