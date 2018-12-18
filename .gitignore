@@ -43,5 +43,3 @@
 !/vendor/scrivo/highlight.php/Highlight/languages/yaml.json
 
 !/vendor/scrivo/highlight.php/styles/
-/vendor/scrivo/highlight.php/styles/*
-!/vendor/scrivo/highlight.php/styles/default.css
