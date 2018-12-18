@@ -21,8 +21,8 @@
     }
   },
   "scripts": {
-    "make-pot": "wp i18n make-pot . languages/code-syntax-block.pot --include=code-syntax-block.js",
-    "zip": "zip -r code-syntax-block.zip index.php code-syntax.js languages $( git ls-files vendor )"
+    "make-pot": "composer run-script make-pot",
+    "zip": "zip -r code-syntax-block.zip index.php code-syntax.js languages $( git ls-files vendor ) $( git ls-files node_modules )"
   },
   "dependencies": {
     "htm": "^1.0.1"

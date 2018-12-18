@@ -5,5 +5,11 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "scrivo/highlight.php": "v9.*"
+    },
+    "require-dev": {
+        "wp-cli/i18n-command": "^2.1"
+    },
+    "scripts": {
+      "make-pot": "wp i18n make-pot . languages/code-syntax-block.pot --include=code-syntax-block.js"
     }
 }
