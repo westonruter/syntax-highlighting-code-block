@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:  Code Syntax Block (with Server-Side Highlighting)
- * Plugin URI:   https://github.com/mkaz/code-syntax-block
+ * Plugin URI:   https://github.com/westonruter/code-syntax-block
  * Description:  A plugin to extend Gutenberg code block with syntax highlighting.
  * Version:      0.4.0
  * Author:       Weston Ruter
@@ -14,10 +14,12 @@
  * @package Code_Syntax_Block
  */
 
+namespace Code_Syntax_Block;
+
 /**
  * Load text domain.
  */
-function mkaz_load_plugin_textdomain() {
+function init() {
 	if ( ! function_exists( 'register_block_type' ) ) {
 		return;
 	}
@@ -25,64 +27,52 @@ function mkaz_load_plugin_textdomain() {
 	load_plugin_textdomain( 'code-syntax-block', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 	register_block_type( 'core/code', array(
-		'render_callback' => 'mkaz_code_syntax_render_block',
+		'render_callback' => __NAMESPACE__ . '\render_block',
 	) );
 }
-add_action( 'plugins_loaded', 'mkaz_load_plugin_textdomain' );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
 
 /**
  * Enqueue assets for editor portion of Gutenberg
  */
-function mkaz_code_syntax_editor_assets() {
-	// Files.
-	$block_path        = 'build/block.built.js';
-	$editor_style_path = 'assets/blocks.editor.css';
+function enqueue_editor_assets() {
+	wp_register_script(
+		'htm',
+		plugins_url( $block_path, __FILE__ ) . '/node_modules/htm/dist/htm.js',
+		array(),
+		false
+	);
 
-	// Block.
+	$handle = 'code-syntax-block';
 	wp_enqueue_script(
-		'mkaz-code-syntax',
-		plugins_url( $block_path, __FILE__ ),
-		array( 'wp-blocks', 'wp-element', 'wp-i18n' ),
+		$handle,
+		plugins_url( $block_path, __FILE__ ) . '/code-syntax-block.js',
+		array( 'wp-blocks', 'wp-hooks', 'wp-element', 'wp-i18n', 'htm' ),
 		filemtime( plugin_dir_path( __FILE__ ) . $block_path )
 	);
 
-	// Enqueue editor style.
-	wp_enqueue_style(
-		'mkaz-code-syntax-editor-css',
-		plugins_url( $editor_style_path, __FILE__ ),
-		array( 'wp-blocks' ),
-		filemtime( plugin_dir_path( __FILE__ ) . $editor_style_path )
-	);
-
-	wp_set_script_translations( 'mkaz-code-syntax', 'code-syntax-block' );
+	wp_set_script_translations( $handle, 'code-syntax-block' );
 }
-add_action( 'enqueue_block_editor_assets', 'mkaz_code_syntax_editor_assets' );
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
 
 /**
- * Enqueue assets for viewing posts
+ * Enqueue assets for viewing posts.
+ *
+ * @todo This should only be enqueued if the block is actually on the page!
  */
-function mkaz_code_syntax_view_assets() {
+function enqueue_frontend_assets() {
 	// Files.
-	$view_style_path    = 'assets/blocks.style.css';
 	$default_style_path = 'vendor/scrivo/highlight.php/styles/default.css';
-
-	// Enqueue view style.
-	wp_enqueue_style(
-		'mkaz-code-syntax-css',
-		plugins_url( $view_style_path, __FILE__ ),
-		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . $view_style_path )
-	);
 
 	// Enqueue prism style.
 	wp_enqueue_style(
-		'mkaz-code-syntax-hljs-default',
+		'code-syntax-block-hljs-default',
 		plugins_url( $default_style_path, __FILE__ ),
 		array(),
 		filemtime( plugin_dir_path( __FILE__ ) . $default_style_path )
 	);
 }
-add_action( 'wp_enqueue_scripts', 'mkaz_code_syntax_view_assets' );
+add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_frontend_assets' );
 
 /**
  * Render code block.
@@ -91,7 +81,7 @@ add_action( 'wp_enqueue_scripts', 'mkaz_code_syntax_view_assets' );
  * @param string $content    Content.
  * @return string Highlighted content.
  */
-function mkaz_code_syntax_render_block( $attributes, $content ) {
+function render_block( $attributes, $content ) {
 	$pattern  = '(?P<before><pre.*?><code.*?>)';
 	$pattern .= '(?P<code>.*)';
 	$after    = '</code></pre>';

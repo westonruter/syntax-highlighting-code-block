@@ -3,21 +3,18 @@
  * A gutenberg block that allows inserting code with syntax highlighting.
  */
 
-/**
- * WordPress dependencies
- */
+const html = htm.bind( wp.element.createElement );
 const { __ } = wp.i18n;
 const { addFilter } = wp.hooks;
 const { PlainText, InspectorControls } = wp.editor;
 const { SelectControl } = wp.components;
+const { Fragment } = wp.element;
 
-/**
- * Internal dependencies
+/*
+ * Available languages, which corresponds to the files located in vendor/scrivo/highlight.php/Highlight/languages.
+ * The strings are used here for the sake of translations. An array is used as opposed to an object because objects
+ * in JS do not preserve order like associative arrays in PHP.
  */
-import './editor.scss';
-import './style.scss';
-
-// An array is used as opposed to an object because objects in JS do not preserve order like associative arrays in PHP.
 const languageOptions = [
 	{
 		value: 'bash',
@@ -69,7 +66,7 @@ const languageOptions = [
 	}
 ];
 
-const addSyntaxToCodeBlock = settings => {
+const addSyntaxToCodeBlock = ( settings ) => {
 	if ( 'core/code' !== settings.name ) {
 		return settings;
 	}
@@ -85,41 +82,46 @@ const addSyntaxToCodeBlock = settings => {
 		},
 
 		edit({ attributes, setAttributes, isSelected, className }) {
-
 			const updateLanguage = language => {
 				setAttributes({ language });
 			};
 
-			return [
-				<InspectorControls key="controls">
-					<SelectControl
-						label="Language"
-						value={ attributes.language }
-						options={
-							[
-								{ label: __( 'Auto-detect', 'code-syntax-block' ), value: '' },
-								...languageOptions
-							]
-						}
-						onChange={ updateLanguage }
-					/>
-				</InspectorControls>,
-				<div key="editor-wrapper" className={ className }>
-					<PlainText
-						value={ attributes.content }
-						onChange={ ( content ) => setAttributes({ content }) }
-						placeholder={ __( 'Write code…', 'code-syntax-block' ) }
-						aria-label={ __( 'Code', 'code-syntax-block' ) }
-					/>
-					<div className="language-selected">{ languageOptions[ attributes.language ] }</div>
-				</div>
-			];
+			// Note: Use of Fragment can be eliminated after https://github.com/developit/htm/issues/15.
+			return html`
+				<${Fragment}>
+					<${InspectorControls} key="controls">
+						<${SelectControl}
+							label=${ __( 'Language', 'code-syntax-block' ) }
+							value=${ attributes.language }
+							options=${
+								[
+									{ label: __( 'Auto-detect', 'code-syntax-block' ), value: '' },
+									...languageOptions
+								]
+							}
+							onChange=${ updateLanguage }
+						/>
+					</${InspectorControls}>
+					<div key="editor-wrapper" className=${ className }>
+						<${PlainText}
+							value=${ attributes.content }
+							onChange=${ ( content ) => setAttributes({ content }) }
+							placeholder=${ __( 'Write code…', 'code-syntax-block' ) }
+							aria-label=${ __( 'Code', 'code-syntax-block' ) }
+						/>
+						<div className="language-selected">${ languageOptions[ attributes.language ] }</div>
+					</div>
+				</${Fragment}>
+			`;
 		},
 
 		save({ attributes }) {
-			return <pre><code>{ attributes.content }</code></pre>;
+			return html`
+				<pre><code>${ attributes.content }</code></pre>
+			`;
 		},
 
+		// Automatically convert core code blocks to this new extended code block.
 		deprecated: [
 			...( settings.deprecated || []),
 			{
@@ -131,8 +133,10 @@ const addSyntaxToCodeBlock = settings => {
 				},
 
 				save: function({ attributes }) {
-					const cls = ( attributes.language ) ? 'language-' + attributes.language : '';
-					return <pre><code lang={ attributes.language } className={ cls }>{ attributes.content }</code></pre>;
+					const className = ( attributes.language ) ? 'language-' + attributes.language : '';
+					return html`
+						<pre><code lang=${ attributes.language } className=${ className }>${ attributes.content }</code></pre>
+					`;
 				}
 			}
 		]
@@ -142,6 +146,6 @@ const addSyntaxToCodeBlock = settings => {
 // Register Filter
 addFilter(
 	'blocks.registerBlockType',
-	'mkaz/code-syntax-block',
+	'westonruter/code-syntax-block',
 	addSyntaxToCodeBlock
 );
