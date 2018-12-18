@@ -1,10 +1,20 @@
 {
-    "name": "mkaz/code-syntax-block",
-    "description": "A WordPress plugin which extends Gutenberg adding color syntax highlighting to the code block.",
-    "type": "wordpress-plugin",
-    "license": "GPL-2.0-or-later",
-    "version": "0.5.0",
-    "require": {
-        "scrivo/highlight.php": "v9.*"
-    }
+  "name": "westonruter/code-syntax-block",
+  "description": "A WordPress plugin which extends Gutenberg adding color syntax highlighting to the code block.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "scrivo/highlight.php": "v9.*"
+  },
+  "require-dev": {
+    "wp-cli/i18n-command": "^2.1",
+    "wp-coding-standards/wpcs": "^1.2",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+    "phpcompatibility/php-compatibility": "^9.1"
+  },
+  "scripts": {
+    "phpcs": "phpcs",
+    "zip": "git archive --format=zip HEAD > code-syntax-block.zip && unzip -l code-syntax-block.zip",
+    "make-pot": "wp i18n make-pot . languages/code-syntax-block.pot --include=code-syntax-block.js"
+  }
 }
