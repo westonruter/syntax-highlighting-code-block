@@ -3,7 +3,7 @@
  * Plugin Name:  Code Syntax Block (with Server-Side Highlighting)
  * Plugin URI:   https://github.com/westonruter/code-syntax-block
  * Description:  A plugin to extend Gutenberg code block with syntax highlighting.
- * Version:      0.4.0
+ * Version:      1.0.0
  * Author:       Weston Ruter
  * Author URI:   https://weston.ruter.net/
  * License:      GPL2
@@ -16,8 +16,12 @@
 
 namespace Code_Syntax_Block;
 
+const PLUGIN_VERSION = '1.0.0';
+
+const FRONTEND_STYLE_HANDLE = 'code-syntax-block-hljs-default';
+
 /**
- * Load text domain.
+ * Initialize plugin.
  */
 function init() {
 	if ( ! function_exists( 'register_block_type' ) ) {
@@ -26,29 +30,38 @@ function init() {
 
 	load_plugin_textdomain( 'code-syntax-block', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
-	register_block_type( 'core/code', array(
-		'render_callback' => __NAMESPACE__ . '\render_block',
-	) );
+	register_block_type(
+		'core/code',
+		array(
+			'render_callback' => __NAMESPACE__ . '\render_block',
+		)
+	);
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
 
 /**
- * Enqueue assets for editor portion of Gutenberg
+ * Enqueue assets for editor.
  */
 function enqueue_editor_assets() {
+	$in_footer = true;
+
+	$htm_path = '/node_modules/htm/dist/htm.js';
 	wp_register_script(
 		'htm',
-		plugins_url( $block_path, __FILE__ ) . '/node_modules/htm/dist/htm.js',
+		plugins_url( $htm_path, __FILE__ ),
 		array(),
-		false
+		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $htm_path ) : PLUGIN_VERSION,
+		$in_footer
 	);
 
-	$handle = 'code-syntax-block';
+	$handle     = 'code-syntax-block';
+	$block_path = '/code-syntax-block.js';
 	wp_enqueue_script(
 		$handle,
-		plugins_url( $block_path, __FILE__ ) . '/code-syntax-block.js',
+		plugins_url( $block_path, __FILE__ ),
 		array( 'wp-blocks', 'wp-hooks', 'wp-element', 'wp-i18n', 'htm' ),
-		filemtime( plugin_dir_path( __FILE__ ) . $block_path )
+		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $block_path ) : PLUGIN_VERSION,
+		$in_footer
 	);
 
 	wp_set_script_translations( $handle, 'code-syntax-block' );
@@ -56,23 +69,20 @@ function enqueue_editor_assets() {
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
 
 /**
- * Enqueue assets for viewing posts.
+ * Register assets for the frontend.
  *
- * @todo This should only be enqueued if the block is actually on the page!
+ * Asset(s) will only be enqueued if needed.
  */
-function enqueue_frontend_assets() {
-	// Files.
+function register_frontend_assets() {
 	$default_style_path = 'vendor/scrivo/highlight.php/styles/default.css';
-
-	// Enqueue prism style.
-	wp_enqueue_style(
-		'code-syntax-block-hljs-default',
+	wp_register_style(
+		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
 		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . $default_style_path )
+		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
 	);
 }
-add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_frontend_assets' );
+add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\register_frontend_assets' );
 
 /**
  * Render code block.
@@ -94,6 +104,9 @@ function render_block( $attributes, $content ) {
 	if ( ! isset( $attributes['language'] ) ) {
 		$attributes['language'] = '';
 	}
+
+	// Enqueue the style now that we know it will be needed.
+	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 
 	$inject_language_class = function( $start_tags, $language ) {
 		$start_tags = preg_replace(

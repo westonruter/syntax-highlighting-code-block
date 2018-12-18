@@ -7,3 +7,4 @@ package.json export-ignore
 readme.md export-ignore
 .gitattributes export-ignore
 screenshot.png export-ignore
+phpcs.xml.dist export-ignore

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards for Code Syntax Block">
+
+	<rule ref="WordPress-Core" />
+	<rule ref="WordPress-Docs" />
+	<rule ref="WordPress-Extra" />
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" value="code-syntax-block" />
+		</properties>
+	</rule>
+
+	<!-- Include sniffs for PHP cross-version compatibility. -->
+	<config name="testVersion" value="5.4-99.0"/>
+	<rule ref="PHPCompatibility"/>
+
+	<arg value="s"/>
+	<arg name="extensions" value="php"/>
+	<file>.</file>
+
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+</ruleset>
