@@ -7,6 +7,7 @@
 /node_modules/htm/dist/*
 !node_modules/htm/dist/htm.js
 *.log
+*.zip
 /vendor/*
 !/vendor/scrivo
 /vendor/scrivo/highlight.php/*

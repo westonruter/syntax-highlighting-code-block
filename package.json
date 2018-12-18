@@ -22,7 +22,7 @@
   },
   "scripts": {
     "make-pot": "composer run-script make-pot",
-    "zip": "zip -r code-syntax-block.zip index.php code-syntax.js languages $( git ls-files vendor ) $( git ls-files node_modules )"
+    "zip": "composer run-script zip"
   },
   "dependencies": {
     "htm": "^1.0.1"
