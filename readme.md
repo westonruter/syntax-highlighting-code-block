@@ -19,7 +19,16 @@ On the front-end when the post is being viewed, the code will be color syntax hi
 
 The default install uses a limited set of languages from highlight.php (bash, cpp, css, diff, go, javascript, json, markdown, php, python, sql, xml). If your language is not included, you can modify the [`.gitignore`] to skip ignoring them and then optionally add a label in the `get_languages()` PHP function.
 
-Changing color theme, the [default color theme](https://github.com/scrivo/highlight.php/blob/master/styles/default.css) is used from highlight.php. To use a different color scheme, just download one of the [other styles](https://github.com/scrivo/highlight.php/tree/master/styles) and then dequeue the default CSS to replace with your own.
+For styling, the [default color theme](https://github.com/scrivo/highlight.php/blob/master/styles/default.css) is used from highlight.php. To use a different color scheme, you can use the `code_syntax_block_style` filter to use another one of the [styles](https://github.com/scrivo/highlight.php/tree/master/styles):
+
+```php
+add_filter(
+	'code_syntax_block_style',
+	function() {
+		return 'github';
+	}
+);
+```
 
 ### Colophon
 

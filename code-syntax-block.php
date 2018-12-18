@@ -134,7 +134,18 @@ function get_languages() {
  * Asset(s) will only be enqueued if needed.
  */
 function register_frontend_assets() {
-	$default_style_path = 'vendor/scrivo/highlight.php/styles/default.css';
+	/**
+	 * Filters the style used for the code syntax block.
+	 *
+	 * The string returned must correspond to the filenames found at <https://github.com/scrivo/highlight.php/tree/master/styles>,
+	 * minus the file extension.
+	 *
+	 * @since 1.0.0
+	 * @param string $style Style.
+	 */
+	$style = apply_filters( 'code_syntax_block_style', 'default' );
+
+	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', sanitize_key( $style ) );
 	wp_register_style(
 		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
@@ -168,10 +179,11 @@ function render_block( $attributes, $content ) {
 	// Enqueue the style now that we know it will be needed.
 	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 
-	$inject_language_class = function( $start_tags, $language ) {
-		$start_tags = preg_replace(
+	$inject_classes = function( $start_tags, $language ) {
+		$added_classes = "hljs language-$language";
+		$start_tags    = preg_replace(
 			'/(<code[^>]*class=")/',
-			'$1' . esc_attr( $language . ' ' ),
+			'$1 ' . esc_attr( $added_classes ),
 			$start_tags,
 			1,
 			$count
@@ -179,7 +191,7 @@ function render_block( $attributes, $content ) {
 		if ( 0 === $count ) {
 			$start_tags = preg_replace(
 				'/(?<=<code)(?=>)/',
-				sprintf( ' class="%s"', esc_attr( "language-$language" ) ),
+				sprintf( ' class="%s"', esc_attr( $added_classes ) ),
 				$start_tags,
 				1
 			);
@@ -192,7 +204,7 @@ function render_block( $attributes, $content ) {
 
 	if ( $highlighted && isset( $highlighted['code'] ) ) {
 		if ( isset( $highlighted['language'] ) ) {
-			$matches['before'] = $inject_language_class( $matches['before'], $highlighted['language'] );
+			$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'] );
 		}
 		return $matches['before'] . $highlighted['code'] . $after;
 	}
@@ -228,7 +240,7 @@ function render_block( $attributes, $content ) {
 
 		set_transient( $transient_key, compact( 'code', 'language' ), MONTH_IN_SECONDS );
 
-		$matches['before'] = $inject_language_class( $matches['before'], $highlighted['language'] );
+		$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'] );
 
 		return $matches['before'] . $code . $after;
 	} catch ( \Exception $e ) {
