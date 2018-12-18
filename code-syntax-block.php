@@ -18,7 +18,7 @@ namespace Code_Syntax_Block;
 
 const PLUGIN_VERSION = '1.0.0';
 
-const FRONTEND_STYLE_HANDLE = 'code-syntax-block-hljs-default';
+const FRONTEND_STYLE_HANDLE = 'code-syntax-block';
 
 /**
  * Initialize plugin.
@@ -64,9 +64,54 @@ function enqueue_editor_assets() {
 		$in_footer
 	);
 
+	wp_add_inline_script(
+		$handle,
+		sprintf( 'const codeSyntaxBlockLanguages = %s;', wp_json_encode( get_languages() ) )
+	);
+
 	wp_set_script_translations( $handle, 'code-syntax-block' );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
+
+/**
+ * Get languages.
+ *
+ * @return array Languages.
+ */
+function get_languages() {
+	$language_names = array(
+		'bash'       => __( 'Bash (shell)', 'code-syntax-block' ),
+		'cpp'        => __( 'C-like', 'code-syntax-block' ),
+		'css'        => __( 'CSS', 'code-syntax-block' ),
+		'diff'       => __( 'Diff', 'code-syntax-block' ),
+		'go'         => __( 'Go (golang)', 'code-syntax-block' ),
+		'xml'        => __( 'HTML/Markup', 'code-syntax-block' ),
+		'javascript' => __( 'JavaScript (JSX)', 'code-syntax-block' ),
+		'json'       => __( 'JSON', 'code-syntax-block' ),
+		'markdown'   => __( 'Markdown', 'code-syntax-block' ),
+		'php'        => __( 'PHP', 'code-syntax-block' ),
+		'python'     => __( 'Python', 'code-syntax-block' ),
+		'sql'        => __( 'SQL', 'code-syntax-block' ),
+	);
+
+	$languages = array();
+	foreach ( glob( __DIR__ . '/vendor/scrivo/highlight.php/Highlight/languages/*.json' ) as $language_file ) {
+		$basename = basename( $language_file, '.json' );
+
+		$languages[ $basename ] = array(
+			'label' => isset( $language_names[ $basename ] ) ? $language_names[ $basename ] : $basename,
+			'value' => $basename,
+		);
+	}
+	usort(
+		$languages,
+		function( $a, $b ) {
+			return strcmp( strtolower( $a['label'] ), strtolower( $b['label'] ) );
+		}
+	);
+
+	return $languages;
+}
 
 /**
  * Register assets for the frontend.
@@ -127,7 +172,7 @@ function render_block( $attributes, $content ) {
 		return $start_tags;
 	};
 
-	$transient_key = 'code-syntax-block-' . md5( $attributes['language'] . $matches['code'] ) . '-v1';
+	$transient_key = 'code-syntax-block-' . md5( $attributes['language'] . $matches['code'] ) . '-v' . PLUGIN_VERSION;
 	$highlighted   = get_transient( $transient_key );
 
 	if ( $highlighted && isset( $highlighted['code'] ) ) {
@@ -166,7 +211,7 @@ function render_block( $attributes, $content ) {
 		$language    = $r->language;
 		$highlighted = compact( 'code', 'language' );
 
-		set_transient( $transient_key, compact( 'code', 'language' ) );
+		set_transient( $transient_key, compact( 'code', 'language' ), MONTH_IN_SECONDS );
 
 		$matches['before'] = $inject_language_class( $matches['before'], $highlighted['language'] );
 

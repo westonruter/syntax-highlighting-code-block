@@ -9,15 +9,15 @@ Example:
 
 ### Usage
 
-Install code-syntax-block plugin to your WordPress plugins directory and activate. You can download a ZIP from the [GitHub](https://github.com/westonruter/code-syntax-block), without any build step required.
+Install code-syntax-block plugin to your WordPress plugins directory and activate. You can download a ZIP from the [GitHub](https://github.com/westonruter/code-syntax-block), without any build step required. You can also run `npm run zip` to create a ZIP of the non-development files.
 
-When creating a new code block, select `Code` block, and then in the Inspector (Block Controls on the Right) select the language for the code. The code will not change within the editor, but you'll see a small label with the selected language.
+This plugin upgrades the existing Code block in core. It uses auto-detection for the language in the block to add syntad highlighting, but you can override the language in the block inspector.
 
 On the front-end when the post is being viewed, the code will be color syntax highlighted.
 
 ### Customize
 
-The default install uses a limited set of languages from highlight.php (bash, cpp, css, diff, go, javascript, json, markdown, php, python, sql, xml). If your language is not included, you can modify the [`.gitignore`] to skip ignoring them you will also need to edit the `langs` array in [`code-syntax.js`](code-syntax.js) and rebuild.
+The default install uses a limited set of languages from highlight.php (bash, cpp, css, diff, go, javascript, json, markdown, php, python, sql, xml). If your language is not included, you can modify the [`.gitignore`] to skip ignoring them and then optionally add a label in the `get_languages()` PHP function.
 
 Changing color theme, the [default color theme](https://github.com/scrivo/highlight.php/blob/master/styles/default.css) is used from highlight.php. To use a different color scheme, just download one of the [other styles](https://github.com/scrivo/highlight.php/tree/master/styles) and then dequeue the default CSS to replace with your own.
 
