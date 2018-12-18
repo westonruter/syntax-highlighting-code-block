@@ -1,7 +1,7 @@
 
 # Server-Side Code Syntax Highlighting Block
 
-A WordPress plugin which extends Gutenberg by adding *server-side* syntax highlighting to the WordPress core code block.
+A WordPress plugin which extends Gutenberg by adding *server-side* syntax highlighting to the WordPress core code block. Fully compatible with the [offical AMP plugin](https://amp-wp.org).
 
 Example:
 
@@ -13,7 +13,7 @@ Install code-syntax-block plugin to your WordPress plugins directory and activat
 
 This plugin upgrades the existing Code block in core. It uses auto-detection for the language in the block to add syntad highlighting, but you can override the language in the block inspector.
 
-On the front-end when the post is being viewed, the code will be color syntax highlighted.
+On the front-end when the post is being viewed, the code will be color syntax highlighted. Syntax highighting is performed server-side via [highlight.php](https://github.com/scrivo/highlight.php), so there is no JavaScript required on the frontend (e.g. Prism.js). Because of this, AMP pages get the same syntax highlighting as non-AMP pages. 
 
 ### Customize
 
