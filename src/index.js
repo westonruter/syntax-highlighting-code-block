@@ -6,6 +6,7 @@ const { addFilter } = wp.hooks;
 const { PlainText, InspectorControls } = wp.editor;
 const { SelectControl } = wp.components;
 const { Fragment } = wp.element;
+const { sortBy } = lodash;
 
 /**
  * Internal dependencies
@@ -38,6 +39,11 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				setAttributes( { language } );
 			};
 
+			const sortedLanguageNames = sortBy(
+				Object.entries( languagesNames ).map( ( [ value, label ] ) => ( { label, value } ) ),
+				( languageOption ) => languageOption.label.toLowerCase()
+			);
+
 			return <Fragment>
 				<InspectorControls key="controls">
 					<SelectControl
@@ -46,7 +52,7 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 						options={
 							[
 								{ label: __( 'Auto-detect', 'syntax-highlighting-code-block' ), value: '' },
-								...Object.entries( languagesNames ).map( ( [ value, label ] ) => ( { label, value } ) ),
+								...sortedLanguageNames,
 							]
 						}
 						onChange={ updateLanguage }
