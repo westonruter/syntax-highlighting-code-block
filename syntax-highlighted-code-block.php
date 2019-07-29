@@ -9,7 +9,7 @@
  * License:      GPL2
  * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:  syntax-highlighted-code-block
- * Requires PHP: 5.4
+ * Requires PHP: 5.6
  *
  * @package Syntax_Highlighted_Code_Block
  */
@@ -32,9 +32,9 @@ function init() {
 
 	register_block_type(
 		'core/code',
-		array(
+		[
 			'render_callback' => __NAMESPACE__ . '\render_block',
-		)
+		]
 	);
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
@@ -49,7 +49,7 @@ function enqueue_editor_assets() {
 	wp_register_script(
 		'htm',
 		plugins_url( $htm_path, __FILE__ ),
-		array(),
+		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $htm_path ) : PLUGIN_VERSION,
 		$in_footer
 	);
@@ -59,7 +59,7 @@ function enqueue_editor_assets() {
 	wp_enqueue_script(
 		$handle,
 		plugins_url( $block_path, __FILE__ ),
-		array( 'wp-blocks', 'wp-hooks', 'wp-element', 'wp-i18n', 'htm' ),
+		[ 'wp-blocks', 'wp-hooks', 'wp-element', 'wp-i18n', 'htm' ],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $block_path ) : PLUGIN_VERSION,
 		$in_footer
 	);
@@ -79,7 +79,7 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_asse
  * @return array Languages.
  */
 function get_languages() {
-	$language_names = array(
+	$language_names = [
 		'bash'       => __( 'Bash (shell)', 'syntax-highlighted-code-block' ),
 		'cpp'        => __( 'C-like', 'syntax-highlighted-code-block' ),
 		'css'        => __( 'CSS', 'syntax-highlighted-code-block' ),
@@ -107,16 +107,16 @@ function get_languages() {
 		'typescript' => __( 'TypeScript', 'syntax-highlighted-code-block' ),
 		'xml'        => __( 'HTML/Markup', 'syntax-highlighted-code-block' ),
 		'yaml'       => __( 'YAML', 'syntax-highlighted-code-block' ),
-	);
+	];
 
-	$languages = array();
+	$languages = [];
 	foreach ( glob( __DIR__ . '/vendor/scrivo/highlight.php/Highlight/languages/*.json' ) as $language_file ) {
 		$basename = basename( $language_file, '.json' );
 
-		$languages[ $basename ] = array(
+		$languages[ $basename ] = [
 			'label' => isset( $language_names[ $basename ] ) ? $language_names[ $basename ] : $basename,
 			'value' => $basename,
-		);
+		];
 	}
 	usort(
 		$languages,
@@ -149,7 +149,7 @@ function register_frontend_assets() {
 	wp_register_style(
 		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
-		array(),
+		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
 	);
 }
