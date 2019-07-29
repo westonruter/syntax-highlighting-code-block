@@ -1,5 +1,5 @@
 {
-  "name": "syntax-highlighted-code-block",
+  "name": "syntax-highlighting-code-block",
   "license": "GPL-2.0-or-later",
   "main": "code-syntax.js",
   "devDependencies": {
