@@ -1,7 +1,6 @@
 <?php
-/* Copyright (c)
- * - 2014,      Geert Bergman (geert@scrivo.nl), highlight.php
- * All rights reserved.
+
+/* Copyright (c) 2014-2019 Geert Bergman (geert@scrivo.nl), highlight.php
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -96,14 +95,20 @@ class JsonRef
      *
      * @param mixed $s Decoded JSON data (decoded with json_decode)
      */
-    private function resolvePathReferences(&$s)
+    private function resolvePathReferences(&$s, $limit = 20, $depth = 1)
     {
+        if ($depth >= $limit) {
+            return;
+        }
+
+        ++$depth;
+
         if (is_array($s) || is_object($s)) {
             foreach ($s as $k => &$v) {
                 if ($k === "\$ref") {
                     $s = $this->paths[$v];
                 } else {
-                    $this->resolvePathReferences($v);
+                    $this->resolvePathReferences($v, $limit, $depth);
                 }
             }
         }

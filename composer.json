@@ -8,7 +8,7 @@
   },
   "require-dev": {
     "wp-cli/i18n-command": "^2.1",
-    "wp-coding-standards/wpcs": "^1.2",
+    "wp-coding-standards/wpcs": "^2",
     "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
     "phpcompatibility/php-compatibility": "^9.1"
   },

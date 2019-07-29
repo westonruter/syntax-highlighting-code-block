@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2da6bafa1b65e5e08cb623cdcc019003",
+    "content-hash": "db817d0ab610f89a0498415fa0d0deee",
     "packages": [
         {
             "name": "scrivo/highlight.php",
-            "version": "v9.13.1.0",
+            "version": "v9.15.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrivo/highlight.php.git",
-                "reference": "e453ed4bb1a7602efb334c07579be885a4ee8abb"
+                "reference": "5c80fcb49592e451ffc73be5aeecbb57575ccca7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/e453ed4bb1a7602efb334c07579be885a4ee8abb",
-                "reference": "e453ed4bb1a7602efb334c07579be885a4ee8abb",
+                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/5c80fcb49592e451ffc73be5aeecbb57575ccca7",
+                "reference": "5c80fcb49592e451ffc73be5aeecbb57575ccca7",
                 "shasum": ""
             },
             "require": {
@@ -25,14 +25,21 @@
                 "ext-mbstring": "*"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8",
+                "phpunit/phpunit": "^4.8|^5.7",
                 "symfony/finder": "^2.8"
+            },
+            "suggest": {
+                "ext-dom": "Needed to make use of the features in the utilities namespace"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "Highlight\\": ""
-                }
+                    "Highlight\\": "",
+                    "HighlightUtilities\\": ""
+                },
+                "files": [
+                    "HighlightUtilities/functions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -41,18 +48,18 @@
             "authors": [
                 {
                     "name": "Geert Bergman",
-                    "homepage": "http://www.scrivo.org/",
-                    "role": "Project Author"
+                    "role": "Project Author",
+                    "homepage": "http://www.scrivo.org/"
                 },
                 {
                     "name": "Vladimir Jimenez",
-                    "homepage": "https://allejo.io",
-                    "role": "Contributor"
+                    "role": "Contributor",
+                    "homepage": "https://allejo.io"
                 },
                 {
                     "name": "Martin Folkers",
-                    "homepage": "https://twobrain.io",
-                    "role": "Contributor"
+                    "role": "Contributor",
+                    "homepage": "https://twobrain.io"
                 }
             ],
             "description": "Server side syntax highlighter that supports 185 languages. It's a PHP port of highlight.js",
@@ -63,7 +70,7 @@
                 "highlight.php",
                 "syntax"
             ],
-            "time": "2018-11-23T02:08:01+00:00"
+            "time": "2019-07-20T04:29:35+00:00"
         }
     ],
     "packages-dev": [
@@ -135,16 +142,16 @@
         },
         {
             "name": "gettext/gettext",
-            "version": "v4.6.1",
+            "version": "v4.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/oscarotero/Gettext.git",
-                "reference": "854ff5f5aaf92d2af7080ba8fc15718b27b5c89a"
+                "reference": "70c6ff2fecd275e6ef9cdd542f55939a3d1904d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/oscarotero/Gettext/zipball/854ff5f5aaf92d2af7080ba8fc15718b27b5c89a",
-                "reference": "854ff5f5aaf92d2af7080ba8fc15718b27b5c89a",
+                "url": "https://api.github.com/repos/oscarotero/Gettext/zipball/70c6ff2fecd275e6ef9cdd542f55939a3d1904d6",
+                "reference": "70c6ff2fecd275e6ef9cdd542f55939a3d1904d6",
                 "shasum": ""
             },
             "require": {
@@ -193,7 +200,7 @@
                 "po",
                 "translation"
             ],
-            "time": "2018-08-27T15:40:19+00:00"
+            "time": "2019-07-15T12:56:31+00:00"
         },
         {
             "name": "gettext/languages",
@@ -258,16 +265,16 @@
         },
         {
             "name": "mck89/peast",
-            "version": "v1.8.1",
+            "version": "v1.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mck89/peast.git",
-                "reference": "f76861af116e9d31f048fe1cc34418686f7bf955"
+                "reference": "7c9e487a0bb2410b3b7f27e8274cd04248b68197"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mck89/peast/zipball/f76861af116e9d31f048fe1cc34418686f7bf955",
-                "reference": "f76861af116e9d31f048fe1cc34418686f7bf955",
+                "url": "https://api.github.com/repos/mck89/peast/zipball/7c9e487a0bb2410b3b7f27e8274cd04248b68197",
+                "reference": "7c9e487a0bb2410b3b7f27e8274cd04248b68197",
                 "shasum": ""
             },
             "require": {
@@ -279,7 +286,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9.2-dev"
                 }
             },
             "autoload": {
@@ -299,7 +306,7 @@
                 }
             ],
             "description": "Peast is PHP library that generates AST for JavaScript code",
-            "time": "2018-11-06T14:27:52+00:00"
+            "time": "2019-05-24T16:47:14+00:00"
         },
         {
             "name": "mustache/mustache",
@@ -349,16 +356,16 @@
         },
         {
             "name": "phpcompatibility/php-compatibility",
-            "version": "9.1.0",
+            "version": "9.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCompatibility/PHPCompatibility.git",
-                "reference": "a898db5410e365eeb658c63a76bd08d211769321"
+                "reference": "3db1bf1e28123fd574a4ae2e9a84072826d51b5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCompatibility/PHPCompatibility/zipball/a898db5410e365eeb658c63a76bd08d211769321",
-                "reference": "a898db5410e365eeb658c63a76bd08d211769321",
+                "url": "https://api.github.com/repos/PHPCompatibility/PHPCompatibility/zipball/3db1bf1e28123fd574a4ae2e9a84072826d51b5e",
+                "reference": "3db1bf1e28123fd574a4ae2e9a84072826d51b5e",
                 "shasum": ""
             },
             "require": {
@@ -372,7 +379,7 @@
                 "phpunit/phpunit": "~4.5 || ^5.0 || ^6.0 || ^7.0"
             },
             "suggest": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3 || This Composer plugin will sort out the PHPCS 'installed_paths' automatically.",
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.5 || This Composer plugin will sort out the PHPCS 'installed_paths' automatically.",
                 "roave/security-advisories": "dev-master || Helps prevent installing dependencies with known security issues."
             },
             "type": "phpcodesniffer-standard",
@@ -387,13 +394,13 @@
                 },
                 {
                     "name": "Wim Godden",
-                    "homepage": "https://github.com/wimg",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/wimg"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "homepage": "https://github.com/jrfnl",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/jrfnl"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
@@ -403,52 +410,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-12-16T19:16:39+00:00"
-        },
-        {
-            "name": "ramsey/array_column",
-            "version": "1.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ramsey/array_column.git",
-                "reference": "f8e52eb28e67eb50e613b451dd916abcf783c1db"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/array_column/zipball/f8e52eb28e67eb50e613b451dd916abcf783c1db",
-                "reference": "f8e52eb28e67eb50e613b451dd916abcf783c1db",
-                "shasum": ""
-            },
-            "require-dev": {
-                "jakub-onderka/php-parallel-lint": "0.8.*",
-                "phpunit/phpunit": "~4.5",
-                "satooshi/php-coveralls": "0.6.*",
-                "squizlabs/php_codesniffer": "~2.2"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/array_column.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ben Ramsey",
-                    "homepage": "http://benramsey.com"
-                }
-            ],
-            "description": "Provides functionality for array_column() to projects using PHP earlier than version 5.5.",
-            "homepage": "https://github.com/ramsey/array_column",
-            "keywords": [
-                "array",
-                "array_column",
-                "column"
-            ],
-            "time": "2015-03-20T22:07:39+00:00"
+            "time": "2019-06-27T19:58:56+00:00"
         },
         {
             "name": "rmccue/requests",
@@ -501,16 +463,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.3.2",
+            "version": "3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "6ad28354c04b364c3c71a34e4a18b629cc3b231e"
+                "reference": "b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/6ad28354c04b364c3c71a34e4a18b629cc3b231e",
-                "reference": "6ad28354c04b364c3c71a34e4a18b629cc3b231e",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8",
+                "reference": "b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8",
                 "shasum": ""
             },
             "require": {
@@ -543,25 +505,25 @@
                 }
             ],
             "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
-            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
             "keywords": [
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-09-23T23:08:17+00:00"
+            "time": "2019-04-10T23:49:02+00:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v4.2.1",
+            "version": "v4.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "e53d477d7b5c4982d0e1bfd2298dbee63d01441d"
+                "reference": "9638d41e3729459860bb96f6247ccb61faaa45f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/e53d477d7b5c4982d0e1bfd2298dbee63d01441d",
-                "reference": "e53d477d7b5c4982d0e1bfd2298dbee63d01441d",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/9638d41e3729459860bb96f6247ccb61faaa45f2",
+                "reference": "9638d41e3729459860bb96f6247ccb61faaa45f2",
                 "shasum": ""
             },
             "require": {
@@ -570,7 +532,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2-dev"
+                    "dev-master": "4.3-dev"
                 }
             },
             "autoload": {
@@ -597,20 +559,20 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-11T19:52:12+00:00"
+            "time": "2019-06-28T13:16:30+00:00"
         },
         {
             "name": "wp-cli/i18n-command",
-            "version": "v2.1.0",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-cli/i18n-command.git",
-                "reference": "3050d9c953aa108477957cde693f36fd6506948d"
+                "reference": "e52a9a602772339a0f844bd5e9a9ac8cc8b490ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-cli/i18n-command/zipball/3050d9c953aa108477957cde693f36fd6506948d",
-                "reference": "3050d9c953aa108477957cde693f36fd6506948d",
+                "url": "https://api.github.com/repos/wp-cli/i18n-command/zipball/e52a9a602772339a0f844bd5e9a9ac8cc8b490ea",
+                "reference": "e52a9a602772339a0f844bd5e9a9ac8cc8b490ea",
                 "shasum": ""
             },
             "require": {
@@ -620,7 +582,7 @@
             },
             "require-dev": {
                 "wp-cli/scaffold-command": "^1.2 || ^2",
-                "wp-cli/wp-cli-tests": "^2.0.7"
+                "wp-cli/wp-cli-tests": "^2.1"
             },
             "type": "wp-cli-package",
             "extra": {
@@ -654,7 +616,7 @@
             ],
             "description": "Provides internationalization tools for WordPress projects.",
             "homepage": "https://github.com/wp-cli/i18n-command",
-            "time": "2018-12-05T16:57:17+00:00"
+            "time": "2019-04-25T00:31:04+00:00"
         },
         {
             "name": "wp-cli/mustangostang-spyc",
@@ -756,22 +718,22 @@
         },
         {
             "name": "wp-cli/wp-cli",
-            "version": "v2.0.1",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-cli/wp-cli.git",
-                "reference": "8b47483c730b592ca956f1447bb064e90606e4ba"
+                "reference": "193f08f48585326bc1f1648349201531eeda2ee5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-cli/wp-cli/zipball/8b47483c730b592ca956f1447bb064e90606e4ba",
-                "reference": "8b47483c730b592ca956f1447bb064e90606e4ba",
+                "url": "https://api.github.com/repos/wp-cli/wp-cli/zipball/193f08f48585326bc1f1648349201531eeda2ee5",
+                "reference": "193f08f48585326bc1f1648349201531eeda2ee5",
                 "shasum": ""
             },
             "require": {
+                "ext-curl": "*",
                 "mustache/mustache": "~2.4",
-                "php": ">=5.4",
-                "ramsey/array_column": "~1.1",
+                "php": "^5.4 || ^7.0",
                 "rmccue/requests": "~1.6",
                 "symfony/finder": ">2.7",
                 "wp-cli/mustangostang-spyc": "^0.6.3",
@@ -783,7 +745,11 @@
                 "wp-cli/entity-command": "^1.2 || ^2",
                 "wp-cli/extension-command": "^1.1 || ^2",
                 "wp-cli/package-command": "^1 || ^2",
-                "wp-cli/wp-cli-tests": "^2.0.8"
+                "wp-cli/wp-cli-tests": "^2.1"
+            },
+            "suggest": {
+                "ext-readline": "Include for a better --prompt implementation",
+                "ext-zip": "Needed to support extraction of ZIP archives when doing downloads or updates"
             },
             "bin": [
                 "bin/wp",
@@ -792,7 +758,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "2.1.x-dev"
                 }
             },
             "autoload": {
@@ -810,31 +776,33 @@
                 "cli",
                 "wordpress"
             ],
-            "time": "2018-08-23T23:01:42+00:00"
+            "time": "2019-04-25T05:38:33+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
-            "version": "1.2.1",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git",
-                "reference": "f328bcafd97377e8e5e5d7b244d5ddbf301a3a5c"
+                "url": "https://github.com/WordPress/WordPress-Coding-Standards.git",
+                "reference": "bd9c33152115e6741e3510ff7189605b35167908"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/f328bcafd97377e8e5e5d7b244d5ddbf301a3a5c",
-                "reference": "f328bcafd97377e8e5e5d7b244d5ddbf301a3a5c",
+                "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/bd9c33152115e6741e3510ff7189605b35167908",
+                "reference": "bd9c33152115e6741e3510ff7189605b35167908",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3",
-                "squizlabs/php_codesniffer": "^2.9.0 || ^3.0.2"
+                "php": ">=5.4",
+                "squizlabs/php_codesniffer": "^3.3.1"
             },
             "require-dev": {
-                "phpcompatibility/php-compatibility": "^9.0"
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+                "phpcompatibility/php-compatibility": "^9.0",
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
             "suggest": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3 || This Composer plugin will sort out the PHPCS 'installed_paths' automatically."
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0 || This Composer plugin will sort out the PHPCS 'installed_paths' automatically."
             },
             "type": "phpcodesniffer-standard",
             "notification-url": "https://packagist.org/downloads/",
@@ -853,7 +821,7 @@
                 "standards",
                 "wordpress"
             ],
-            "time": "2018-12-18T09:43:51+00:00"
+            "time": "2019-05-21T02:50:00+00:00"
         }
     ],
     "aliases": [],

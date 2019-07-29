@@ -1,10 +1,10 @@
 <?php
+
 /* Copyright (c)
  * - 2006-2013, Ivan Sagalaev (maniac@softwaremaniacs.org), highlight.js
  *              (original author)
- * - 2013-2015, Geert Bergman (geert@scrivo.nl), highlight.php
- * - 2014,      Daniel Lynge, highlight.php (contributor)
- * All rights reserved.
+ * - 2013-2019, Geert Bergman (geert@scrivo.nl), highlight.php
+ * - 2014       Daniel Lynge, highlight.php (contributor)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -190,6 +190,10 @@ class Highlighter
 
         $openSpan .= $classname . "\">";
 
+        if (!$classname) {
+            return $insideSpan;
+        }
+
         return $openSpan . $insideSpan . $closeSpan;
     }
 
@@ -276,7 +280,12 @@ class Highlighter
 
     private function processBuffer()
     {
-        $this->result .= $this->top->subLanguage ? $this->processSubLanguage() : $this->processKeywords();
+        if (is_object($this->top) && $this->top->subLanguage) {
+            $this->result .= $this->processSubLanguage();
+        } else {
+            $this->result .= $this->processKeywords();
+        }
+
         $this->modeBuffer = '';
     }
 
@@ -503,9 +512,9 @@ class Highlighter
             $index = 0;
 
             while ($this->top && $this->top->terminators) {
-                $test = preg_match($this->top->terminators, $code, $match, PREG_OFFSET_CAPTURE, $index);
+                $test = @preg_match($this->top->terminators, $code, $match, PREG_OFFSET_CAPTURE, $index);
                 if ($test === false) {
-                    throw new \Exception("Invalid regExp " . var_export($this->top->terminators, true));
+                    throw new \Exception("Invalid " . $this->language->name . " regExp " . var_export($this->top->terminators, true));
                 } elseif ($test === 0) {
                     break;
                 }
