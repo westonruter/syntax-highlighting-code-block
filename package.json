@@ -1,5 +1,5 @@
 {
-  "name": "westonruter-code-syntax",
+  "name": "syntax-highlighted-code-block",
   "license": "GPL-2.0-or-later",
   "main": "code-syntax.js",
   "devDependencies": {

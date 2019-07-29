@@ -32,11 +32,11 @@ const addSyntaxToCodeBlock = ( settings ) => {
 				<${Fragment}>
 					<${InspectorControls} key="controls">
 						<${SelectControl}
-							label=${ __( 'Language', 'code-syntax-block' ) }
+							label=${ __( 'Language', 'syntax-highlighted-code-block' ) }
 							value=${ attributes.language }
 							options=${
 								[
-									{ label: __( 'Auto-detect', 'code-syntax-block' ), value: '' },
+									{ label: __( 'Auto-detect', 'syntax-highlighted-code-block' ), value: '' },
 									...codeSyntaxBlockLanguages
 								]
 							}
@@ -47,8 +47,8 @@ const addSyntaxToCodeBlock = ( settings ) => {
 						<${PlainText}
 							value=${ attributes.content }
 							onChange=${ ( content ) => setAttributes({ content }) }
-							placeholder=${ __( 'Write code…', 'code-syntax-block' ) }
-							aria-label=${ __( 'Code', 'code-syntax-block' ) }
+							placeholder=${ __( 'Write code…', 'syntax-highlighted-code-block' ) }
+							aria-label=${ __( 'Code', 'syntax-highlighted-code-block' ) }
 						/>
 					</div>
 				</${Fragment}>
@@ -85,6 +85,6 @@ const addSyntaxToCodeBlock = ( settings ) => {
 
 addFilter(
 	'blocks.registerBlockType',
-	'westonruter/code-syntax-block',
+	'westonruter/syntax-highlighted-code-block',
 	addSyntaxToCodeBlock
 );

@@ -1,6 +1,6 @@
 {
-  "name": "westonruter/code-syntax-block",
-  "description": "A WordPress plugin which extends Gutenberg adding color syntax highlighting to the code block.",
+  "name": "westonruter/syntax-highlighted-code-block",
+  "description": "A WordPress plugin which extends Gutenberg adding server-rendered color syntax highlighting to the code block.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "require": {
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "phpcs": "phpcs",
-    "zip": "git archive --format=zip HEAD > code-syntax-block.zip && unzip -l code-syntax-block.zip",
-    "make-pot": "wp i18n make-pot . languages/code-syntax-block.pot --include=code-syntax-block.js"
+    "zip": "git archive --format=zip HEAD > syntax-highlighted-code-block.zip && unzip -l syntax-highlighted-code-block.zip",
+    "make-pot": "wp i18n make-pot . languages/syntax-highlighted-code-block.pot --include=syntax-highlighted-code-block.js"
   }
 }

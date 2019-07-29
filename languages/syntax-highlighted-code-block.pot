@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Code Syntax Block (with Server-Side Highlighting) 0.4.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/code-syntax-block\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/syntax-highlighted-code-block\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,14 +12,14 @@ msgstr ""
 "POT-Creation-Date: 2018-12-18T06:49:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.0.1\n"
-"X-Domain: code-syntax-block\n"
+"X-Domain: syntax-highlighted-code-block\n"
 
 #. Plugin Name of the plugin
 msgid "Code Syntax Block (with Server-Side Highlighting)"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://github.com/westonruter/code-syntax-block"
+msgid "https://github.com/westonruter/syntax-highlighted-code-block"
 msgstr ""
 
 #. Description of the plugin
@@ -34,66 +34,66 @@ msgstr ""
 msgid "https://weston.ruter.net/"
 msgstr ""
 
-#: code-syntax-block.js:21
+#: syntax-highlighted-code-block.js:21
 msgid "Bash (shell)"
 msgstr ""
 
-#: code-syntax-block.js:25
+#: syntax-highlighted-code-block.js:25
 msgid "C-like"
 msgstr ""
 
-#: code-syntax-block.js:29
+#: syntax-highlighted-code-block.js:29
 msgid "CSS"
 msgstr ""
 
-#: code-syntax-block.js:33
+#: syntax-highlighted-code-block.js:33
 msgid "Diff"
 msgstr ""
 
-#: code-syntax-block.js:37
+#: syntax-highlighted-code-block.js:37
 msgid "Go (golang)"
 msgstr ""
 
-#: code-syntax-block.js:41
+#: syntax-highlighted-code-block.js:41
 msgid "HTML/Markup"
 msgstr ""
 
-#: code-syntax-block.js:45
+#: syntax-highlighted-code-block.js:45
 msgid "JavaScript (JSX)"
 msgstr ""
 
-#: code-syntax-block.js:49
+#: syntax-highlighted-code-block.js:49
 msgid "JSON"
 msgstr ""
 
-#: code-syntax-block.js:53
+#: syntax-highlighted-code-block.js:53
 msgid "Markdown"
 msgstr ""
 
-#: code-syntax-block.js:57
+#: syntax-highlighted-code-block.js:57
 msgid "PHP"
 msgstr ""
 
-#: code-syntax-block.js:61
+#: syntax-highlighted-code-block.js:61
 msgid "Python"
 msgstr ""
 
-#: code-syntax-block.js:65
+#: syntax-highlighted-code-block.js:65
 msgid "SQL"
 msgstr ""
 
-#: code-syntax-block.js:96
+#: syntax-highlighted-code-block.js:96
 msgid "Language"
 msgstr ""
 
-#: code-syntax-block.js:100
+#: syntax-highlighted-code-block.js:100
 msgid "Auto-detect"
 msgstr ""
 
-#: code-syntax-block.js:111
+#: syntax-highlighted-code-block.js:111
 msgid "Write code…"
 msgstr ""
 
-#: code-syntax-block.js:112
+#: syntax-highlighted-code-block.js:112
 msgid "Code"
 msgstr ""

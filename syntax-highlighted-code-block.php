@@ -1,24 +1,24 @@
 <?php
 /**
- * Plugin Name:  Code Syntax Block (with Server-Side Highlighting)
- * Plugin URI:   https://github.com/westonruter/code-syntax-block
- * Description:  A plugin to extend Gutenberg code block with syntax highlighting.
+ * Plugin Name:  Syntax-highlighted Code Block (with Server-side Rendering)
+ * Plugin URI:   https://github.com/westonruter/syntax-highlighted-code-block
+ * Description:  Extending the WordPress code block with syntax highlighting that is rendered on the server, thus being AMP-compatible and having faster frontend performance.
  * Version:      1.0.0
  * Author:       Weston Ruter
  * Author URI:   https://weston.ruter.net/
  * License:      GPL2
  * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:  code-syntax-block
+ * Text Domain:  syntax-highlighted-code-block
  * Requires PHP: 5.4
  *
- * @package Code_Syntax_Block
+ * @package Syntax_Highlighted_Code_Block
  */
 
-namespace Code_Syntax_Block;
+namespace Syntax_Highlighted_Code_Block;
 
 const PLUGIN_VERSION = '1.0.0';
 
-const FRONTEND_STYLE_HANDLE = 'code-syntax-block';
+const FRONTEND_STYLE_HANDLE = 'syntax-highlighted-code-block';
 
 /**
  * Initialize plugin.
@@ -28,7 +28,7 @@ function init() {
 		return;
 	}
 
-	load_plugin_textdomain( 'code-syntax-block', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'syntax-highlighted-code-block', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 	register_block_type(
 		'core/code',
@@ -54,8 +54,8 @@ function enqueue_editor_assets() {
 		$in_footer
 	);
 
-	$handle     = 'code-syntax-block';
-	$block_path = '/code-syntax-block.js';
+	$handle     = 'syntax-highlighted-code-block';
+	$block_path = '/syntax-highlighted-code-block.js';
 	wp_enqueue_script(
 		$handle,
 		plugins_url( $block_path, __FILE__ ),
@@ -69,7 +69,7 @@ function enqueue_editor_assets() {
 		sprintf( 'const codeSyntaxBlockLanguages = %s;', wp_json_encode( get_languages() ) )
 	);
 
-	wp_set_script_translations( $handle, 'code-syntax-block' );
+	wp_set_script_translations( $handle, 'syntax-highlighted-code-block' );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
 
@@ -80,33 +80,33 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_asse
  */
 function get_languages() {
 	$language_names = array(
-		'bash'       => __( 'Bash (shell)', 'code-syntax-block' ),
-		'cpp'        => __( 'C-like', 'code-syntax-block' ),
-		'css'        => __( 'CSS', 'code-syntax-block' ),
-		'diff'       => __( 'Diff', 'code-syntax-block' ),
-		'dns'        => __( 'DNS', 'code-syntax-block' ),
-		'dockerfile' => __( 'Dockerfile', 'code-syntax-block' ),
-		'go'         => __( 'Go (golang)', 'code-syntax-block' ),
-		'handlebars' => __( 'Handlebars', 'code-syntax-block' ),
-		'http'       => __( 'HTTP', 'code-syntax-block' ),
-		'java'       => __( 'Java', 'code-syntax-block' ),
-		'javascript' => __( 'JavaScript (JSX)', 'code-syntax-block' ),
-		'json'       => __( 'JSON', 'code-syntax-block' ),
-		'less'       => __( 'LESS', 'code-syntax-block' ),
-		'makefile'   => __( 'Makefile', 'code-syntax-block' ),
-		'markdown'   => __( 'Markdown', 'code-syntax-block' ),
-		'nginx'      => __( 'Nginx', 'code-syntax-block' ),
-		'perl'       => __( 'Perl', 'code-syntax-block' ),
-		'php'        => __( 'PHP', 'code-syntax-block' ),
-		'protobuf'   => __( 'Protobuf', 'code-syntax-block' ),
-		'python'     => __( 'Python', 'code-syntax-block' ),
-		'scss'       => __( 'SCSS', 'code-syntax-block' ),
-		'shell'      => __( 'Shell', 'code-syntax-block' ),
-		'sql'        => __( 'SQL', 'code-syntax-block' ),
-		'twig'       => __( 'Twig', 'code-syntax-block' ),
-		'typescript' => __( 'TypeScript', 'code-syntax-block' ),
-		'xml'        => __( 'HTML/Markup', 'code-syntax-block' ),
-		'yaml'       => __( 'YAML', 'code-syntax-block' ),
+		'bash'       => __( 'Bash (shell)', 'syntax-highlighted-code-block' ),
+		'cpp'        => __( 'C-like', 'syntax-highlighted-code-block' ),
+		'css'        => __( 'CSS', 'syntax-highlighted-code-block' ),
+		'diff'       => __( 'Diff', 'syntax-highlighted-code-block' ),
+		'dns'        => __( 'DNS', 'syntax-highlighted-code-block' ),
+		'dockerfile' => __( 'Dockerfile', 'syntax-highlighted-code-block' ),
+		'go'         => __( 'Go (golang)', 'syntax-highlighted-code-block' ),
+		'handlebars' => __( 'Handlebars', 'syntax-highlighted-code-block' ),
+		'http'       => __( 'HTTP', 'syntax-highlighted-code-block' ),
+		'java'       => __( 'Java', 'syntax-highlighted-code-block' ),
+		'javascript' => __( 'JavaScript (JSX)', 'syntax-highlighted-code-block' ),
+		'json'       => __( 'JSON', 'syntax-highlighted-code-block' ),
+		'less'       => __( 'LESS', 'syntax-highlighted-code-block' ),
+		'makefile'   => __( 'Makefile', 'syntax-highlighted-code-block' ),
+		'markdown'   => __( 'Markdown', 'syntax-highlighted-code-block' ),
+		'nginx'      => __( 'Nginx', 'syntax-highlighted-code-block' ),
+		'perl'       => __( 'Perl', 'syntax-highlighted-code-block' ),
+		'php'        => __( 'PHP', 'syntax-highlighted-code-block' ),
+		'protobuf'   => __( 'Protobuf', 'syntax-highlighted-code-block' ),
+		'python'     => __( 'Python', 'syntax-highlighted-code-block' ),
+		'scss'       => __( 'SCSS', 'syntax-highlighted-code-block' ),
+		'shell'      => __( 'Shell', 'syntax-highlighted-code-block' ),
+		'sql'        => __( 'SQL', 'syntax-highlighted-code-block' ),
+		'twig'       => __( 'Twig', 'syntax-highlighted-code-block' ),
+		'typescript' => __( 'TypeScript', 'syntax-highlighted-code-block' ),
+		'xml'        => __( 'HTML/Markup', 'syntax-highlighted-code-block' ),
+		'yaml'       => __( 'YAML', 'syntax-highlighted-code-block' ),
 	);
 
 	$languages = array();
@@ -143,7 +143,7 @@ function register_frontend_assets() {
 	 * @since 1.0.0
 	 * @param string $style Style.
 	 */
-	$style = apply_filters( 'code_syntax_block_style', 'default' );
+	$style = apply_filters( 'syntax_highlighted_code_block_style', 'default' );
 
 	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', sanitize_key( $style ) );
 	wp_register_style(
@@ -199,7 +199,7 @@ function render_block( $attributes, $content ) {
 		return $start_tags;
 	};
 
-	$transient_key = 'code-syntax-block-' . md5( $attributes['language'] . $matches['code'] ) . '-v' . PLUGIN_VERSION;
+	$transient_key = 'syntax-highlighted-code-block-' . md5( $attributes['language'] . $matches['code'] ) . '-v' . PLUGIN_VERSION;
 	$highlighted   = get_transient( $transient_key );
 
 	if ( $highlighted && isset( $highlighted['code'] ) ) {

@@ -1,5 +1,5 @@
 
-# Server-Side Code Syntax Highlighting Block
+# Syntax-highlighted Code Block (with Server-side Rendering)
 
 A WordPress plugin which extends Gutenberg by adding *server-side* syntax highlighting to the WordPress core code block. Fully compatible with the [offical AMP plugin](https://amp-wp.org).
 
@@ -9,7 +9,7 @@ Example:
 
 ### Usage
 
-Install code-syntax-block plugin to your WordPress plugins directory and activate. You can download a ZIP from the [GitHub](https://github.com/westonruter/code-syntax-block), without any build step required. You can also run `npm run zip` to create a ZIP of the non-development files.
+Install syntax-highlighted-code-block plugin to your WordPress plugins directory and activate. You can download a ZIP from the [GitHub](https://github.com/westonruter/syntax-highlighted-code-block), without any build step required. You can also run `npm run zip` to create a ZIP of the non-development files.
 
 This plugin upgrades the existing Code block in core. It uses auto-detection for the language in the block to add syntad highlighting, but you can override the language in the block inspector.
 
@@ -19,11 +19,11 @@ On the front-end when the post is being viewed, the code will be color syntax hi
 
 The default install uses a limited set of languages from highlight.php (bash, cpp, css, diff, go, javascript, json, markdown, php, python, sql, xml). If your language is not included, you can modify the [`.gitignore`] to skip ignoring them and then optionally add a label in the `get_languages()` PHP function.
 
-For styling, the [default color theme](https://github.com/scrivo/highlight.php/blob/master/styles/default.css) is used from highlight.php. To use a different color scheme, you can use the `code_syntax_block_style` filter to use another one of the [styles](https://github.com/scrivo/highlight.php/tree/master/styles):
+For styling, the [default color theme](https://github.com/scrivo/highlight.php/blob/master/styles/default.css) is used from highlight.php. To use a different color scheme, you can use the `syntax_highlighted_code_block_style` filter to use another one of the [styles](https://github.com/scrivo/highlight.php/tree/master/styles):
 
 ```php
 add_filter(
-	'code_syntax_block_style',
+	'syntax_highlighted_code_block_style',
 	function() {
 		return 'github';
 	}
@@ -36,7 +36,7 @@ add_filter(
 
 ### Contribute
 
-See [list of current issues](https://github.com/westonruter/code-syntax-block/issues) with the plugin. Please feel free to file any additional issues or requests that you may come across. [Pull requests](https://github.com/westonruter/code-syntax-block/pulls) are welcome to help extend.
+See [list of current issues](https://github.com/westonruter/syntax-highlighted-code-block/issues) with the plugin. Please feel free to file any additional issues or requests that you may come across. [Pull requests](https://github.com/westonruter/syntax-highlighted-code-block/pulls) are welcome to help extend.
 
 ### License
 
