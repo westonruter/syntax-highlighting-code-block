@@ -1,12 +1,16 @@
 /**
+ * External dependencies
+ */
+import { sortBy } from 'lodash';
+
+/**
  * WordPress dependencies
  */
-const { __ } = wp.i18n;
-const { addFilter } = wp.hooks;
-const { PlainText, InspectorControls } = wp.editor;
-const { SelectControl } = wp.components;
-const { Fragment } = wp.element;
-const { sortBy } = lodash;
+import { __ } from '@wordpress/i18n';
+import { addFilter } from '@wordpress/hooks';
+import { PlainText, InspectorControls } from '@wordpress/editor';
+import { SelectControl } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies

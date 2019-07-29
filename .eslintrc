@@ -10,7 +10,6 @@
     }
   },
   "globals": {
-    "browser": true,
-    "wp": true
+    "browser": true
   }
 }
