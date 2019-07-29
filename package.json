@@ -3,28 +3,20 @@
   "license": "GPL-2.0-or-later",
   "main": "code-syntax.js",
   "devDependencies": {
+    "@wordpress/scripts": "^3.3.0",
     "eslint": "^5.3.0",
-    "eslint-config-wordpress": "^2.0.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "wordpress"
-    ],
-    "env": {
-      "browser": true,
-      "node": false
-    },
-    "parserOptions": {
-      "sourceType": "script",
-      "ecmaVersion": 9
-    }
+    "eslint-config-wordpress": "^2.0.0",
+    "highlight.js": "github:highlightjs/highlight.js#9.15.8"
   },
   "scripts": {
-    "make-pot": "composer run-script make-pot",
+    "build": "wp-scripts build",
+    "generate-language-names": "php bin/generate-language-names.php",
+    "check-engines": "wp-scripts check-engines",
+    "check-licenses": "wp-scripts check-licenses",
+    "lint:js": "wp-scripts lint-js",
+    "lint:pkg-json": "wp-scripts lint-pkg-json",
+    "start": "wp-scripts start",
     "zip": "composer run-script zip"
   },
-  "dependencies": {
-    "htm": "^1.0.1"
-  }
+  "dependencies": {}
 }

@@ -1,0 +1,16 @@
+{
+  "root": true,
+  "extends": [
+    "plugin:@wordpress/eslint-plugin/recommended",
+  ],
+  "settings": {
+    "react": {
+      "pragma": "wp",
+      "version": "16.6"
+    }
+  },
+  "globals": {
+    "browser": true,
+    "wp": true
+  }
+}

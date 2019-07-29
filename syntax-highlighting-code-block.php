@@ -43,88 +43,20 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
 function enqueue_editor_assets() {
 	$in_footer = true;
 
-	$htm_path = '/node_modules/htm/dist/htm.js';
-	wp_register_script(
-		'htm',
-		plugins_url( $htm_path, __FILE__ ),
-		[],
-		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $htm_path ) : PLUGIN_VERSION,
-		$in_footer
-	);
-
 	$handle     = 'syntax-highlighting-code-block';
-	$block_path = '/syntax-highlighting-code-block.js';
+	$block_path = '/build/index.js';
+	$deps       = json_decode( file_get_contents( __DIR__ . '/build/index.deps.json' ) ); // @todo Check if exists.
 	wp_enqueue_script(
 		$handle,
 		plugins_url( $block_path, __FILE__ ),
-		[ 'wp-blocks', 'wp-hooks', 'wp-element', 'wp-i18n', 'htm' ],
+		$deps,
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $block_path ) : PLUGIN_VERSION,
 		$in_footer
-	);
-
-	wp_add_inline_script(
-		$handle,
-		sprintf( 'const codeSyntaxBlockLanguages = %s;', wp_json_encode( get_languages() ) )
 	);
 
 	wp_set_script_translations( $handle, 'syntax-highlighting-code-block' );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
-
-/**
- * Get languages.
- *
- * @return array Languages.
- */
-function get_languages() {
-	$language_names = [
-		'bash'       => __( 'Bash (shell)', 'syntax-highlighting-code-block' ),
-		'cpp'        => __( 'C-like', 'syntax-highlighting-code-block' ),
-		'css'        => __( 'CSS', 'syntax-highlighting-code-block' ),
-		'diff'       => __( 'Diff', 'syntax-highlighting-code-block' ),
-		'dns'        => __( 'DNS', 'syntax-highlighting-code-block' ),
-		'dockerfile' => __( 'Dockerfile', 'syntax-highlighting-code-block' ),
-		'go'         => __( 'Go (golang)', 'syntax-highlighting-code-block' ),
-		'handlebars' => __( 'Handlebars', 'syntax-highlighting-code-block' ),
-		'http'       => __( 'HTTP', 'syntax-highlighting-code-block' ),
-		'java'       => __( 'Java', 'syntax-highlighting-code-block' ),
-		'javascript' => __( 'JavaScript (JSX)', 'syntax-highlighting-code-block' ),
-		'json'       => __( 'JSON', 'syntax-highlighting-code-block' ),
-		'less'       => __( 'LESS', 'syntax-highlighting-code-block' ),
-		'makefile'   => __( 'Makefile', 'syntax-highlighting-code-block' ),
-		'markdown'   => __( 'Markdown', 'syntax-highlighting-code-block' ),
-		'nginx'      => __( 'Nginx', 'syntax-highlighting-code-block' ),
-		'perl'       => __( 'Perl', 'syntax-highlighting-code-block' ),
-		'php'        => __( 'PHP', 'syntax-highlighting-code-block' ),
-		'protobuf'   => __( 'Protobuf', 'syntax-highlighting-code-block' ),
-		'python'     => __( 'Python', 'syntax-highlighting-code-block' ),
-		'scss'       => __( 'SCSS', 'syntax-highlighting-code-block' ),
-		'shell'      => __( 'Shell', 'syntax-highlighting-code-block' ),
-		'sql'        => __( 'SQL', 'syntax-highlighting-code-block' ),
-		'twig'       => __( 'Twig', 'syntax-highlighting-code-block' ),
-		'typescript' => __( 'TypeScript', 'syntax-highlighting-code-block' ),
-		'xml'        => __( 'HTML/Markup', 'syntax-highlighting-code-block' ),
-		'yaml'       => __( 'YAML', 'syntax-highlighting-code-block' ),
-	];
-
-	$languages = [];
-	foreach ( glob( __DIR__ . '/vendor/scrivo/highlight.php/Highlight/languages/*.json' ) as $language_file ) {
-		$basename = basename( $language_file, '.json' );
-
-		$languages[ $basename ] = [
-			'label' => isset( $language_names[ $basename ] ) ? $language_names[ $basename ] : $basename,
-			'value' => $basename,
-		];
-	}
-	usort(
-		$languages,
-		function( $a, $b ) {
-			return strcmp( strtolower( $a['label'] ), strtolower( $b['label'] ) );
-		}
-	);
-
-	return $languages;
-}
 
 /**
  * Register assets for the frontend.
