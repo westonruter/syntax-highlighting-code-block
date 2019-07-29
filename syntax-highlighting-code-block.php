@@ -28,8 +28,6 @@ function init() {
 		return;
 	}
 
-	load_plugin_textdomain( 'syntax-highlighting-code-block', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
 	register_block_type(
 		'core/code',
 		[
