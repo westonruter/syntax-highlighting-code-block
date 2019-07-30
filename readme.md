@@ -5,13 +5,13 @@ Extending the Code block with syntax highlighting rendered on the server, thus b
 
 **Contributors:** [westonruter](https://profiles.wordpress.org/westonruter), [mkaz](https://profiles.wordpress.org/mkaz)  
 **Tags:** [block](https://wordpress.org/plugins/tags/block), [code](https://wordpress.org/plugins/tags/code), [code syntax](https://wordpress.org/plugins/tags/code-syntax), [syntax highlight](https://wordpress.org/plugins/tags/syntax-highlight), [code highlighting](https://wordpress.org/plugins/tags/code-highlighting)  
-**Requires at least:** 5.0  
+**Requires at least:** 5.2  
 **Tested up to:** 5.2  
 **Stable tag:** 1.0.0  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
 **Requires PHP:** 5.6  
 
-[![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com) 
+[![Build Status](https://travis-ci.org/westonruter/syntax-highlighting-code-block.svg?branch=master)](https://travis-ci.org/westonruter/syntax-highlighting-code-block) [![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com) 
 
 ## Description ##
 
@@ -29,12 +29,11 @@ add_filter(
 </pre>
 
 This plugin is [developed on GitHub](https://github.com/westonruter/syntax-highlighting-code-block). See [list of current issues](https://github.com/westonruter/syntax-highlighting-code-block/issues) with the plugin. Please feel free to file any additional issues or requests that you may come across. [Pull requests](https://github.com/westonruter/syntax-highlighting-code-block/pulls) are welcome to help extend.
+### Credits ###
+This is a fork of [Code Syntax Block](https://github.com/mkaz/code-syntax-block) by [Marcus Kazmierczak](https://mkaz.blog/) (mkaz), which is also [available on WordPress.org](https://wordpress.org/plugins/code-syntax-block/). Copyright (c) 2018 Marcus Kazmierczak. Licensed under GPL 2.0 or later.
 
-This is a fork of [Code Syntax Block](https://github.com/mkaz/code-syntax-block) by [Marcus Kazmierczak](https://mkaz.blog/) (mkaz), which is also [available on WordPress.org](https://wordpress.org/plugins/code-syntax-block/).
+[highlight.php](https://github.com/scrivo/highlight.php) is released under the BSD 3-Clause License. Copyright © 2006-2013, Ivan Sagalaev (maniac@softwaremaniacs.org), highlight.js (original author). Copyright © 2013, Geert Bergman (geert@scrivo.nl), highlight.php
 
-[highlight.php](https://github.com/scrivo/highlight.php) is released under the BSD 3-Clause License.
-Copyright © 2006-2013, Ivan Sagalaev (maniac@softwaremaniacs.org), highlight.js (original author).
-Copyright © 2013, Geert Bergman (geert@scrivo.nl), highlight.php
 
 ## Changelog ##
 

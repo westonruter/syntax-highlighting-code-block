@@ -21,7 +21,7 @@ module.exports = function( grunt ) {
 				stdout: true,
 				stderr: true,
 			},
-			readme: {
+			generate_readme_md: {
 				command: './vendor/xwp/wp-dev-lib/scripts/generate-markdown-readme', // Generate the readme.md.
 			},
 			verify_matching_versions: {
@@ -51,10 +51,6 @@ module.exports = function( grunt ) {
 	// Register tasks.
 	grunt.registerTask( 'default', [
 		'dist',
-	] );
-
-	grunt.registerTask( 'readme', [
-		'shell:readme',
 	] );
 
 	grunt.registerTask( 'dist', function() {
