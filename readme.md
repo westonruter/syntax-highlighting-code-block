@@ -17,7 +17,9 @@ Extending the Code block with syntax highlighting rendered on the server, thus b
 
 This plugin extends to Code block in WordPress core to add syntax highlighting which is rendered on the server. By performing the syntax highlighting on the server, there is then no need to enqueue any JavaScript on the frontend (e.g. Highlight.js or Prism.js) and this ensures there is no flash of unhighlighted code (FOUC?). Reducing script on the frontend improves frontend performance and it also allows for the syntax highlighted code to appear properly in AMP pages as rendered by the [official AMP plugin](https://amp-wp.org) (see also [ampproject/amp-wp#972](https://github.com/ampproject/amp-wp/issues/972)).
 
-The extended Code block uses auto-detection for the language in the block to add syntax highlighting, but you can override the language in the block inspector. There is currently no syntax highlighting of the block in the editor. On the frontend, server-side rendering is performed by [highlight.php](https://github.com/scrivo/highlight.php) which is a port of [highlight.js](https://highlightjs.org/), allowing you to use all [89 styles](https://highlightjs.org/static/demo/). To override the `default` style, use the `syntax_highlighting_code_block_style` to supply the one of the [style names](https://github.com/scrivo/highlight.php/tree/master/styles), for example `github`:
+The extended Code block uses auto-detection for the language in the block to add syntax highlighting, but you can override the language in the block inspector. (There is currently no syntax highlighting of the Code block in the editor.) The plugin supports for all [185 programming languages](https://highlightjs.org/static/demo/) that [highlight.php](https://github.com/scrivo/highlight.php) supports (being a port of [highlight.js](https://highlightjs.org/)).
+
+Any one of [89 styles](https://highlightjs.org/static/demo/) may be enqueued that highlight.php/highlight.js provide. To override the `default` style, use the `syntax_highlighting_code_block_style` to supply the one of the [style names](https://github.com/scrivo/highlight.php/tree/master/styles), for example `github`:
 
 <pre lang=php>
 add_filter(
@@ -34,6 +36,16 @@ This is a fork of [Code Syntax Block](https://github.com/mkaz/code-syntax-block)
 
 [highlight.php](https://github.com/scrivo/highlight.php) is released under the BSD 3-Clause License. Copyright © 2006-2013, Ivan Sagalaev (maniac@softwaremaniacs.org), highlight.js (original author). Copyright © 2013, Geert Bergman (geert@scrivo.nl), highlight.php
 
+
+## Screenshots ##
+
+### Supply content as you do normally in the Code block, optionally overriding the auto-detected language.
+
+![Supply content as you do normally in the Code block, optionally overriding the auto-detected language.](wp-assets/screenshot-1.png)
+
+### The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued.
+
+![The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued.](wp-assets/screenshot-2.png)
 
 ## Changelog ##
 
