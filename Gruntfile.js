@@ -8,27 +8,6 @@ module.exports = function( grunt ) {
 
 		pkg: grunt.file.readJSON( 'package.json' ),
 
-		// Clean up the build.
-		clean: {
-			dist: {
-				src: [ 'dist' ],
-			},
-		},
-
-		// Shell actions.
-		shell: {
-			options: {
-				stdout: true,
-				stderr: true,
-			},
-			generate_readme_md: {
-				command: './vendor/xwp/wp-dev-lib/scripts/generate-markdown-readme', // Generate the readme.md.
-			},
-			verify_matching_versions: {
-				command: 'php bin/verify-version-consistency.php',
-			},
-		},
-
 		// Deploys a git Repo to the WordPress SVN repo.
 		wp_deploy: {
 			deploy: {
@@ -43,9 +22,7 @@ module.exports = function( grunt ) {
 	} );
 
 	// Load tasks.
-	grunt.loadNpmTasks( 'grunt-contrib-clean' );
 	grunt.loadNpmTasks( 'grunt-contrib-copy' );
-	grunt.loadNpmTasks( 'grunt-shell' );
 	grunt.loadNpmTasks( 'grunt-wp-deploy' );
 
 	// Register tasks.
@@ -74,6 +51,7 @@ module.exports = function( grunt ) {
 				'readme.txt',
 				'LICENSE',
 				'build/*',
+				'wp-assets/*',
 				'vendor/autoload.php',
 				'vendor/composer/**',
 				'vendor/scrivo/highlight.php/Highlight/**',
@@ -136,10 +114,4 @@ module.exports = function( grunt ) {
 
 		doNext();
 	} );
-
-	grunt.registerTask( 'deploy', [
-		'shell:verify_matching_versions',
-		'dist',
-		'wp_deploy',
-	] );
 };
