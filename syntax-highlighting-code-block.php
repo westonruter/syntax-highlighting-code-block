@@ -18,7 +18,7 @@ namespace Syntax_Highlighting_Code_Block;
 
 const PLUGIN_VERSION = '1.0.0';
 
-const DEVELOPMENT_MODE = true; // Set to false during dist build.
+const DEVELOPMENT_MODE = true; // This is automatically rewritten to false during dist build.
 
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
@@ -71,7 +71,7 @@ function print_build_required_admin_notice() {
 					__( 'Unable to initialize plugin due to being installed from source without running a build. Please run %s', 'syntax-highlighting-code-block' ),
 					'<code>composer install &amp;&amp; npm install &amp;&amp; npm run build</code>'
 				)
-			)
+			);
 			?>
 		</p>
 	</div>
@@ -82,16 +82,16 @@ function print_build_required_admin_notice() {
  * Enqueue assets for editor.
  */
 function enqueue_editor_assets() {
-	$in_footer = true;
-
 	$handle      = 'syntax-highlighting-code-block';
+	$script_path = '/build/index.js';
 	$script_deps = json_decode( file_get_contents( get_script_deps_path() ), false ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	$in_footer   = true;
 
 	wp_enqueue_script(
 		$handle,
-		plugins_url( '/build/index.js', __FILE__ ),
+		plugins_url( $script_path, __FILE__ ),
 		$script_deps,
-		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $block_path ) : PLUGIN_VERSION,
+		DEVELOPMENT_MODE ? filemtime( plugin_dir_path( __FILE__ ) . $script_path ) : PLUGIN_VERSION,
 		$in_footer
 	);
 
