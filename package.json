@@ -1,7 +1,22 @@
 {
   "name": "syntax-highlighting-code-block",
+  "private": true,
+  "description": "Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.",
+  "author": "Weston Ruter",
   "license": "GPL-2.0-or-later",
-  "main": "code-syntax.js",
+  "keywords": [
+    "wordpress",
+    "wordpress-plugin"
+  ],
+  "homepage": "https://github.com/westonruter/syntax-highlighting-code-block",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/westonruter/syntax-highlighting-code-block.git"
+  },
+  "bugs": {
+    "url": "https://github.com/westonruter/syntax-highlighting-code-block/issues"
+  },
+  "dependencies": {},
   "devDependencies": {
     "@wordpress/components": "^8.0.0",
     "@wordpress/editor": "^9.4.0",
@@ -11,18 +26,35 @@
     "@wordpress/scripts": "^3.3.0",
     "eslint": "^5.3.0",
     "eslint-config-wordpress": "^2.0.0",
+    "grunt": "^1.0.4",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-shell": "^3.0.1",
+    "grunt-wp-deploy": "^2.0.0",
     "highlight.js": "github:highlightjs/highlight.js#9.15.8",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "npm-run-all": "^4.1.5"
   },
   "scripts": {
-    "build": "wp-scripts build",
+    "build": "npm-run-all build:*",
+    "build:prepare": "grunt clean",
+    "build:js": "wp-scripts build",
+    "build:dist": "grunt dist",
+    "build:zip": "if [ -e syntax-highlighting-code-block.zip ]; then rm syntax-highlighting-code-block.zip; fi; cd dist; zip -r ../syntax-highlighting-code-block.zip .; cd ..; echo; echo \"ZIP of build: $(pwd)/syntax-highlighting-code-block.zip\"",
     "generate-language-names": "php bin/generate-language-names.php",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
+    "lint": "npm-run-all --parallel lint:*",
+    "lint:php": "vendor/bin/phpcs",
     "lint:js": "wp-scripts lint-js",
-    "lint:pkg-json": "wp-scripts lint-pkg-json",
-    "start": "wp-scripts start",
-    "zip": "composer run-script zip"
+    "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
+    "start": "wp-scripts start"
   },
-  "dependencies": {}
+  "npmPackageJsonLintConfig": {
+    "extends": "@wordpress/npm-package-json-lint-config",
+    "rules": {
+      "require-version": "off"
+    }
+  },
+  "title": "Syntax-highlighting Code Block (with Server-side Rendering)"
 }

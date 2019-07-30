@@ -11,6 +11,8 @@ Extending the Code block with syntax highlighting rendered on the server, thus b
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
 **Requires PHP:** 5.6  
 
+[![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com) 
+
 ## Description ##
 
 This plugin extends to Code block in WordPress core to add syntax highlighting which is rendered on the server. By performing the syntax highlighting on the server, there is then no need to enqueue any JavaScript on the frontend (e.g. Highlight.js or Prism.js) and this ensures there is no flash of unhighlighted code (FOUC?). Reducing script on the frontend improves frontend performance and it also allows for the syntax highlighted code to appear properly in AMP pages as rendered by the [official AMP plugin](https://amp-wp.org) (see also [ampproject/amp-wp#972](https://github.com/ampproject/amp-wp/issues/972)).

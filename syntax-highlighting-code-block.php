@@ -18,7 +18,18 @@ namespace Syntax_Highlighting_Code_Block;
 
 const PLUGIN_VERSION = '1.0.0';
 
+const DEVELOPMENT_MODE = true; // Set to false during dist build.
+
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
+
+/**
+ * Get path to script deps file.
+ *
+ * @return string Path.
+ */
+function get_script_deps_path() {
+	return __DIR__ . '/build/index.deps.json';
+}
 
 /**
  * Initialize plugin.
@@ -28,14 +39,44 @@ function init() {
 		return;
 	}
 
+	if ( DEVELOPMENT_MODE && ! file_exists( get_script_deps_path() ) ) {
+		add_action( 'admin_notices', __NAMESPACE__ . '\print_build_required_admin_notice' );
+		return;
+	}
+
 	register_block_type(
 		'core/code',
 		[
 			'render_callback' => __NAMESPACE__ . '\render_block',
 		]
 	);
+
+	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
+	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\register_frontend_assets' );
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
+
+/**
+ * Print admin notice when plugin installed from source but no build being performed.
+ */
+function print_build_required_admin_notice() {
+	?>
+	<div class="notice notice-error">
+		<p>
+			<strong><?php esc_html_e( 'Syntax-highlighting Code Block', 'amp' ); ?>:</strong>
+			<?php
+			echo wp_kses_post(
+				sprintf(
+					/* translators: %s is the command to run */
+					__( 'Unable to initialize plugin due to being installed from source without running a build. Please run %s', 'syntax-highlighting-code-block' ),
+					'<code>composer install &amp;&amp; npm install &amp;&amp; npm run build</code>'
+				)
+			)
+			?>
+		</p>
+	</div>
+	<?php
+}
 
 /**
  * Enqueue assets for editor.
@@ -43,20 +84,19 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
 function enqueue_editor_assets() {
 	$in_footer = true;
 
-	$handle     = 'syntax-highlighting-code-block';
-	$block_path = '/build/index.js';
-	$deps       = json_decode( file_get_contents( __DIR__ . '/build/index.deps.json' ) ); // @todo Check if exists.
+	$handle      = 'syntax-highlighting-code-block';
+	$script_deps = json_decode( file_get_contents( get_script_deps_path() ), false ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
 	wp_enqueue_script(
 		$handle,
-		plugins_url( $block_path, __FILE__ ),
-		$deps,
+		plugins_url( '/build/index.js', __FILE__ ),
+		$script_deps,
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $block_path ) : PLUGIN_VERSION,
 		$in_footer
 	);
 
 	wp_set_script_translations( $handle, 'syntax-highlighting-code-block' );
 }
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
 
 /**
  * Register assets for the frontend.
@@ -83,7 +123,6 @@ function register_frontend_assets() {
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
 	);
 }
-add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\register_frontend_assets' );
 
 /**
  * Render code block.

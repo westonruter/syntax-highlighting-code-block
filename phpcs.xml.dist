@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards for Code Syntax Block">
+<ruleset name="WordPress Coding Standards for Syntax-highlighting Code Block">
 
 	<rule ref="WordPress-Core" />
 	<rule ref="WordPress-Docs" />
@@ -17,8 +17,10 @@
 
 	<arg value="s"/>
 	<arg name="extensions" value="php"/>
-	<file>.</file>
+	<file>syntax-highlighting-code-block.php</file>
 
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/dist/*</exclude-pattern>
+	<exclude-pattern>*/bin/*</exclude-pattern>
 </ruleset>
