@@ -4,25 +4,26 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "441e1cd808ccd5cfcb255e25886103a9",
+    "content-hash": "23a75b68d8eec594b1f23f3f41a15571",
     "packages": [
         {
             "name": "scrivo/highlight.php",
-            "version": "v9.15.8.1",
+            "version": "v9.15.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrivo/highlight.php.git",
-                "reference": "5c80fcb49592e451ffc73be5aeecbb57575ccca7"
+                "reference": "fdc7a5109fc2202c9452adb2a21b8d31e7ce5900"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/5c80fcb49592e451ffc73be5aeecbb57575ccca7",
-                "reference": "5c80fcb49592e451ffc73be5aeecbb57575ccca7",
+                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/fdc7a5109fc2202c9452adb2a21b8d31e7ce5900",
+                "reference": "fdc7a5109fc2202c9452adb2a21b8d31e7ce5900",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "ext-mbstring": "*"
+                "ext-mbstring": "*",
+                "php": ">=5.4"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8|^5.7",
@@ -70,7 +71,7 @@
                 "highlight.php",
                 "syntax"
             ],
-            "time": "2019-07-20T04:29:35+00:00"
+            "time": "2019-08-09T05:01:28+00:00"
         }
     ],
     "packages-dev": [
