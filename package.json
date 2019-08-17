@@ -34,6 +34,7 @@
     "npm-run-all": "^4.1.5"
   },
   "scripts": {
+    "update": "bin/update-highlight-libs.sh",
     "build": "npm-run-all build:*",
     "build:clean": "if [ -e dist ]; then rm -r dist; fi; if [ -e build ]; then rm -r build; fi",
     "build:js": "wp-scripts build",
