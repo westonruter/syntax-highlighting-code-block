@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23a75b68d8eec594b1f23f3f41a15571",
+    "content-hash": "39503043f0ab0c4b1e8b69d85336fa78",
     "packages": [
         {
             "name": "scrivo/highlight.php",
-            "version": "v9.15.9.0",
+            "version": "v9.15.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrivo/highlight.php.git",
-                "reference": "fdc7a5109fc2202c9452adb2a21b8d31e7ce5900"
+                "reference": "9ad3adb4456dc91196327498dbbce6aa1ba1239e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/fdc7a5109fc2202c9452adb2a21b8d31e7ce5900",
-                "reference": "fdc7a5109fc2202c9452adb2a21b8d31e7ce5900",
+                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/9ad3adb4456dc91196327498dbbce6aa1ba1239e",
+                "reference": "9ad3adb4456dc91196327498dbbce6aa1ba1239e",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
                 "highlight.php",
                 "syntax"
             ],
-            "time": "2019-08-09T05:01:28+00:00"
+            "time": "2019-08-27T04:27:48+00:00"
         }
     ],
     "packages-dev": [
