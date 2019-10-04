@@ -145,6 +145,10 @@ function render_block( $attributes, $content ) {
 		$attributes['language'] = '';
 	}
 
+	if ( ! isset( $attributes['showLines'] ) ) {
+		$attributes['showLines'] = false;
+	}
+
 	// Enqueue the style now that we know it will be needed.
 	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 
@@ -168,7 +172,7 @@ function render_block( $attributes, $content ) {
 		return $start_tags;
 	};
 
-	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['language'] . $matches['code'] ) . '-v' . PLUGIN_VERSION;
+	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['language'] . $attributes['language'] . $matches['code'] ) . '-v' . PLUGIN_VERSION;
 	$highlighted   = get_transient( $transient_key );
 
 	if ( $highlighted && isset( $highlighted['code'] ) ) {
@@ -203,11 +207,24 @@ function render_block( $attributes, $content ) {
 			$r = $highlighter->highlightAuto( $code );
 		}
 
-		$code        = $r->value;
-		$language    = $r->language;
-		$highlighted = compact( 'code', 'language' );
+		$code       = $r->value;
+		$language   = $r->language;
+		$show_lines = $attributes['showLines'];
 
-		set_transient( $transient_key, compact( 'code', 'language' ), MONTH_IN_SECONDS );
+		if ( $show_lines ) {
+			require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+
+			$lines = \HighlightUtilities\splitCodeIntoArray( $code );
+			$code  = '';
+
+			foreach ( $lines as $line ) {
+				$code .= sprintf( '<span class="loc">%s</span>%s', $line, PHP_EOL );
+			}
+		}
+
+		$highlighted = compact( 'code', 'language', 'show_lines' );
+
+		set_transient( $transient_key, compact( 'code', 'language', 'show_lines' ), MONTH_IN_SECONDS );
 
 		$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'] );
 
