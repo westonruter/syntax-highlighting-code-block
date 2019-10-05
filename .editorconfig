@@ -1,3 +1,6 @@
+[*]
+indent_style = tab
+
 [*.md]
 max_line_length = off
 trim_trailing_whitespace = false
