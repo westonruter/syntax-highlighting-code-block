@@ -22,8 +22,6 @@ const DEVELOPMENT_MODE = true; // This is automatically rewritten to false durin
 
 const FRONTEND_HIGHLIGHT_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
-const FRONTEND_PLUGIN_STYLE_HANDLE = 'syntax-highlighting-plugin-styles';
-
 /**
  * Get path to script deps file.
  *
@@ -124,13 +122,6 @@ function register_frontend_assets() {
 		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
 	);
-
-	wp_register_style(
-		FRONTEND_PLUGIN_STYLE_HANDLE,
-		plugins_url( 'index.css', __FILE__ ),
-		[],
-		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . 'index.css' ) : PLUGIN_VERSION
-	);
 }
 
 /**
@@ -160,7 +151,10 @@ function render_block( $attributes, $content ) {
 
 	// Enqueue the style now that we know it will be needed.
 	wp_enqueue_style( FRONTEND_HIGHLIGHT_STYLE_HANDLE );
-	wp_enqueue_style( FRONTEND_PLUGIN_STYLE_HANDLE );
+	wp_add_inline_style(
+		FRONTEND_HIGHLIGHT_STYLE_HANDLE,
+		file_get_contents( plugins_url( 'index.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	);
 
 	$inject_classes = function( $start_tags, $language, $show_lines ) {
 		$added_classes = "hljs language-$language";
