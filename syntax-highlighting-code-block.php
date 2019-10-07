@@ -20,7 +20,9 @@ const PLUGIN_VERSION = '1.0.2';
 
 const DEVELOPMENT_MODE = true; // This is automatically rewritten to false during dist build.
 
-const FRONTEND_HIGHLIGHT_STYLE_HANDLE = 'syntax-highlighting-code-block';
+const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
+
+const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
 /**
  * Get path to script deps file.
@@ -104,20 +106,29 @@ function enqueue_editor_assets() {
  * Asset(s) will only be enqueued if needed.
  */
 function register_frontend_assets() {
-	/**
-	 * Filters the style used for the code syntax block.
-	 *
-	 * The string returned must correspond to the filenames found at <https://github.com/scrivo/highlight.php/tree/master/styles>,
-	 * minus the file extension.
-	 *
-	 * @since 1.0.0
-	 * @param string $style Style.
-	 */
-	$style = apply_filters( 'syntax_highlighting_code_block_style', 'default' );
+	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
+		/**
+		 * Filters the style used for the code syntax block.
+		 *
+		 * The string returned must correspond to the filenames found at <https://github.com/scrivo/highlight.php/tree/master/styles>,
+		 * minus the file extension.
+		 *
+		 * @since 1.0.0
+		 * @param string $style Style.
+		 */
+		$style = apply_filters( BLOCK_STYLE_FILTER, 'default' );
+	} else {
+		$style = get_option(
+			'syntax_highlighting_options',
+			[
+				'theme_name' => 'default',
+			]
+		)['theme_name'];
+	}
 
 	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', sanitize_key( $style ) );
 	wp_register_style(
-		FRONTEND_HIGHLIGHT_STYLE_HANDLE,
+        FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
 		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
@@ -150,9 +161,9 @@ function render_block( $attributes, $content ) {
 	}
 
 	// Enqueue the style now that we know it will be needed.
-	wp_enqueue_style( FRONTEND_HIGHLIGHT_STYLE_HANDLE );
+	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 	wp_add_inline_style(
-		FRONTEND_HIGHLIGHT_STYLE_HANDLE,
+        FRONTEND_STYLE_HANDLE,
 		file_get_contents( plugins_url( 'index.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 	);
 
@@ -250,3 +261,71 @@ function render_block( $attributes, $content ) {
 		);
 	}
 }
+
+/**
+ * Initialize admin settings.
+ */
+function admin_init() {
+	register_setting( 'syntax_highlighting', 'syntax_highlighting_options' );
+}
+add_action( 'admin_init', __NAMESPACE__ . '\admin_init' );
+
+/**
+ * Sanitize the given theme name to make sure it's a valid highlight.js theme.
+ *
+ * @param string $input Value of the dropdown.
+ *
+ * @return string The sanitized theme name
+ */
+function sanitize_theme_name( $input ) {
+	require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+
+	$themes = \HighlightUtilities\getAvailableStyleSheets();
+
+	return in_array( $input, $themes, true ) ? sanitize_text_field( $input ) : 'default';
+}
+
+/**
+ * Add plugin settings to Customizer.
+ *
+ * @param \WP_Customize_Manager $wp_customize The Customizer object.
+ */
+function customize_register( $wp_customize ) {
+	require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+
+	$themes  = \HighlightUtilities\getAvailableStyleSheets();
+	$choices = array_combine( $themes, $themes );
+
+	$style = get_option(
+		'syntax_highlighting_options',
+		[
+			'theme_name' => 'default',
+		]
+	)['theme_name'];
+
+	$wp_customize->add_section(
+		'syntax_highlighting',
+		[
+			'title'       => __( 'Syntax Highlighting', 'syntax-highlighting-code-block' ),
+			'description' => __( 'Configure how rendered code blocks will appear.', 'syntax-highlighting-code-block' ),
+		]
+	);
+	$wp_customize->add_setting(
+		'syntax_highlighting_options[theme_name]',
+		array(
+			'type'              => 'option',
+			'default'           => $style,
+			'sanitize_callback' => __NAMESPACE__ . '\sanitize_theme_name',
+		)
+	);
+	$wp_customize->add_control(
+		'syntax_highlighting_options[theme_name]',
+		array(
+			'type'    => 'select',
+			'section' => 'syntax_highlighting',
+			'label'   => __( 'Theme Name', 'syntax-highlighting-code-block' ),
+			'choices' => $choices,
+		)
+	);
+}
+add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
