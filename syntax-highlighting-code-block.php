@@ -20,7 +20,7 @@ const PLUGIN_VERSION = '1.0.2';
 
 const DEVELOPMENT_MODE = true; // This is automatically rewritten to false during dist build.
 
-const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
+const FRONTEND_HIGHLIGHT_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
 /**
  * Get path to script deps file.
@@ -117,7 +117,7 @@ function register_frontend_assets() {
 
 	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', sanitize_key( $style ) );
 	wp_register_style(
-		FRONTEND_STYLE_HANDLE,
+		FRONTEND_HIGHLIGHT_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
 		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
@@ -145,12 +145,25 @@ function render_block( $attributes, $content ) {
 		$attributes['language'] = '';
 	}
 
-	// Enqueue the style now that we know it will be needed.
-	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
+	if ( ! isset( $attributes['showLines'] ) ) {
+		$attributes['showLines'] = false;
+	}
 
-	$inject_classes = function( $start_tags, $language ) {
+	// Enqueue the style now that we know it will be needed.
+	wp_enqueue_style( FRONTEND_HIGHLIGHT_STYLE_HANDLE );
+	wp_add_inline_style(
+		FRONTEND_HIGHLIGHT_STYLE_HANDLE,
+		file_get_contents( plugins_url( 'index.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	);
+
+	$inject_classes = function( $start_tags, $language, $show_lines ) {
 		$added_classes = "hljs language-$language";
-		$start_tags    = preg_replace(
+
+		if ( $show_lines ) {
+			$added_classes .= ' line-numbers';
+		}
+
+		$start_tags = preg_replace(
 			'/(<code[^>]*class=")/',
 			'$1 ' . esc_attr( $added_classes ),
 			$start_tags,
@@ -168,12 +181,12 @@ function render_block( $attributes, $content ) {
 		return $start_tags;
 	};
 
-	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['language'] . $matches['code'] ) . '-v' . PLUGIN_VERSION;
+	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['showLines'] . $attributes['language'] . $matches['code'] ) . '-v' . PLUGIN_VERSION;
 	$highlighted   = get_transient( $transient_key );
 
 	if ( $highlighted && isset( $highlighted['code'] ) ) {
 		if ( isset( $highlighted['language'] ) ) {
-			$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'] );
+			$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'] );
 		}
 		return $matches['before'] . $highlighted['code'] . $after;
 	}
@@ -203,13 +216,28 @@ function render_block( $attributes, $content ) {
 			$r = $highlighter->highlightAuto( $code );
 		}
 
-		$code        = $r->value;
-		$language    = $r->language;
-		$highlighted = compact( 'code', 'language' );
+		$code       = $r->value;
+		$language   = $r->language;
+		$show_lines = $attributes['showLines'];
 
-		set_transient( $transient_key, compact( 'code', 'language' ), MONTH_IN_SECONDS );
+		if ( $show_lines ) {
+			require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
 
-		$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'] );
+			$lines = \HighlightUtilities\splitCodeIntoArray( $code );
+			$code  = '';
+
+			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
+			// by our `table-row`.
+			foreach ( $lines as $line ) {
+				$code .= sprintf( '<div class="loc"><span>%s</span></div>%s', $line, PHP_EOL );
+			}
+		}
+
+		$highlighted = compact( 'code', 'language', 'show_lines' );
+
+		set_transient( $transient_key, compact( 'code', 'language', 'show_lines' ), MONTH_IN_SECONDS );
+
+		$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'] );
 
 		return $matches['before'] . $code . $after;
 	} catch ( \Exception $e ) {

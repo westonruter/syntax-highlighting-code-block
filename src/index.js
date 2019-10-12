@@ -9,7 +9,7 @@ import { sortBy } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { PlainText, InspectorControls } from '@wordpress/editor';
-import { SelectControl } from '@wordpress/components';
+import { SelectControl, CheckboxControl } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 
 /**
@@ -36,11 +36,18 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 			language: {
 				type: 'string',
 			},
+			showLines: {
+				type: 'boolean',
+			},
 		},
 
 		edit( { attributes, setAttributes, className } ) {
 			const updateLanguage = ( language ) => {
 				setAttributes( { language } );
+			};
+
+			const updateShowLines = ( showLines ) => {
+				setAttributes( { showLines } );
 			};
 
 			const sortedLanguageNames = sortBy(
@@ -60,6 +67,11 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 							]
 						}
 						onChange={ updateLanguage }
+					/>
+					<CheckboxControl
+						label={ __( 'Show Line Numbers', 'syntax-highlighting-code-block' ) }
+						checked={ attributes.showLines }
+						onChange={ updateShowLines }
 					/>
 				</InspectorControls>
 				<div key="editor-wrapper" className={ className }>
