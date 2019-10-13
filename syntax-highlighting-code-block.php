@@ -331,7 +331,8 @@ function customize_register( $wp_customize ) {
 
 	require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
 
-	$themes  = \HighlightUtilities\getAvailableStyleSheets();
+	$themes = \HighlightUtilities\getAvailableStyleSheets();
+	sort( $themes );
 	$choices = array_combine( $themes, $themes );
 
 	$wp_customize->add_setting(
