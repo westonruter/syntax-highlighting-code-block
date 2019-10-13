@@ -144,6 +144,9 @@ function register_frontend_assets() {
 		 * The string returned must correspond to the filenames found at <https://github.com/scrivo/highlight.php/tree/master/styles>,
 		 * minus the file extension.
 		 *
+		 * This filter takes precedence over any settings set in the database as an option. Additionally, if this filter
+		 * is provided, then a theme selector will not be provided in Customizer.
+		 *
 		 * @since 1.0.0
 		 * @param string $style Style.
 		 */
