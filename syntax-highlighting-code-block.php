@@ -154,7 +154,7 @@ function register_frontend_assets() {
 
 	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', sanitize_key( $style ) );
 	wp_register_style(
-        FRONTEND_STYLE_HANDLE,
+		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
 		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
@@ -189,7 +189,7 @@ function render_block( $attributes, $content ) {
 	// Enqueue the style now that we know it will be needed.
 	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 	wp_add_inline_style(
-        FRONTEND_STYLE_HANDLE,
+		FRONTEND_STYLE_HANDLE,
 		file_get_contents( plugins_url( 'index.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 	);
 
