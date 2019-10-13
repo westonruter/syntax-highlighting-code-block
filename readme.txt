@@ -16,7 +16,7 @@ This plugin extends to Code block in WordPress core to add syntax highlighting w
 
 The extended Code block uses auto-detection for the language in the block to add syntax highlighting, but you can override the language in the block inspector. (There is currently no syntax highlighting of the Code block in the editor.) The plugin supports for all [185 programming languages](https://highlightjs.org/static/demo/) that [highlight.php](https://github.com/scrivo/highlight.php) supports (being a port of [highlight.js](https://highlightjs.org/)).
 
-Any one of [89 styles](https://highlightjs.org/static/demo/) may be enqueued that highlight.php/highlight.js provide. To override the `default` style, use the `syntax_highlighting_code_block_style` to supply the one of the [style names](https://github.com/scrivo/highlight.php/tree/master/styles), for example `github`:
+Any one of [89 styles](https://highlightjs.org/static/demo/) may be enqueued that highlight.php/highlight.js provide. To change the `default` style, you may do so by picking a theme via Customizer in the Colors section. To override the `default` style programmatically, use the `syntax_highlighting_code_block_style` to supply the one of the [style names](https://github.com/scrivo/highlight.php/tree/master/styles), for example `github`:
 
 <pre lang=php>
 add_filter(
@@ -26,6 +26,8 @@ add_filter(
 	}
 );
 </pre>
+
+When a filter is provided, the theme selector in Customizer is automatically disabled.
 
 This plugin is [developed on GitHub](https://github.com/westonruter/syntax-highlighting-code-block). See [list of current issues](https://github.com/westonruter/syntax-highlighting-code-block/issues) with the plugin. Please feel free to file any additional issues or requests that you may come across. [Pull requests](https://github.com/westonruter/syntax-highlighting-code-block/pulls) are welcome to help extend.
 

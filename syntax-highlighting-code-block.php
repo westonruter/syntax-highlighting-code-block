@@ -20,7 +20,40 @@ const PLUGIN_VERSION = '1.0.2';
 
 const DEVELOPMENT_MODE = true; // This is automatically rewritten to false during dist build.
 
-const FRONTEND_HIGHLIGHT_STYLE_HANDLE = 'syntax-highlighting-code-block';
+const OPTION_NAME = 'syntax_highlighting';
+
+const DEFAULT_THEME = 'default';
+
+const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
+
+const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
+
+/**
+ * Get an array of all the options tied to this plugin.
+ *
+ * @return array
+ */
+function get_options() {
+	$options = \get_option( OPTION_NAME, [] );
+
+	return array_merge(
+		[
+			'theme_name' => DEFAULT_THEME,
+		],
+		$options
+	);
+}
+
+/**
+ * Get the single, specified plugin option.
+ *
+ * @param string $option_name The plugin option name.
+ *
+ * @return mixed
+ */
+function get_option( $option_name ) {
+	return get_options()[ $option_name ];
+}
 
 /**
  * Get path to script deps file.
@@ -104,20 +137,27 @@ function enqueue_editor_assets() {
  * Asset(s) will only be enqueued if needed.
  */
 function register_frontend_assets() {
-	/**
-	 * Filters the style used for the code syntax block.
-	 *
-	 * The string returned must correspond to the filenames found at <https://github.com/scrivo/highlight.php/tree/master/styles>,
-	 * minus the file extension.
-	 *
-	 * @since 1.0.0
-	 * @param string $style Style.
-	 */
-	$style = apply_filters( 'syntax_highlighting_code_block_style', 'default' );
+	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
+		/**
+		 * Filters the style used for the code syntax block.
+		 *
+		 * The string returned must correspond to the filenames found at <https://github.com/scrivo/highlight.php/tree/master/styles>,
+		 * minus the file extension.
+		 *
+		 * This filter takes precedence over any settings set in the database as an option. Additionally, if this filter
+		 * is provided, then a theme selector will not be provided in Customizer.
+		 *
+		 * @since 1.0.0
+		 * @param string $style Style.
+		 */
+		$style = apply_filters( BLOCK_STYLE_FILTER, DEFAULT_THEME );
+	} else {
+		$style = get_option( 'theme_name' );
+	}
 
 	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', sanitize_key( $style ) );
 	wp_register_style(
-		FRONTEND_HIGHLIGHT_STYLE_HANDLE,
+		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
 		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
@@ -150,9 +190,9 @@ function render_block( $attributes, $content ) {
 	}
 
 	// Enqueue the style now that we know it will be needed.
-	wp_enqueue_style( FRONTEND_HIGHLIGHT_STYLE_HANDLE );
+	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 	wp_add_inline_style(
-		FRONTEND_HIGHLIGHT_STYLE_HANDLE,
+		FRONTEND_STYLE_HANDLE,
 		file_get_contents( plugins_url( 'index.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 	);
 
@@ -250,3 +290,68 @@ function render_block( $attributes, $content ) {
 		);
 	}
 }
+
+/**
+ * Initialize admin settings.
+ */
+function admin_init() {
+	register_setting( 'syntax_highlighting', OPTION_NAME );
+}
+add_action( 'admin_init', __NAMESPACE__ . '\admin_init' );
+
+/**
+ * Validate the given stylesheet name against available stylesheets.
+ *
+ * @param \WP_Error $validity Validator object.
+ * @param string    $input    Incoming theme name.
+ *
+ * @return mixed
+ */
+function validate_theme_name( $validity, $input ) {
+	require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+
+	$themes = \HighlightUtilities\getAvailableStyleSheets();
+
+	if ( ! in_array( $input, $themes, true ) ) {
+		$validity->add( 'invalid_theme', __( 'Unrecognized theme', 'syntax-highlighting-code-block' ) );
+	}
+
+	return $validity;
+}
+
+/**
+ * Add plugin settings to Customizer.
+ *
+ * @param \WP_Customize_Manager $wp_customize The Customizer object.
+ */
+function customize_register( $wp_customize ) {
+	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+
+	$themes = \HighlightUtilities\getAvailableStyleSheets();
+	sort( $themes );
+	$choices = array_combine( $themes, $themes );
+
+	$wp_customize->add_setting(
+		'syntax_highlighting[theme_name]',
+		[
+			'type'              => 'option',
+			'default'           => DEFAULT_THEME,
+			'validate_callback' => __NAMESPACE__ . '\validate_theme_name',
+		]
+	);
+	$wp_customize->add_control(
+		'syntax_highlighting[theme_name]',
+		[
+			'type'        => 'select',
+			'section'     => 'colors',
+			'label'       => __( 'Syntax Highlighting Theme', 'syntax-highlighting-code-block' ),
+			'description' => __( 'Preview the theme by navigating to a page with a code block to see the different themes in action.', 'syntax-highlighting-code-block' ),
+			'choices'     => $choices,
+		]
+	);
+}
+add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
