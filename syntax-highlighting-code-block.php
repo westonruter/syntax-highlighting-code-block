@@ -297,18 +297,23 @@ function admin_init() {
 add_action( 'admin_init', __NAMESPACE__ . '\admin_init' );
 
 /**
- * Sanitize the given theme name to make sure it's a valid highlight.js theme.
+ * Validate the given stylesheet name against available stylesheets.
  *
- * @param string $input Value of the dropdown.
+ * @param \WP_Error $validity Validator object.
+ * @param string    $input    Incoming theme name.
  *
- * @return string The sanitized theme name
+ * @return mixed
  */
-function sanitize_theme_name( $input ) {
+function validate_theme_name( $validity, $input ) {
 	require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
 
 	$themes = \HighlightUtilities\getAvailableStyleSheets();
 
-	return in_array( $input, $themes, true ) ? sanitize_text_field( $input ) : DEFAULT_THEME;
+	if ( ! in_array( $input, $themes, true ) ) {
+		$validity->add( 'invalid_theme', __( 'Unrecognized theme', 'syntax-highlighting-code-block' ) );
+	}
+
+	return $validity;
 }
 
 /**
@@ -331,7 +336,7 @@ function customize_register( $wp_customize ) {
 		[
 			'type'              => 'option',
 			'default'           => DEFAULT_THEME,
-			'sanitize_callback' => __NAMESPACE__ . '\sanitize_theme_name',
+			'validate_callback' => __NAMESPACE__ . '\validate_theme_name',
 		]
 	);
 	$wp_customize->add_control(
