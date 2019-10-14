@@ -155,7 +155,7 @@ function register_frontend_assets() {
 		$style = get_option( 'theme_name' );
 	}
 
-	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', sanitize_key( $style ) );
+	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', 0 === validate_file( $style ) ? $style : DEFAULT_THEME );
 	wp_register_style(
 		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
