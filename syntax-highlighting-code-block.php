@@ -191,10 +191,24 @@ function render_block( $attributes, $content ) {
 
 	// Enqueue the style now that we know it will be needed.
 	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
-	wp_add_inline_style(
-		FRONTEND_STYLE_HANDLE,
-		file_get_contents( plugins_url( 'index.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-	);
+
+	// Include line-number styles if requesting to show lines.
+	if ( $attributes['showLines'] ) {
+		$after_styles = wp_styles()->get_data( FRONTEND_STYLE_HANDLE, 'after' );
+		if ( ! is_array( $after_styles ) ) {
+			$after_styles = '';
+		} else {
+			$after_styles = implode( '', $after_styles );
+		}
+
+		// Only include line-number styles if not already included.
+		if ( false === strpos( $after_styles, '.hljs.line-numbers' ) ) {
+			wp_add_inline_style(
+				FRONTEND_STYLE_HANDLE,
+				file_get_contents( plugins_url( 'line-numbers.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			);
+		}
+	}
 
 	$inject_classes = function( $start_tags, $language, $show_lines ) {
 		$added_classes = "hljs language-$language";
