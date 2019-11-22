@@ -9,7 +9,7 @@ import { sortBy } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { PlainText, InspectorControls } from '@wordpress/editor';
-import { SelectControl, CheckboxControl } from '@wordpress/components';
+import { SelectControl, CheckboxControl, Panel, PanelBody, PanelRow } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 
 /**
@@ -57,22 +57,33 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 
 			return <Fragment>
 				<InspectorControls key="controls">
-					<SelectControl
-						label={ __( 'Language', 'syntax-highlighting-code-block' ) }
-						value={ attributes.language }
-						options={
-							[
-								{ label: __( 'Auto-detect', 'syntax-highlighting-code-block' ), value: '' },
-								...sortedLanguageNames,
-							]
-						}
-						onChange={ updateLanguage }
-					/>
-					<CheckboxControl
-						label={ __( 'Show Line Numbers', 'syntax-highlighting-code-block' ) }
-						checked={ attributes.showLines }
-						onChange={ updateShowLines }
-					/>
+					<Panel>
+						<PanelBody
+							title={ __( 'Syntax Highlighting', 'syntax-highlighting-code-block' ) }
+							initialOpen={ true }
+						>
+							<PanelRow>
+								<SelectControl
+									label={ __( 'Language', 'syntax-highlighting-code-block' ) }
+									value={ attributes.language }
+									options={
+										[
+											{ label: __( 'Auto-detect', 'syntax-highlighting-code-block' ), value: '' },
+											...sortedLanguageNames,
+										]
+									}
+									onChange={ updateLanguage }
+								/>
+							</PanelRow>
+							<PanelRow>
+								<CheckboxControl
+									label={ __( 'Show Line Numbers', 'syntax-highlighting-code-block' ) }
+									checked={ attributes.showLines }
+									onChange={ updateShowLines }
+								/>
+							</PanelRow>
+						</PanelBody>
+					</Panel>
 				</InspectorControls>
 				<div key="editor-wrapper" className={ className }>
 					<PlainText
