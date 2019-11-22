@@ -193,7 +193,7 @@ function render_block( $attributes, $content ) {
 	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 	wp_add_inline_style(
 		FRONTEND_STYLE_HANDLE,
-		file_get_contents( plugins_url( 'index.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		file_get_contents( plugins_url( 'line-numbers.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 	);
 
 	$inject_classes = function( $start_tags, $language, $show_lines ) {
