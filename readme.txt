@@ -3,7 +3,7 @@ Contributors: westonruter, mkaz
 Tags: block, code, code syntax, syntax highlight, code highlighting
 Requires at least: 5.2
 Tested up to: 5.3
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP: 5.6

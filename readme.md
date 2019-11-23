@@ -8,7 +8,7 @@ Extending the Code block with syntax highlighting rendered on the server, thus b
 **Tags:** [block](https://wordpress.org/plugins/tags/block), [code](https://wordpress.org/plugins/tags/code), [code syntax](https://wordpress.org/plugins/tags/code-syntax), [syntax highlight](https://wordpress.org/plugins/tags/syntax-highlight), [code highlighting](https://wordpress.org/plugins/tags/code-highlighting)  
 **Requires at least:** 5.2  
 **Tested up to:** 5.3  
-**Stable tag:** 1.1.0  
+**Stable tag:** 1.1.1  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
 **Requires PHP:** 5.6  
 
