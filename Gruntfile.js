@@ -57,6 +57,7 @@ module.exports = function( grunt ) {
 				'vendor/composer/**',
 				'vendor/scrivo/highlight.php/Highlight/**',
 				'vendor/scrivo/highlight.php/styles/*',
+				'vendor/scrivo/highlight.php/HighlightUtilities/functions.php',
 			];
 
 			grunt.config.set( 'copy', {
