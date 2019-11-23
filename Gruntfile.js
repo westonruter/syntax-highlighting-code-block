@@ -56,6 +56,7 @@ module.exports = function( grunt ) {
 				'vendor/autoload.php',
 				'vendor/composer/**',
 				'vendor/scrivo/highlight.php/Highlight/**',
+				'vendor/scrivo/highlight.php/HighlightUtilities/**',
 				'vendor/scrivo/highlight.php/styles/*',
 			];
 
