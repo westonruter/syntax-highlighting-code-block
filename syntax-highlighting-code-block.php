@@ -267,7 +267,7 @@ function render_block( $attributes, $content ) {
 	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['showLines'] . $attributes['language'] . implode( '', $auto_detect_languages ) . $matches['code'] ) . '-v' . PLUGIN_VERSION;
 	$highlighted   = get_transient( $transient_key );
 
-	if ( $highlighted && isset( $highlighted['code'] ) ) {
+	if ( !DEVELOPMENT_MODE && $highlighted && isset( $highlighted['code'] ) ) {
 		if ( isset( $highlighted['language'] ) ) {
 			$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'] );
 		}
