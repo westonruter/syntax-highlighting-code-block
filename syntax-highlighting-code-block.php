@@ -267,7 +267,7 @@ function render_block( $attributes, $content ) {
 	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['showLines'] . $attributes['language'] . implode( '', $auto_detect_languages ) . $matches['code'] ) . '-v' . PLUGIN_VERSION;
 	$highlighted   = get_transient( $transient_key );
 
-	if ( !DEVELOPMENT_MODE && $highlighted && isset( $highlighted['code'] ) ) {
+	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['code'] ) ) {
 		if ( isset( $highlighted['language'] ) ) {
 			$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'] );
 		}
@@ -309,7 +309,7 @@ function render_block( $attributes, $content ) {
 
 		$code       = $r->value;
 		$language   = $r->language;
-		$show_lines = $attributes['showLines'];
+		$show_lines = $attributes['showLines'] || ! empty( $attributes['selectedLines'] );
 
 		if ( $show_lines ) {
 			require_highlight_php_functions();
@@ -319,8 +319,14 @@ function render_block( $attributes, $content ) {
 
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
 			// by our `table-row`.
-			foreach ( $lines as $line ) {
-				$code .= sprintf( '<div class="loc"><span>%s</span></div>%s', $line, PHP_EOL );
+			foreach ( $lines as $i => $line ) {
+				$class_name = 'loc';
+
+				if ( isset( $attributes['selectedLines'] ) && in_array( $i, $attributes['selectedLines'], true ) ) {
+					$class_name .= ' highlighted';
+				}
+
+				$code .= sprintf( '<div class="%s"><span>%s</span></div>%s', $class_name, $line, PHP_EOL );
 			}
 		}
 
@@ -347,6 +353,14 @@ function render_block( $attributes, $content ) {
  */
 function admin_init() {
 	register_setting( 'syntax_highlighting', OPTION_NAME );
+
+	$admin_styles = 'block-styles.css';
+	wp_register_style(
+		FRONTEND_STYLE_HANDLE,
+		plugins_url( $admin_styles, __FILE__ ),
+		[],
+		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $admin_styles ) : PLUGIN_VERSION
+	);
 }
 add_action( 'admin_init', __NAMESPACE__ . '\admin_init' );
 
