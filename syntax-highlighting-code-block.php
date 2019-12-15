@@ -205,7 +205,7 @@ function render_block( $attributes, $content ) {
 		if ( false === strpos( $after_styles, '.hljs.line-numbers' ) ) {
 			wp_add_inline_style(
 				FRONTEND_STYLE_HANDLE,
-				file_get_contents( plugins_url( 'line-numbers.css', __FILE__ ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+				file_get_contents( __DIR__ . '/line-numbers.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			);
 		}
 	}
