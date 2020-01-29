@@ -65,6 +65,17 @@ function get_script_deps_path() {
 }
 
 /**
+ * Require the highlight.php functions file.
+ */
+function require_highlight_php_functions() {
+	if ( DEVELOPMENT_MODE ) {
+		require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+	} else {
+		require_once __DIR__ . '/vendor/scrivo/highlight-php/HighlightUtilities/functions.php';
+	}
+}
+
+/**
  * Initialize plugin.
  */
 function init() {
@@ -155,7 +166,11 @@ function register_frontend_assets() {
 		$style = get_option( 'theme_name' );
 	}
 
-	$default_style_path = sprintf( 'vendor/scrivo/highlight.php/styles/%s.css', 0 === validate_file( $style ) ? $style : DEFAULT_THEME );
+	$default_style_path = sprintf(
+		'vendor/scrivo/%s/styles/%s.css',
+		DEVELOPMENT_MODE ? 'highlight.php' : 'highlight-php',
+		0 === validate_file( $style ) ? $style : DEFAULT_THEME
+	);
 	wp_register_style(
 		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
@@ -247,7 +262,11 @@ function render_block( $attributes, $content ) {
 
 	try {
 		if ( ! class_exists( '\Highlight\Autoloader' ) ) {
-			require_once __DIR__ . '/vendor/scrivo/highlight.php/Highlight/Autoloader.php';
+			if ( DEVELOPMENT_MODE ) {
+				require_once __DIR__ . '/vendor/scrivo/highlight.php/Highlight/Autoloader.php';
+			} else {
+				require_once __DIR__ . '/vendor/scrivo/highlight-php/Highlight/Autoloader.php';
+			}
 			spl_autoload_register( 'Highlight\Autoloader::load' );
 		}
 
@@ -275,7 +294,7 @@ function render_block( $attributes, $content ) {
 		$show_lines = $attributes['showLines'];
 
 		if ( $show_lines ) {
-			require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+			require_highlight_php_functions();
 
 			$lines = \HighlightUtilities\splitCodeIntoArray( $code );
 			$code  = '';
@@ -322,7 +341,7 @@ add_action( 'admin_init', __NAMESPACE__ . '\admin_init' );
  * @return mixed
  */
 function validate_theme_name( $validity, $input ) {
-	require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+	require_highlight_php_functions();
 
 	$themes = \HighlightUtilities\getAvailableStyleSheets();
 
@@ -343,7 +362,7 @@ function customize_register( $wp_customize ) {
 		return;
 	}
 
-	require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
+	require_highlight_php_functions();
 
 	$themes = \HighlightUtilities\getAvailableStyleSheets();
 	sort( $themes );
