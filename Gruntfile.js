@@ -53,11 +53,6 @@ module.exports = function( grunt ) {
 				'LICENSE',
 				'build/*',
 				'wp-assets/*',
-				'vendor/autoload.php',
-				'vendor/composer/**',
-				'vendor/scrivo/highlight.php/Highlight/**',
-				'vendor/scrivo/highlight.php/HighlightUtilities/**',
-				'vendor/scrivo/highlight.php/styles/*',
 			];
 
 			grunt.config.set( 'copy', {
@@ -89,6 +84,30 @@ module.exports = function( grunt ) {
 							return updatedContent;
 						},
 					},
+				},
+				composer: {
+					src: [
+						'vendor/autoload.php',
+						'vendor/composer/**',
+					],
+					dest: 'dist',
+					expand: true,
+					options: {
+						noProcess: [ 'vendor/composer/installed.json' ],
+						process( content ) {
+							return content.replace( /\/highlight\.php/g, '/highlight-php' );
+						},
+					},
+				},
+				vendor: {
+					src: [
+						'Highlight/**',
+						'HighlightUtilities/**',
+						'styles/*',
+					],
+					expand: true,
+					cwd: 'vendor/scrivo/highlight.php/',
+					dest: 'dist/vendor/scrivo/highlight-php/',
 				},
 			} );
 			grunt.task.run( 'copy' );
