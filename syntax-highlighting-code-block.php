@@ -271,8 +271,19 @@ function render_block( $attributes, $content ) {
 		}
 
 		$highlighter = new \Highlight\Highlighter();
-		$language    = $attributes['language'];
-		$code        = html_entity_decode( $matches['code'], ENT_QUOTES );
+
+		/**
+		 * Filters the list of languages that are used for auto-detection.
+		 *
+		 * @param string[] $auto_detect_language Auto-detect languages.
+		 */
+		$auto_detect_languages = apply_filters( 'syntax_highlighting_code_block_auto_detect_languages', [] );
+		if ( ! empty( $auto_detect_languages ) ) {
+			$highlighter->setAutodetectLanguages( $auto_detect_languages );
+		}
+
+		$language = $attributes['language'];
+		$code     = html_entity_decode( $matches['code'], ENT_QUOTES );
 
 		// Convert from Prism.js languages names.
 		if ( 'clike' === $language ) {
