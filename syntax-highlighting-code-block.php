@@ -16,6 +16,11 @@
 
 namespace Syntax_Highlighting_Code_Block;
 
+use Exception;
+use WP_Error;
+use WP_Customize_Manager;
+use WP_Styles;
+
 const PLUGIN_VERSION = '1.1.4';
 
 const DEVELOPMENT_MODE = true; // This is automatically rewritten to false during dist build.
@@ -95,8 +100,8 @@ function init() {
 		]
 	);
 
+	add_action( 'wp_default_styles', __NAMESPACE__ . '\register_styles' );
 	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
-	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\register_frontend_assets' );
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
 
@@ -146,8 +151,10 @@ function enqueue_editor_assets() {
  * Register assets for the frontend.
  *
  * Asset(s) will only be enqueued if needed.
+ *
+ * @param WP_Styles $styles Styles.
  */
-function register_frontend_assets() {
+function register_styles( WP_Styles $styles ) {
 	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
 		/**
 		 * Filters the style used for the code syntax block.
@@ -171,7 +178,7 @@ function register_frontend_assets() {
 		DEVELOPMENT_MODE ? 'highlight.php' : 'highlight-php',
 		0 === validate_file( $style ) ? $style : DEFAULT_THEME
 	);
-	wp_register_style(
+	$styles->add(
 		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
 		[],
@@ -313,7 +320,7 @@ function render_block( $attributes, $content ) {
 		$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'] );
 
 		return $matches['before'] . $code . $after;
-	} catch ( \Exception $e ) {
+	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
 			get_class( $e ),
@@ -335,8 +342,8 @@ add_action( 'admin_init', __NAMESPACE__ . '\admin_init' );
 /**
  * Validate the given stylesheet name against available stylesheets.
  *
- * @param \WP_Error $validity Validator object.
- * @param string    $input    Incoming theme name.
+ * @param WP_Error $validity Validator object.
+ * @param string   $input    Incoming theme name.
  *
  * @return mixed
  */
@@ -355,7 +362,7 @@ function validate_theme_name( $validity, $input ) {
 /**
  * Add plugin settings to Customizer.
  *
- * @param \WP_Customize_Manager $wp_customize The Customizer object.
+ * @param WP_Customize_Manager $wp_customize The Customizer object.
  */
 function customize_register( $wp_customize ) {
 	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
