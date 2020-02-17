@@ -257,7 +257,14 @@ function render_block( $attributes, $content ) {
 		return $start_tags;
 	};
 
-	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['showLines'] . $attributes['language'] . $matches['code'] ) . '-v' . PLUGIN_VERSION;
+	/**
+	 * Filters the list of languages that are used for auto-detection.
+	 *
+	 * @param string[] $auto_detect_language Auto-detect languages.
+	 */
+	$auto_detect_languages = apply_filters( 'syntax_highlighting_code_block_auto_detect_languages', [] );
+
+	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['showLines'] . $attributes['language'] . implode( '', $auto_detect_languages ) . $matches['code'] ) . '-v' . PLUGIN_VERSION;
 	$highlighted   = get_transient( $transient_key );
 
 	if ( $highlighted && isset( $highlighted['code'] ) ) {
@@ -278,8 +285,12 @@ function render_block( $attributes, $content ) {
 		}
 
 		$highlighter = new \Highlight\Highlighter();
-		$language    = $attributes['language'];
-		$code        = html_entity_decode( $matches['code'], ENT_QUOTES );
+		if ( ! empty( $auto_detect_languages ) ) {
+			$highlighter->setAutodetectLanguages( $auto_detect_languages );
+		}
+
+		$language = $attributes['language'];
+		$code     = html_entity_decode( $matches['code'], ENT_QUOTES );
 
 		// Convert from Prism.js languages names.
 		if ( 'clike' === $language ) {
