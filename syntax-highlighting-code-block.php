@@ -131,20 +131,29 @@ function print_build_required_admin_notice() {
  * Enqueue assets for editor.
  */
 function enqueue_editor_assets() {
-	$handle      = 'syntax-highlighting-code-block';
-	$script_path = '/build/index.js';
-	$script_deps = json_decode( file_get_contents( get_script_deps_path() ), false ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-	$in_footer   = true;
+	$script_handle = 'syntax-highlighting-code-block-scripts';
+	$script_path   = '/build/index.js';
+	$style_handle  = 'syntax-highlighting-code-block-styles';
+	$style_path    = '/editor-styles.css';
+	$script_deps   = json_decode( file_get_contents( get_script_deps_path() ), false ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	$in_footer     = true;
+
+	wp_enqueue_style(
+		$style_handle,
+		plugins_url( $style_path, __FILE__ ),
+		[],
+		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $style_path ) : PLUGIN_VERSION
+	);
 
 	wp_enqueue_script(
-		$handle,
+		$script_handle,
 		plugins_url( $script_path, __FILE__ ),
 		$script_deps,
 		DEVELOPMENT_MODE ? filemtime( plugin_dir_path( __FILE__ ) . $script_path ) : PLUGIN_VERSION,
 		$in_footer
 	);
 
-	wp_set_script_translations( $handle, 'syntax-highlighting-code-block' );
+	wp_set_script_translations( $script_handle, 'syntax-highlighting-code-block' );
 }
 
 /**
@@ -314,15 +323,16 @@ function render_block( $attributes, $content ) {
 		if ( $show_lines ) {
 			require_highlight_php_functions();
 
-			$lines = \HighlightUtilities\splitCodeIntoArray( $code );
-			$code  = '';
+			$selected_lines = parse_selected_lines( $attributes['selectedLines'] );
+			$lines          = \HighlightUtilities\splitCodeIntoArray( $code );
+			$code           = '';
 
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
 			// by our `table-row`.
 			foreach ( $lines as $i => $line ) {
 				$class_name = 'loc';
 
-				if ( isset( $attributes['selectedLines'] ) && in_array( $i, $attributes['selectedLines'], true ) ) {
+				if ( in_array( $i, $selected_lines, true ) ) {
 					$class_name .= ' highlighted';
 				}
 
@@ -349,20 +359,37 @@ function render_block( $attributes, $content ) {
 }
 
 /**
- * Initialize admin settings.
+ * Parse the selected line syntax from the front-end and return an array of selected lines.
+ *
+ * @param string $selected_lines The selected line syntax.
+ *
+ * @return int[]
  */
-function admin_init() {
-	register_setting( 'syntax_highlighting', OPTION_NAME );
+function parse_selected_lines( $selected_lines ) {
+	$highlighted_lines = [];
 
-	$admin_styles = 'block-styles.css';
-	wp_register_style(
-		FRONTEND_STYLE_HANDLE,
-		plugins_url( $admin_styles, __FILE__ ),
-		[],
-		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $admin_styles ) : PLUGIN_VERSION
-	);
+	if ( ! $selected_lines || empty( trim( $selected_lines ) ) ) {
+		return $highlighted_lines;
+	}
+
+	$ranges = explode( ',', preg_replace( '/\s/', '', $selected_lines ) );
+
+	foreach ( $ranges as $chunk ) {
+		if ( strpos( $chunk, '-' ) !== false ) {
+			$range = explode( '-', $chunk );
+
+			if ( count( $ranges ) === 2 ) {
+				for ( $i = (int) $range[0]; $i < (int) $range[1]; $i++ ) {
+					$highlighted_lines[] = $i - 1;
+				}
+			}
+		} else {
+			$highlighted_lines[] = (int) $chunk - 1;
+		}
+	}
+
+	return $highlighted_lines;
 }
-add_action( 'admin_init', __NAMESPACE__ . '\admin_init' );
 
 /**
  * Validate the given stylesheet name against available stylesheets.

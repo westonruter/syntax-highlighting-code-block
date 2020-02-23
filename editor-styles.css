@@ -1,0 +1,17 @@
+.code-block-overlay {
+	left: 0;
+	pointer-events: none;
+	position: absolute;
+	top: .8em;
+	width: 100%;
+	z-index: 10;
+}
+
+.code-block-overlay .loc {
+	display: block;
+	height: 1.65em;
+}
+
+.code-block-overlay .loc.highlighted {
+	background: rgba(86, 213, 255, 0.2);
+}

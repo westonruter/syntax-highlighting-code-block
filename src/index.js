@@ -28,8 +28,6 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		return settings;
 	}
 
-	const highlightedLines = new Set();
-
 	return {
 		...settings,
 
@@ -39,9 +37,6 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				type: 'string',
 			},
 			selectedLines: {
-				type: 'array',
-			},
-			selectedLinesRaw: {
 				type: 'string',
 			},
 			showLines: {
@@ -50,37 +45,40 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		},
 
 		edit( { attributes, setAttributes, className } ) {
+			const parseSelectedLines = ( selectedLines ) => {
+				const highlightedLines = new Set();
+
+				if ( ! selectedLines || selectedLines.trim().length === 0 ) {
+					return highlightedLines;
+				}
+
+				let chunk;
+				const ranges = selectedLines.replace( /\s/, '' ).split( ',' );
+
+				for ( chunk of ranges ) {
+					if ( chunk.indexOf( '-' ) >= 0 ) {
+						let i;
+						const range = chunk.split( '-' );
+
+						if ( range.length === 2 ) {
+							for ( i = +range[ 0 ]; i <= +range[ 1 ]; ++i ) {
+								highlightedLines.add( i - 1 );
+							}
+						}
+					} else {
+						highlightedLines.add( +chunk - 1 );
+					}
+				}
+
+				return highlightedLines;
+			};
+
 			const updateLanguage = ( language ) => {
 				setAttributes( { language } );
 			};
 
 			const updateSelectedLines = ( selectedLines ) => {
-				highlightedLines.clear();
-
-				if ( selectedLines ) {
-					let chunk;
-					const ranges = selectedLines.replace( /\s/, '' ).split( ',' );
-
-					for ( chunk of ranges ) {
-						if ( chunk.indexOf( '-' ) >= 0 ) {
-							let i;
-							const range = chunk.split( '-' );
-
-							if ( range.length === 2 ) {
-								for ( i = +range[ 0 ]; i <= +range[ 1 ]; ++i ) {
-									highlightedLines.add( i - 1 );
-								}
-							}
-						} else {
-							highlightedLines.add( +chunk - 1 );
-						}
-					}
-				}
-
-				setAttributes( {
-					selectedLines: [ ...highlightedLines ],
-					selectedLinesRaw: selectedLines,
-				} );
+				setAttributes( { selectedLines } );
 			};
 
 			const updateShowLines = ( showLines ) => {
@@ -91,6 +89,9 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				Object.entries( languagesNames ).map( ( [ value, label ] ) => ( { label, value } ) ),
 				( languageOption ) => languageOption.label.toLowerCase()
 			);
+
+			const highlightedLines = parseSelectedLines( attributes.selectedLines );
+			const blockContent = attributes.content || '';
 
 			return <Fragment>
 				<InspectorControls key="controls">
@@ -114,7 +115,7 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 						<PanelRow>
 							<TextControl
 								label={ __( 'Highlighted Lines', 'syntax-highlighting-code-block' ) }
-								value={ attributes.selectedLinesRaw }
+								value={ attributes.selectedLines }
 								onChange={ updateSelectedLines }
 								help={ __( 'Supported format: 1, 3-5', 'syntax-highlighting-code-block' ) }
 							/>
@@ -130,13 +131,13 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				</InspectorControls>
 				<div key="editor-wrapper" className={ className }>
 					<PlainText
-						value={ attributes.content }
+						value={ blockContent }
 						onChange={ ( content ) => setAttributes( { content } ) }
 						placeholder={ __( 'Write code…', 'syntax-highlighting-code-block' ) }
 						aria-label={ __( 'Code', 'syntax-highlighting-code-block' ) }
 					/>
-					<div aria-hidden={ true } className="code-block-bg">
-						{ attributes.content.split( '\n' ).map( ( v, i ) => {
+					<div aria-hidden={ true } className="code-block-overlay">
+						{ blockContent.split( /\n/ ).map( ( v, i ) => {
 							let cName = 'loc';
 
 							if ( highlightedLines.has( i ) ) {
