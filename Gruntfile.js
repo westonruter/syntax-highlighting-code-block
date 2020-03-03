@@ -48,6 +48,7 @@ module.exports = function( grunt ) {
 
 			const paths = [
 				'syntax-highlighting-code-block.php',
+				'editor-styles.css',
 				'line-numbers.css',
 				'readme.txt',
 				'LICENSE',
