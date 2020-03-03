@@ -373,7 +373,7 @@ function render_block( $attributes, $content ) {
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['code'] ) ) {
 		if ( isset( $highlighted['language'] ) ) {
-			$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'] );
+			$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'], $highlighted['has_selected_lines'] );
 		}
 		return $matches['before'] . $highlighted['code'] . $after;
 	}
