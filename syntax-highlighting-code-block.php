@@ -34,6 +34,91 @@ const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
 /**
+ * Add a tint to an RGB color and make it lighter.
+ *
+ * @param float[] $rgb_array An array representing an RGB color.
+ * @param float   $tint      How much of a tint to apply; a number between 0 and 1.
+ *
+ * @return float[] The new color as an RGB array.
+ */
+function add_tint_to_rgb( $rgb_array, $tint ) {
+	return [
+		'r' => $rgb_array['r'] + ( 255 - $rgb_array['r'] ) * $tint,
+		'g' => $rgb_array['g'] + ( 255 - $rgb_array['g'] ) * $tint,
+		'b' => $rgb_array['b'] + ( 255 - $rgb_array['b'] ) * $tint,
+	];
+}
+
+/**
+ * Get the relative luminance of a color.
+ *
+ * @param float[] $rgb_array An array representing an RGB color.
+ *
+ * @link https://en.wikipedia.org/wiki/Relative_luminance
+ *
+ * @return float A value between 0 and 100 representing the luminance of a color.
+ *     The closer to to 100, the higher the luminance is; i.e. the lighter it is.
+ */
+function get_relative_luminance( $rgb_array ) {
+	return 0.2126 * ( $rgb_array['r'] / 255 ) +
+		0.7152 * ( $rgb_array['g'] / 255 ) +
+		0.0722 * ( $rgb_array['b'] / 255 );
+}
+
+/**
+ * Check whether or not a given RGB array is considered a "dark theme."
+ *
+ * @param float[] $rgb_array The RGB array to test.
+ *
+ * @return bool True if the theme's background has a "dark" luminance.
+ */
+function is_dark_theme( $rgb_array ) {
+	return get_relative_luminance( $rgb_array ) <= 60;
+}
+
+/**
+ * Convert an RGB array to hexadecimal representation.
+ *
+ * @param float[] $rgb_array The RGB array to convert.
+ *
+ * @return string A hexadecimal representation.
+ */
+function get_hex_from_rgb( $rgb_array ) {
+	return sprintf(
+		'#%02X%02X%02X',
+		$rgb_array['r'],
+		$rgb_array['g'],
+		$rgb_array['b']
+	);
+}
+
+/**
+ * Get the default selected line background color.
+ *
+ * In a dark theme, the background color is decided by adding a 15% tint to the
+ * color.
+ *
+ * In a light theme, a default light blue is used.
+ *
+ * @param string $theme_name The theme name to get a color for.
+ *
+ * @return string A hexadecimal value.
+ */
+function get_default_line_bg_color( $theme_name ) {
+	require_highlight_php_functions();
+
+	$theme_rgb = \HighlightUtilities\getThemeBackgroundColor( $theme_name );
+
+	if ( is_dark_theme( $theme_rgb ) ) {
+		return get_hex_from_rgb(
+			add_tint_to_rgb( $theme_rgb, 0.15 )
+		);
+	}
+
+	return '#ddf6ff';
+}
+
+/**
  * Get an array of all the options tied to this plugin.
  *
  * @return array
@@ -43,7 +128,8 @@ function get_options() {
 
 	return array_merge(
 		[
-			'theme_name' => DEFAULT_THEME,
+			'theme_name'             => DEFAULT_THEME,
+			'selected_line_bg_color' => get_default_line_bg_color( $options['theme_name'] ),
 		],
 		$options
 	);
@@ -238,14 +324,23 @@ function render_block( $attributes, $content ) {
 				FRONTEND_STYLE_HANDLE,
 				file_get_contents( __DIR__ . '/line-numbers.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			);
+
+			$line_color = get_option( 'selected_line_bg_color' );
+			$inline_css = ".hljs .loc.highlighted { background-color: $line_color; }";
+
+			wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
 		}
 	}
 
-	$inject_classes = function( $start_tags, $language, $show_lines ) {
+	$inject_classes = function( $start_tags, $language, $show_lines, $has_selected_lines ) {
 		$added_classes = "hljs language-$language";
 
 		if ( $show_lines ) {
 			$added_classes .= ' line-numbers';
+		}
+
+		if ( $has_selected_lines ) {
+			$added_classes .= ' selected-lines';
 		}
 
 		$start_tags = preg_replace(
@@ -316,11 +411,12 @@ function render_block( $attributes, $content ) {
 			$r = $highlighter->highlightAuto( $code );
 		}
 
-		$code       = $r->value;
-		$language   = $r->language;
-		$show_lines = $attributes['showLines'] || ! empty( $attributes['selectedLines'] );
+		$code               = $r->value;
+		$language           = $r->language;
+		$show_lines         = $attributes['showLines'];
+		$has_selected_lines = ! empty( $attributes['selectedLines'] );
 
-		if ( $show_lines ) {
+		if ( $show_lines || $has_selected_lines ) {
 			require_highlight_php_functions();
 
 			$selected_lines = parse_selected_lines( $attributes['selectedLines'] );
@@ -340,11 +436,16 @@ function render_block( $attributes, $content ) {
 			}
 		}
 
-		$highlighted = compact( 'code', 'language', 'show_lines' );
+		$highlighted = compact( 'code', 'language', 'show_lines', 'has_selected_lines' );
 
-		set_transient( $transient_key, compact( 'code', 'language', 'show_lines' ), MONTH_IN_SECONDS );
+		set_transient( $transient_key, compact( 'code', 'language', 'show_lines', 'has_selected_lines' ), MONTH_IN_SECONDS );
 
-		$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'] );
+		$matches['before'] = $inject_classes(
+			$matches['before'],
+			$highlighted['language'],
+			$highlighted['show_lines'],
+			$highlighted['has_selected_lines']
+		);
 
 		return $matches['before'] . $code . $after;
 	} catch ( Exception $e ) {
@@ -378,7 +479,7 @@ function parse_selected_lines( $selected_lines ) {
 		if ( strpos( $chunk, '-' ) !== false ) {
 			$range = explode( '-', $chunk );
 
-			if ( count( $ranges ) === 2 ) {
+			if ( count( $range ) === 2 ) {
 				for ( $i = (int) $range[0]; $i < (int) $range[1]; $i++ ) {
 					$highlighted_lines[] = $i - 1;
 				}
@@ -444,6 +545,27 @@ function customize_register( $wp_customize ) {
 			'description' => __( 'Preview the theme by navigating to a page with a code block to see the different themes in action.', 'syntax-highlighting-code-block' ),
 			'choices'     => $choices,
 		]
+	);
+
+	$wp_customize->add_setting(
+		'syntax_highlighting[selected_line_bg_color]',
+		[
+			'type'              => 'option',
+			'default'           => get_default_line_bg_color( get_option( 'theme_name' ) ),
+			'sanitize_callback' => 'sanitize_hex_color',
+		]
+	);
+	$wp_customize->add_control(
+		new \WP_Customize_Color_Control(
+			$wp_customize,
+			'syntax_highlighting[selected_line_bg_color]',
+			[
+				'section'     => 'colors',
+				'settings'    => 'syntax_highlighting[selected_line_bg_color]',
+				'label'       => __( 'Highlighted Line Color', 'syntax-highlighting-code-block' ),
+				'description' => __( 'The background color of a selected line.', 'syntax-highlighting-code-block' ),
+			]
+		)
 	);
 }
 add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );

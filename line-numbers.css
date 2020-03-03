@@ -1,13 +1,22 @@
+.hljs.line-numbers,
+.hljs.selected-lines {
+	display: table;
+	width: 100%;
+}
+
+.hljs.line-numbers .loc,
+.hljs.selected-lines .loc {
+	display: table-row;
+	width: 100%;
+}
+
 .hljs.line-numbers {
 	border-spacing: 0.75em 0;
 	counter-reset: line;
-	display: table;
 }
 
 .hljs.line-numbers .loc {
 	counter-increment: line;
-	display: table-row;
-	width: 100%;
 }
 
 .hljs.line-numbers .loc::before {
