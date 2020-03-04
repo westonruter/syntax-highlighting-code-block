@@ -534,54 +534,58 @@ function validate_theme_name( $validity, $input ) {
  * @param WP_Customize_Manager $wp_customize The Customizer object.
  */
 function customize_register( $wp_customize ) {
-	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
+	if ( has_filter( BLOCK_STYLE_FILTER ) && has_filter( SELECTED_LINE_BG_FILTER ) ) {
 		return;
 	}
 
 	require_highlight_php_functions();
 
-	$themes = \HighlightUtilities\getAvailableStyleSheets();
-	sort( $themes );
-	$choices = array_combine( $themes, $themes );
+	if ( ! has_filter( BLOCK_STYLE_FILTER ) ) {
+		$themes = \HighlightUtilities\getAvailableStyleSheets();
+		sort( $themes );
+		$choices = array_combine( $themes, $themes );
 
-	$wp_customize->add_setting(
-		'syntax_highlighting[theme_name]',
-		[
-			'type'              => 'option',
-			'default'           => DEFAULT_THEME,
-			'validate_callback' => __NAMESPACE__ . '\validate_theme_name',
-		]
-	);
-	$wp_customize->add_control(
-		'syntax_highlighting[theme_name]',
-		[
-			'type'        => 'select',
-			'section'     => 'colors',
-			'label'       => __( 'Syntax Highlighting Theme', 'syntax-highlighting-code-block' ),
-			'description' => __( 'Preview the theme by navigating to a page with a code block to see the different themes in action.', 'syntax-highlighting-code-block' ),
-			'choices'     => $choices,
-		]
-	);
+		$wp_customize->add_setting(
+			'syntax_highlighting[theme_name]',
+			[
+				'type'              => 'option',
+				'default'           => DEFAULT_THEME,
+				'validate_callback' => __NAMESPACE__ . '\validate_theme_name',
+			]
+		);
+		$wp_customize->add_control(
+			'syntax_highlighting[theme_name]',
+			[
+				'type'        => 'select',
+				'section'     => 'colors',
+				'label'       => __( 'Syntax Highlighting Theme', 'syntax-highlighting-code-block' ),
+				'description' => __( 'Preview the theme by navigating to a page with a code block to see the different themes in action.', 'syntax-highlighting-code-block' ),
+				'choices'     => $choices,
+			]
+		);
+	}
 
-	$wp_customize->add_setting(
-		'syntax_highlighting[selected_line_bg_color]',
-		[
-			'type'              => 'option',
-			'default'           => get_default_line_bg_color( get_option( 'theme_name' ) ),
-			'sanitize_callback' => 'sanitize_hex_color',
-		]
-	);
-	$wp_customize->add_control(
-		new \WP_Customize_Color_Control(
-			$wp_customize,
+	if ( ! has_filter( SELECTED_LINE_BG_FILTER ) ) {
+		$wp_customize->add_setting(
 			'syntax_highlighting[selected_line_bg_color]',
 			[
-				'section'     => 'colors',
-				'settings'    => 'syntax_highlighting[selected_line_bg_color]',
-				'label'       => __( 'Highlighted Line Color', 'syntax-highlighting-code-block' ),
-				'description' => __( 'The background color of a selected line.', 'syntax-highlighting-code-block' ),
+				'type'              => 'option',
+				'default'           => get_default_line_bg_color( DEFAULT_THEME ),
+				'sanitize_callback' => 'sanitize_hex_color',
 			]
-		)
-	);
+		);
+		$wp_customize->add_control(
+			new \WP_Customize_Color_Control(
+				$wp_customize,
+				'syntax_highlighting[selected_line_bg_color]',
+				[
+					'section'     => 'colors',
+					'settings'    => 'syntax_highlighting[selected_line_bg_color]',
+					'label'       => __( 'Highlighted Line Color', 'syntax-highlighting-code-block' ),
+					'description' => __( 'The background color of a selected line.', 'syntax-highlighting-code-block' ),
+				]
+			)
+		);
+	}
 }
 add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
