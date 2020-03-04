@@ -129,7 +129,7 @@ function get_options() {
 	return array_merge(
 		[
 			'theme_name'             => DEFAULT_THEME,
-			'selected_line_bg_color' => get_default_line_bg_color( $options['theme_name'] ),
+			'selected_line_bg_color' => get_default_line_bg_color( DEFAULT_THEME ),
 		],
 		$options
 	);
