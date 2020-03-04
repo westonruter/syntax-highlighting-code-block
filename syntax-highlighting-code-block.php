@@ -73,7 +73,7 @@ function get_relative_luminance( $rgb_array ) {
  * @return bool True if the theme's background has a "dark" luminance.
  */
 function is_dark_theme( $rgb_array ) {
-	return get_relative_luminance( $rgb_array ) <= 60;
+	return get_relative_luminance( $rgb_array ) <= 0.6;
 }
 
 /**
