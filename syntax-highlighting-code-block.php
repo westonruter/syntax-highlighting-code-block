@@ -31,6 +31,8 @@ const DEFAULT_THEME = 'default';
 
 const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
 
+const SELECTED_LINE_BG_FILTER = 'syntax_highlighting_code_selected_line_bg';
+
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
 /**
@@ -325,7 +327,21 @@ function render_block( $attributes, $content ) {
 				file_get_contents( __DIR__ . '/line-numbers.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			);
 
-			$line_color = get_option( 'selected_line_bg_color' );
+			if ( has_filter( SELECTED_LINE_BG_FILTER ) ) {
+				/**
+				 * Filters the background color of a selected line.
+				 *
+				 * This filter takes precedence over any settings set in the database as an option. Additionally, if this filter
+				 * is provided, then a color selector will not be provided in Customizer.
+				 *
+				 * @since 1.1.5
+				 * @param string $rgb_color An RGB hexadecimal (with the #) to be used as the background color of a selected line.
+				 */
+				$line_color = apply_filters( SELECTED_LINE_BG_FILTER, get_default_line_bg_color( DEFAULT_THEME ) );
+			} else {
+				$line_color = get_option( 'selected_line_bg_color' );
+			}
+
 			$inline_css = ".hljs .loc.highlighted { background-color: $line_color; }";
 
 			wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
