@@ -188,7 +188,6 @@ function init() {
 		]
 	);
 
-	add_action( 'wp_default_styles', __NAMESPACE__ . '\register_styles' );
 	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
@@ -306,6 +305,10 @@ function render_block( $attributes, $content ) {
 
 	if ( ! isset( $attributes['showLines'] ) ) {
 		$attributes['showLines'] = false;
+	}
+
+	if ( ! wp_style_is( FRONTEND_STYLE_HANDLE, 'registered' ) ) {
+		register_styles( wp_styles() );
 	}
 
 	// Enqueue the style now that we know it will be needed.
