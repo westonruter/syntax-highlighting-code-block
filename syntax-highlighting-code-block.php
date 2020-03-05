@@ -128,10 +128,11 @@ function get_default_line_bg_color( $theme_name ) {
 function get_options() {
 	$options = \get_option( OPTION_NAME, [] );
 
+	$theme_name = isset( $options['theme_name'] ) ? $options['theme_name'] : DEFAULT_THEME;
 	return array_merge(
 		[
 			'theme_name'             => DEFAULT_THEME,
-			'selected_line_bg_color' => get_default_line_bg_color( DEFAULT_THEME ),
+			'selected_line_bg_color' => get_default_line_bg_color( $theme_name ),
 		],
 		$options
 	);
@@ -573,7 +574,6 @@ function customize_register( $wp_customize ) {
 			'syntax_highlighting[selected_line_bg_color]',
 			[
 				'type'              => 'option',
-				'default'           => get_default_line_bg_color( DEFAULT_THEME ),
 				'sanitize_callback' => 'sanitize_hex_color',
 			]
 		);
@@ -592,3 +592,21 @@ function customize_register( $wp_customize ) {
 	}
 }
 add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
+
+/**
+ * Override the post value for the selected line background color when the theme has been selected.
+ *
+ * This is an unfortunate workaround for the Customizer not respecting dynamic updates to the default setting value.
+ *
+ * @todo What's missing is dynamically changing the default value of the selected_line_bg_color control based on the selected theme.
+ *
+ * @param \WP_Customize_Manager $wp_customize Customize manager.
+ */
+function override_selected_line_bg_color_post_value( \WP_Customize_Manager $wp_customize ) {
+	$selected_line_bg_color_setting = $wp_customize->get_setting( 'syntax_highlighting[selected_line_bg_color]' );
+	if ( $selected_line_bg_color_setting && ! $selected_line_bg_color_setting->post_value() ) {
+		$selected_line_bg_color_setting->default = get_default_line_bg_color( get_option( 'theme_name' ) ); // This has no effect.
+		$wp_customize->set_post_value( $selected_line_bg_color_setting->id, $selected_line_bg_color_setting->default );
+	}
+}
+add_action( 'customize_preview_init', __NAMESPACE__ . '\override_selected_line_bg_color_post_value' );
