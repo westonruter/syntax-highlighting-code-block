@@ -28,6 +28,23 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		return settings;
 	}
 
+	let textareaStyles = {};
+	const handleTextareaRef = ( ref ) => {
+		if ( ! ref ) {
+			return;
+		}
+
+		const computedStyles = window.getComputedStyle( ref.textarea );
+
+		textareaStyles = {
+			fontFamily: computedStyles.getPropertyValue( 'font-family' ),
+			fontSize: computedStyles.getPropertyValue( 'font-size' ),
+			overflow: computedStyles.getPropertyValue( 'overflow' ),
+			overflowWrap: computedStyles.getPropertyValue( 'overflow-wrap' ),
+			resize: computedStyles.getPropertyValue( 'resize' ),
+		};
+	};
+
 	return {
 		...settings,
 
@@ -131,12 +148,13 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				</InspectorControls>
 				<div key="editor-wrapper" className={ className }>
 					<PlainText
+						ref={ handleTextareaRef }
 						value={ blockContent }
 						onChange={ ( content ) => setAttributes( { content } ) }
 						placeholder={ __( 'Write code…', 'syntax-highlighting-code-block' ) }
 						aria-label={ __( 'Code', 'syntax-highlighting-code-block' ) }
 					/>
-					<div aria-hidden={ true } className="code-block-overlay">
+					<div aria-hidden={ true } className="code-block-overlay" style={ textareaStyles }>
 						{ blockContent.split( /\n/ ).map( ( v, i ) => {
 							let cName = 'loc';
 
@@ -144,7 +162,7 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 								cName += ' highlighted';
 							}
 
-							return <span key={ i } className={ cName } />;
+							return <span key={ i } className={ cName }>{ v || ' ' }</span>;
 						} ) }
 					</div>
 				</div>

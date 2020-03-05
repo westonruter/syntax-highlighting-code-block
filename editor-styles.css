@@ -1,15 +1,19 @@
 .code-block-overlay {
+	height: 100%;
 	left: 0;
+	padding: inherit;
 	pointer-events: none;
 	position: absolute;
-	top: .8em;
+	top: 0;
+	white-space: pre-wrap;
 	width: 100%;
 	z-index: 10;
 }
 
 .code-block-overlay .loc {
+	color: transparent;
 	display: block;
-	height: 1.65em;
+	line-height: inherit;
 }
 
 .code-block-overlay .loc.highlighted {
