@@ -1,5 +1,5 @@
 === Syntax-highlighting Code Block (with Server-side Rendering) ===
-Contributors: westonruter, mkaz
+Contributors: westonruter, allejo
 Tags: block, code, code syntax, syntax highlight, code highlighting
 Requires at least: 5.2
 Tested up to: 5.3
