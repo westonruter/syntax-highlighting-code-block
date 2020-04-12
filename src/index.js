@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { PlainText, InspectorControls } from '@wordpress/editor';
 import { SelectControl, TextControl, CheckboxControl, PanelBody, PanelRow } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
+import { Fragment, createRef, useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -28,21 +28,41 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		return settings;
 	}
 
-	let textareaStyles = {};
-	const handleTextareaRef = ( ref ) => {
-		if ( ! ref ) {
-			return;
-		}
+	const HighlightablePlainText = ( props ) => {
+		const plainTextRef = createRef();
+		const [ styles, setStyles ] = useState( {} );
 
-		const computedStyles = window.getComputedStyle( ref.textarea );
+		useEffect( () => {
+			if ( plainTextRef.current !== null ) {
+				const computedStyles = window.getComputedStyle( plainTextRef.current.textarea );
 
-		textareaStyles = {
-			fontFamily: computedStyles.getPropertyValue( 'font-family' ),
-			fontSize: computedStyles.getPropertyValue( 'font-size' ),
-			overflow: computedStyles.getPropertyValue( 'overflow' ),
-			overflowWrap: computedStyles.getPropertyValue( 'overflow-wrap' ),
-			resize: computedStyles.getPropertyValue( 'resize' ),
-		};
+				setStyles( {
+					fontFamily: computedStyles.getPropertyValue( 'font-family' ),
+					fontSize: computedStyles.getPropertyValue( 'font-size' ),
+					overflow: computedStyles.getPropertyValue( 'overflow' ),
+					overflowWrap: computedStyles.getPropertyValue( 'overflow-wrap' ),
+					resize: computedStyles.getPropertyValue( 'resize' ),
+				} );
+			}
+		}, [] );
+
+		return <Fragment>
+			<PlainText
+				ref={ plainTextRef }
+				{ ...props }
+			/>
+			<div aria-hidden={ true } className="code-block-overlay" style={ styles }>
+				{ props.value.split( /\n/ ).map( ( v, i ) => {
+					let cName = 'loc';
+
+					if ( props.highlightedLines.has( i ) ) {
+						cName += ' highlighted';
+					}
+
+					return <span key={ i } className={ cName }>{ v || ' ' }</span>;
+				} ) }
+			</div>
+		</Fragment>;
 	};
 
 	return {
@@ -147,24 +167,13 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 					</PanelBody>
 				</InspectorControls>
 				<div key="editor-wrapper" className={ className }>
-					<PlainText
-						ref={ handleTextareaRef }
+					<HighlightablePlainText
 						value={ blockContent }
+						highlightedLines={ highlightedLines }
 						onChange={ ( content ) => setAttributes( { content } ) }
 						placeholder={ __( 'Write code…', 'syntax-highlighting-code-block' ) }
 						aria-label={ __( 'Code', 'syntax-highlighting-code-block' ) }
 					/>
-					<div aria-hidden={ true } className="code-block-overlay" style={ textareaStyles }>
-						{ blockContent.split( /\n/ ).map( ( v, i ) => {
-							let cName = 'loc';
-
-							if ( highlightedLines.has( i ) ) {
-								cName += ' highlighted';
-							}
-
-							return <span key={ i } className={ cName }>{ v || ' ' }</span>;
-						} ) }
-					</div>
 				</div>
 			</Fragment>;
 		},
