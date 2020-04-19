@@ -65,6 +65,34 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		</Fragment>;
 	};
 
+	const parseSelectedLines = ( selectedLines ) => {
+		const highlightedLines = new Set();
+
+		if ( ! selectedLines || selectedLines.trim().length === 0 ) {
+			return highlightedLines;
+		}
+
+		let chunk;
+		const ranges = selectedLines.replace( /\s/, '' ).split( ',' );
+
+		for ( chunk of ranges ) {
+			if ( chunk.indexOf( '-' ) >= 0 ) {
+				let i;
+				const range = chunk.split( '-' );
+
+				if ( range.length === 2 ) {
+					for ( i = +range[ 0 ]; i <= +range[ 1 ]; ++i ) {
+						highlightedLines.add( i - 1 );
+					}
+				}
+			} else {
+				highlightedLines.add( +chunk - 1 );
+			}
+		}
+
+		return highlightedLines;
+	};
+
 	return {
 		...settings,
 
@@ -82,34 +110,6 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		},
 
 		edit( { attributes, setAttributes, className } ) {
-			const parseSelectedLines = ( selectedLines ) => {
-				const highlightedLines = new Set();
-
-				if ( ! selectedLines || selectedLines.trim().length === 0 ) {
-					return highlightedLines;
-				}
-
-				let chunk;
-				const ranges = selectedLines.replace( /\s/, '' ).split( ',' );
-
-				for ( chunk of ranges ) {
-					if ( chunk.indexOf( '-' ) >= 0 ) {
-						let i;
-						const range = chunk.split( '-' );
-
-						if ( range.length === 2 ) {
-							for ( i = +range[ 0 ]; i <= +range[ 1 ]; ++i ) {
-								highlightedLines.add( i - 1 );
-							}
-						}
-					} else {
-						highlightedLines.add( +chunk - 1 );
-					}
-				}
-
-				return highlightedLines;
-			};
-
 			const updateLanguage = ( language ) => {
 				setAttributes( { language } );
 			};
