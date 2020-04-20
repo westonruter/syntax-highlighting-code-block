@@ -291,6 +291,12 @@ function register_styles( WP_Styles $styles ) {
  * @return string Highlighted content.
  */
 function render_block( $attributes, $content ) {
+	static $added_line_numbers_style      = false;
+	static $added_highlighted_lines_style = false;
+
+	$has_show_lines     = ! empty( $attributes['showLines'] );
+	$has_selected_lines = ! empty( $attributes['selectedLines'] );
+
 	$pattern  = '(?P<before><pre.*?><code.*?>)';
 	$pattern .= '(?P<code>.*)';
 	$after    = '</code></pre>';
@@ -316,40 +322,35 @@ function render_block( $attributes, $content ) {
 	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 
 	// Include line-number styles if requesting to show lines.
-	if ( $attributes['showLines'] ) {
-		$after_styles = wp_styles()->get_data( FRONTEND_STYLE_HANDLE, 'after' );
-		if ( ! is_array( $after_styles ) ) {
-			$after_styles = '';
+	if ( $attributes['showLines'] && ! $added_line_numbers_style ) {
+		$added_line_numbers_style = true;
+		wp_add_inline_style(
+			FRONTEND_STYLE_HANDLE,
+			file_get_contents( __DIR__ . '/line-numbers.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		);
+	}
+
+	if ( $has_selected_lines && ! $added_highlighted_lines_style ) {
+		$added_highlighted_lines_style = true;
+		if ( has_filter( SELECTED_LINE_BG_FILTER ) ) {
+			/**
+			 * Filters the background color of a selected line.
+			 *
+			 * This filter takes precedence over any settings set in the database as an option. Additionally, if this filter
+			 * is provided, then a color selector will not be provided in Customizer.
+			 *
+			 * @param string $rgb_color An RGB hexadecimal (with the #) to be used as the background color of a selected line.
+			 *
+			 * @since 1.1.5
+			 */
+			$line_color = apply_filters( SELECTED_LINE_BG_FILTER, get_default_line_bg_color( DEFAULT_THEME ) );
 		} else {
-			$after_styles = implode( '', $after_styles );
+			$line_color = get_option( 'selected_line_bg_color' );
 		}
 
-		// Only include line-number styles if not already included.
-		if ( false === strpos( $after_styles, '.hljs.line-numbers' ) ) {
-			wp_add_inline_style(
-				FRONTEND_STYLE_HANDLE,
-				file_get_contents( __DIR__ . '/line-numbers.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-			);
+		$inline_css = ".hljs .loc.highlighted { background-color: $line_color; }";
 
-			if ( has_filter( SELECTED_LINE_BG_FILTER ) ) {
-				/**
-				 * Filters the background color of a selected line.
-				 *
-				 * This filter takes precedence over any settings set in the database as an option. Additionally, if this filter
-				 * is provided, then a color selector will not be provided in Customizer.
-				 *
-				 * @since 1.1.5
-				 * @param string $rgb_color An RGB hexadecimal (with the #) to be used as the background color of a selected line.
-				 */
-				$line_color = apply_filters( SELECTED_LINE_BG_FILTER, get_default_line_bg_color( DEFAULT_THEME ) );
-			} else {
-				$line_color = get_option( 'selected_line_bg_color' );
-			}
-
-			$inline_css = ".hljs .loc.highlighted { background-color: $line_color; }";
-
-			wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
-		}
+		wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
 	}
 
 	$inject_classes = function( $start_tags, $language, $show_lines, $has_selected_lines ) {
@@ -431,12 +432,10 @@ function render_block( $attributes, $content ) {
 			$r = $highlighter->highlightAuto( $code );
 		}
 
-		$code               = $r->value;
-		$language           = $r->language;
-		$show_lines         = $attributes['showLines'];
-		$has_selected_lines = ! empty( $attributes['selectedLines'] );
+		$code     = $r->value;
+		$language = $r->language;
 
-		if ( $show_lines || $has_selected_lines ) {
+		if ( $has_show_lines || $has_selected_lines ) {
 			require_highlight_php_functions();
 
 			$selected_lines = parse_selected_lines( $attributes['selectedLines'] );
@@ -456,9 +455,9 @@ function render_block( $attributes, $content ) {
 			}
 		}
 
-		$highlighted = compact( 'code', 'language', 'show_lines', 'has_selected_lines' );
+		$highlighted = compact( 'code', 'language', 'has_show_lines', 'has_selected_lines' );
 
-		set_transient( $transient_key, compact( 'code', 'language', 'show_lines', 'has_selected_lines' ), MONTH_IN_SECONDS );
+		set_transient( $transient_key, compact( 'code', 'language', 'has_show_lines', 'has_selected_lines' ), MONTH_IN_SECONDS );
 
 		$matches['before'] = $inject_classes(
 			$matches['before'],
