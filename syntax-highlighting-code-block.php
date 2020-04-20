@@ -294,9 +294,6 @@ function render_block( $attributes, $content ) {
 	static $added_line_numbers_style      = false;
 	static $added_highlighted_lines_style = false;
 
-	$has_show_lines     = ! empty( $attributes['showLines'] );
-	$has_selected_lines = ! empty( $attributes['selectedLines'] );
-
 	$pattern  = '(?P<before><pre.*?><code.*?>)';
 	$pattern .= '(?P<content>.*)';
 	$after    = '</code></pre>';
@@ -331,7 +328,7 @@ function render_block( $attributes, $content ) {
 		);
 	}
 
-	if ( $has_selected_lines && ! $added_highlighted_lines_style ) {
+	if ( $attributes['selectedLines'] && ! $added_highlighted_lines_style ) {
 		$added_highlighted_lines_style = true;
 		if ( has_filter( SELECTED_LINE_BG_FILTER ) ) {
 			/**
@@ -439,7 +436,7 @@ function render_block( $attributes, $content ) {
 		$attributes['language'] = $r->language;
 
 		$content = $r->value;
-		if ( $has_show_lines || $has_selected_lines ) {
+		if ( $attributes['showLines'] || $attributes['selectedLines'] ) {
 			require_highlight_php_functions();
 
 			$selected_lines = parse_selected_lines( $attributes['selectedLines'] );
