@@ -298,7 +298,7 @@ function render_block( $attributes, $content ) {
 	$has_selected_lines = ! empty( $attributes['selectedLines'] );
 
 	$pattern  = '(?P<before><pre.*?><code.*?>)';
-	$pattern .= '(?P<code>.*)';
+	$pattern .= '(?P<content>.*)';
 	$after    = '</code></pre>';
 	$pattern .= $after;
 
@@ -306,13 +306,14 @@ function render_block( $attributes, $content ) {
 		return $content;
 	}
 
-	if ( ! isset( $attributes['language'] ) ) {
-		$attributes['language'] = '';
-	}
-
-	if ( ! isset( $attributes['showLines'] ) ) {
-		$attributes['showLines'] = false;
-	}
+	$attributes = wp_parse_args(
+		$attributes,
+		[
+			'language'      => '',
+			'showLines'     => '',
+			'selectedLines' => '',
+		]
+	);
 
 	if ( ! wp_style_is( FRONTEND_STYLE_HANDLE, 'registered' ) ) {
 		register_styles( wp_styles() );
@@ -353,14 +354,18 @@ function render_block( $attributes, $content ) {
 		wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
 	}
 
-	$inject_classes = function( $start_tags, $language, $show_lines, $has_selected_lines ) {
-		$added_classes = "hljs language-$language";
+	$inject_classes = function( $start_tags, $attributes ) {
+		$added_classes = 'hljs';
 
-		if ( $show_lines ) {
+		if ( $attributes['language'] ) {
+			$added_classes .= " language-{$attributes['language']}";
+		}
+
+		if ( $attributes['showLines'] ) {
 			$added_classes .= ' line-numbers';
 		}
 
-		if ( $has_selected_lines ) {
+		if ( $attributes['selectedLines'] ) {
 			$added_classes .= ' selected-lines';
 		}
 
@@ -389,14 +394,14 @@ function render_block( $attributes, $content ) {
 	 */
 	$auto_detect_languages = apply_filters( 'syntax_highlighting_code_block_auto_detect_languages', [] );
 
-	$transient_key = 'syntax-highlighting-code-block-' . md5( $attributes['showLines'] . $attributes['language'] . implode( '', $auto_detect_languages ) . $matches['code'] ) . '-v' . PLUGIN_VERSION;
+	$transient_key = 'syntax-highlighting-code-block-' . md5( wp_json_encode( $attributes ) . implode( '', $auto_detect_languages ) . $matches['content'] ) . '-v' . PLUGIN_VERSION;
 	$highlighted   = get_transient( $transient_key );
 
-	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['code'] ) ) {
+	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
 		if ( isset( $highlighted['language'] ) ) {
-			$matches['before'] = $inject_classes( $matches['before'], $highlighted['language'], $highlighted['show_lines'], $highlighted['has_selected_lines'] );
+			$matches['before'] = $inject_classes( $matches['before'], $highlighted['attributes'] );
 		}
-		return $matches['before'] . $highlighted['code'] . $after;
+		return $matches['before'] . $highlighted['content'] . $after;
 	}
 
 	try {
@@ -415,7 +420,7 @@ function render_block( $attributes, $content ) {
 		}
 
 		$language = $attributes['language'];
-		$code     = html_entity_decode( $matches['code'], ENT_QUOTES );
+		$content  = html_entity_decode( $matches['content'], ENT_QUOTES );
 
 		// Convert from Prism.js languages names.
 		if ( 'clike' === $language ) {
@@ -427,20 +432,19 @@ function render_block( $attributes, $content ) {
 		}
 
 		if ( $language ) {
-			$r = $highlighter->highlight( $language, $code );
+			$r = $highlighter->highlight( $language, $content );
 		} else {
-			$r = $highlighter->highlightAuto( $code );
+			$r = $highlighter->highlightAuto( $content );
 		}
+		$attributes['language'] = $r->language;
 
-		$code     = $r->value;
-		$language = $r->language;
-
+		$content = $r->value;
 		if ( $has_show_lines || $has_selected_lines ) {
 			require_highlight_php_functions();
 
 			$selected_lines = parse_selected_lines( $attributes['selectedLines'] );
-			$lines          = \HighlightUtilities\splitCodeIntoArray( $code );
-			$code           = '';
+			$lines          = \HighlightUtilities\splitCodeIntoArray( $content );
+			$content        = '';
 
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
 			// by our `table-row`.
@@ -451,22 +455,18 @@ function render_block( $attributes, $content ) {
 					$class_name .= ' highlighted';
 				}
 
-				$code .= sprintf( '<div class="%s"><span>%s</span></div>%s', $class_name, $line, PHP_EOL );
+				$content .= sprintf( '<div class="%s"><span>%s</span></div>%s', $class_name, $line, PHP_EOL );
 			}
 		}
 
-		$highlighted = compact( 'code', 'language', 'has_show_lines', 'has_selected_lines' );
-
-		set_transient( $transient_key, compact( 'code', 'language', 'has_show_lines', 'has_selected_lines' ), MONTH_IN_SECONDS );
+		set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
 
 		$matches['before'] = $inject_classes(
 			$matches['before'],
-			$highlighted['language'],
-			$highlighted['show_lines'],
-			$highlighted['has_selected_lines']
+			$attributes
 		);
 
-		return $matches['before'] . $code . $after;
+		return $matches['before'] . $content . $after;
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
