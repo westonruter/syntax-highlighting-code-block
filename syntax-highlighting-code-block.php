@@ -452,6 +452,12 @@ function render_block( $attributes, $content ) {
 					$class_name .= ' highlighted';
 				}
 
+				// Since we're using `display: table-row` in our CSS, empty spans won't render as their own line. So we
+				// need to be explicit about new lines in our spans to render them properly.
+				if ( strlen( $line ) === 0 ) {
+					$line = "\n";
+				}
+
 				$content .= sprintf( '<div class="%s"><span>%s</span></div>%s', $class_name, $line, PHP_EOL );
 			}
 		}
