@@ -58,6 +58,13 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				( languageOption ) => languageOption.label.toLowerCase()
 			);
 
+			const plainTextProps = {
+				value: attributes.content,
+				onChange: ( content ) => setAttributes( { content } ),
+				placeholder: __( 'Write 2code…', 'syntax-highlighting-code-block' ),
+				'aria-label': __( 'Code', 'syntax-highlighting-code-block' ),
+			};
+
 			return <Fragment>
 				<InspectorControls key="controls">
 					<PanelBody
@@ -91,21 +98,13 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 						// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
 						<BlockEditor.__experimentalBlock.pre>
 							<PlainText
+								{ ...plainTextProps }
 								__experimentalVersion={ 2 }
 								tagName="code"
-								value={ attributes.content }
-								onChange={ ( content ) => setAttributes( { content } ) }
-								placeholder={ __( 'Write code…', 'syntax-highlighting-code-block' ) }
-								aria-label={ __( 'Code', 'syntax-highlighting-code-block' ) }
 							/>
 						</BlockEditor.__experimentalBlock.pre> :
 						<div key="editor-wrapper" className={ className }>
-							<PlainText
-								value={ attributes.content }
-								onChange={ ( content ) => setAttributes( { content } ) }
-								placeholder={ __( 'Write code…', 'syntax-highlighting-code-block' ) }
-								aria-label={ __( 'Code', 'syntax-highlighting-code-block' ) }
-							/>
+							<PlainText { ...plainTextProps } />
 						</div>
 				}
 			</Fragment>;
