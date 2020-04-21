@@ -323,7 +323,7 @@ function render_block( $attributes, $content ) {
 	if ( ! $added_inline_style && ( $attributes['selectedLines'] || $attributes['showLines'] ) ) {
 		wp_add_inline_style(
 			FRONTEND_STYLE_HANDLE,
-			file_get_contents( __DIR__ . '/line-numbers.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			file_get_contents( __DIR__ . '/style.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		);
 		$added_inline_style = true;
 	}
