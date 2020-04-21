@@ -502,7 +502,7 @@ function parse_selected_lines( $selected_lines ) {
 			$range = explode( '-', $chunk );
 
 			if ( count( $range ) === 2 ) {
-				for ( $i = (int) $range[0]; $i < (int) $range[1]; $i++ ) {
+				for ( $i = (int) $range[0]; $i <= (int) $range[1]; $i++ ) {
 					$highlighted_lines[] = $i - 1;
 				}
 			}
