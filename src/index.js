@@ -61,7 +61,7 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 			const plainTextProps = {
 				value: attributes.content,
 				onChange: ( content ) => setAttributes( { content } ),
-				placeholder: __( 'Write 2code…', 'syntax-highlighting-code-block' ),
+				placeholder: __( 'Write code…', 'syntax-highlighting-code-block' ),
 				'aria-label': __( 'Code', 'syntax-highlighting-code-block' ),
 			};
 
