@@ -291,8 +291,8 @@ function register_styles( WP_Styles $styles ) {
  * @return string Highlighted content.
  */
 function render_block( $attributes, $content ) {
-	static $added_line_numbers_style      = false;
-	static $added_highlighted_lines_style = false;
+	static $added_inline_style            = false;
+	static $added_highlighted_color_style = false;
 
 	$pattern  = '(?P<before><pre.*?><code.*?>)';
 	$pattern .= '(?P<content>.*)';
@@ -320,16 +320,15 @@ function render_block( $attributes, $content ) {
 	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
 
 	// Include line-number styles if requesting to show lines.
-	if ( $attributes['showLines'] && ! $added_line_numbers_style ) {
-		$added_line_numbers_style = true;
+	if ( ! $added_inline_style && ( $attributes['selectedLines'] || $attributes['showLines'] ) ) {
 		wp_add_inline_style(
 			FRONTEND_STYLE_HANDLE,
 			file_get_contents( __DIR__ . '/line-numbers.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		);
+		$added_inline_style = true;
 	}
 
-	if ( $attributes['selectedLines'] && ! $added_highlighted_lines_style ) {
-		$added_highlighted_lines_style = true;
+	if ( ! $added_highlighted_color_style && $attributes['selectedLines'] ) {
 		if ( has_filter( SELECTED_LINE_BG_FILTER ) ) {
 			/**
 			 * Filters the background color of a selected line.
@@ -349,6 +348,7 @@ function render_block( $attributes, $content ) {
 		$inline_css = ".hljs .loc.highlighted { background-color: $line_color; }";
 
 		wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
+		$added_highlighted_color_style = true;
 	}
 
 	$inject_classes = function( $start_tags, $attributes ) {
