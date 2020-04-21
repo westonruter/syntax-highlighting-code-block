@@ -11,7 +11,7 @@
 }
 
 .hljs.line-numbers {
-	border-spacing: 0.75em 0;
+	border-spacing: 0;
 	counter-reset: line;
 }
 
@@ -19,11 +19,15 @@
 	counter-increment: line;
 }
 
+.hljs.line-numbers .loc > span {
+	padding-left: 0.75em;
+}
+
 .hljs.line-numbers .loc::before {
 	border-right: 1px solid #ddd;
 	content: counter(line);
 	display: table-cell;
-	padding-right: 0.75em;
+	padding: 0 0.75em;
 	text-align: right;
 	-webkit-user-select: none;
 	-moz-user-select: none;
