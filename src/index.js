@@ -17,6 +17,8 @@ import {
 	PanelRow,
 } from '@wordpress/components';
 import { Fragment, createRef, useEffect, useState } from '@wordpress/element';
+import { hasBlockSupport } from '@wordpress/blocks';
+import * as BlockEditor from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -34,15 +36,28 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		return settings;
 	}
 
-	const HighlightablePlainText = ( props ) => {
+	const useLightBlockWrapper =
+		hasBlockSupport( settings, 'core/code', 'lightBlockWrapper', false ) &&
+		BlockEditor.__experimentalBlock &&
+		BlockEditor.__experimentalBlock.pre;
+
+	const HighlightablePlainText = ( props_ ) => {
+		const { highlightedLines, ...props } = props_;
 		const plainTextRef = createRef();
 		const [ styles, setStyles ] = useState( {} );
 
 		useEffect( () => {
 			if ( plainTextRef.current !== null ) {
-				const computedStyles = window.getComputedStyle(
-					plainTextRef.current.textarea
-				);
+				let element = plainTextRef.current;
+
+				// In Gutenberg 7.8 and below, the DOM element was stored in a property with the name of the node type.
+				// In 7.9+, the DOM element is now stored in `current`. This block is here for backward-compatibility
+				// with older Gutenberg versions.
+				if ( element.hasOwnProperty( 'textarea' ) ) {
+					element = plainTextRef.current.textarea;
+				}
+
+				const computedStyles = window.getComputedStyle( element );
 
 				setStyles( {
 					fontFamily: computedStyles.getPropertyValue(
@@ -69,7 +84,7 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 					{ props.value.split( /\n/ ).map( ( v, i ) => {
 						let cName = 'loc';
 
-						if ( props.highlightedLines.has( i ) ) {
+						if ( highlightedLines.has( i ) ) {
 							cName += ' highlighted';
 						}
 
@@ -148,10 +163,15 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				( languageOption ) => languageOption.label.toLowerCase()
 			);
 
-			const highlightedLines = parseSelectedLines(
-				attributes.selectedLines
-			);
-			const blockContent = attributes.content || '';
+			const plainTextProps = {
+				value: attributes.content || '',
+				highlightedLines: parseSelectedLines(
+					attributes.selectedLines
+				),
+				onChange: ( content ) => setAttributes( { content } ),
+				placeholder: __( 'Write code…' ),
+				'aria-label': __( 'Code' ),
+			};
 
 			return (
 				<Fragment>
@@ -191,17 +211,20 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 							</PanelRow>
 						</PanelBody>
 					</InspectorControls>
-					<div key="editor-wrapper" className={ className }>
-						<HighlightablePlainText
-							value={ blockContent }
-							highlightedLines={ highlightedLines }
-							onChange={ ( content ) =>
-								setAttributes( { content } )
-							}
-							placeholder={ __( 'Write code…' ) }
-							aria-label={ __( 'Code' ) }
-						/>
-					</div>
+					{ useLightBlockWrapper ? (
+						// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
+						<BlockEditor.__experimentalBlock.pre>
+							<HighlightablePlainText
+								{ ...plainTextProps }
+								__experimentalVersion={ 2 }
+								tagName="code"
+							/>
+						</BlockEditor.__experimentalBlock.pre>
+					) : (
+						<div key="editor-wrapper" className={ className }>
+							<HighlightablePlainText { ...plainTextProps } />
+						</div>
+					) }
 				</Fragment>
 			);
 		},
