@@ -37,7 +37,16 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 
 		useEffect( () => {
 			if ( plainTextRef.current !== null ) {
-				const computedStyles = window.getComputedStyle( plainTextRef.current.textarea );
+				let element = plainTextRef.current;
+
+				// In Gutenberg 7.8 and below, the DOM element was stored in a property with the name of the node type.
+				// In 7.9+, the DOM element is now stored in `current`. This block is here for backward-compatibility
+				// with older Gutenberg versions.
+				if ( element.hasOwnProperty( 'textarea' ) ) {
+					element = plainTextRef.current.textarea;
+				}
+
+				const computedStyles = window.getComputedStyle( element );
 
 				setStyles( {
 					fontFamily: computedStyles.getPropertyValue( 'font-family' ),
