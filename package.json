@@ -21,7 +21,7 @@
     "@wordpress/components": "^9.4.1",
     "@wordpress/editor": "^9.4.0",
     "@wordpress/element": "^2.13.1",
-    "@wordpress/hooks": "^2.4.0",
+    "@wordpress/hooks": "^2.8.0",
     "@wordpress/i18n": "^3.11.0",
     "@wordpress/scripts": "^3.3.0",
     "eslint": "^6.8.0",
