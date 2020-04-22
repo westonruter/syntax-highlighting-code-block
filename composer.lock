@@ -299,16 +299,16 @@
         },
         {
             "name": "xwp/wp-dev-lib",
-            "version": "1.2.2",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xwp/wp-dev-lib.git",
-                "reference": "a40a29223deb8f44e6d61db7e6c39bd12eb37919"
+                "reference": "3e3ced3fdc5c47bbb59cde2f693ce115f2865f82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xwp/wp-dev-lib/zipball/a40a29223deb8f44e6d61db7e6c39bd12eb37919",
-                "reference": "a40a29223deb8f44e6d61db7e6c39bd12eb37919",
+                "url": "https://api.github.com/repos/xwp/wp-dev-lib/zipball/3e3ced3fdc5c47bbb59cde2f693ce115f2865f82",
+                "reference": "3e3ced3fdc5c47bbb59cde2f693ce115f2865f82",
                 "shasum": ""
             },
             "type": "library",
@@ -333,7 +333,7 @@
             "keywords": [
                 "wordpress"
             ],
-            "time": "2019-07-04T15:04:40+00:00"
+            "time": "2020-02-10T09:35:25+00:00"
         }
     ],
     "aliases": [],
