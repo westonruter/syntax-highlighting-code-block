@@ -41,7 +41,8 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		BlockEditor.__experimentalBlock &&
 		BlockEditor.__experimentalBlock.pre;
 
-	const HighlightablePlainText = ( props ) => {
+	const HighlightablePlainText = ( props_ ) => {
+		const { highlightedLines, ...props } = props_;
 		const plainTextRef = createRef();
 		const [ styles, setStyles ] = useState( {} );
 
@@ -83,7 +84,7 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 					{ props.value.split( /\n/ ).map( ( v, i ) => {
 						let cName = 'loc';
 
-						if ( props.highlightedLines.has( i ) ) {
+						if ( highlightedLines.has( i ) ) {
 							cName += ' highlighted';
 						}
 
