@@ -1,20 +1,33 @@
-.hljs.line-numbers {
-	border-spacing: 0.75em 0;
-	counter-reset: line;
+.hljs.line-numbers,
+.hljs.selected-lines {
 	display: table;
+	width: 100%;
+}
+
+.hljs.line-numbers .loc,
+.hljs.selected-lines .loc {
+	display: table-row;
+	width: 100%;
+}
+
+.hljs.line-numbers {
+	border-spacing: 0;
+	counter-reset: line;
 }
 
 .hljs.line-numbers .loc {
 	counter-increment: line;
-	display: table-row;
-	width: 100%;
+}
+
+.hljs.line-numbers .loc > span {
+	padding-left: 0.75em;
 }
 
 .hljs.line-numbers .loc::before {
 	border-right: 1px solid #ddd;
 	content: counter(line);
 	display: table-cell;
-	padding-right: 0.75em;
+	padding: 0 0.75em;
 	text-align: right;
 	-webkit-user-select: none;
 	-moz-user-select: none;
