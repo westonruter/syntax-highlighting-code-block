@@ -26,7 +26,7 @@
     "@wordpress/scripts": "^8.0.1",
     "eslint": "^6.8.0",
     "eslint-config-wordpress": "^2.0.0",
-    "grunt": "^1.0.4",
+    "grunt": "^1.1.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-wp-deploy": "^2.0.0",
     "highlight.js": "github:highlightjs/highlight.js#9.18.1",
