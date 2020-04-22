@@ -9,8 +9,8 @@ import { sortBy } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { PlainText, InspectorControls } from '@wordpress/editor';
-import { SelectControl, CheckboxControl, PanelBody, PanelRow } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
+import { SelectControl, TextControl, CheckboxControl, PanelBody, PanelRow } from '@wordpress/components';
+import { Fragment, createRef, useEffect, useState } from '@wordpress/element';
 import * as BlockEditor from '@wordpress/block-editor';
 
 /**
@@ -31,12 +31,80 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 
 	const useLightBlockWrapper = settings.supports && settings.supports.lightBlockWrapper && BlockEditor.__experimentalBlock && BlockEditor.__experimentalBlock.pre;
 
+	const HighlightablePlainText = ( props ) => {
+		const plainTextRef = createRef();
+		const [ styles, setStyles ] = useState( {} );
+
+		useEffect( () => {
+			if ( plainTextRef.current !== null ) {
+				const computedStyles = window.getComputedStyle( plainTextRef.current.textarea );
+
+				setStyles( {
+					fontFamily: computedStyles.getPropertyValue( 'font-family' ),
+					fontSize: computedStyles.getPropertyValue( 'font-size' ),
+					overflow: computedStyles.getPropertyValue( 'overflow' ),
+					overflowWrap: computedStyles.getPropertyValue( 'overflow-wrap' ),
+					resize: computedStyles.getPropertyValue( 'resize' ),
+				} );
+			}
+		}, [] );
+
+		return <Fragment>
+			<PlainText
+				ref={ plainTextRef }
+				{ ...props }
+			/>
+			<div aria-hidden={ true } className="code-block-overlay" style={ styles }>
+				{ props.value.split( /\n/ ).map( ( v, i ) => {
+					let cName = 'loc';
+
+					if ( props.highlightedLines.has( i ) ) {
+						cName += ' highlighted';
+					}
+
+					return <span key={ i } className={ cName }>{ v || ' ' }</span>;
+				} ) }
+			</div>
+		</Fragment>;
+	};
+
+	const parseSelectedLines = ( selectedLines ) => {
+		const highlightedLines = new Set();
+
+		if ( ! selectedLines || selectedLines.trim().length === 0 ) {
+			return highlightedLines;
+		}
+
+		let chunk;
+		const ranges = selectedLines.replace( /\s/, '' ).split( ',' );
+
+		for ( chunk of ranges ) {
+			if ( chunk.indexOf( '-' ) >= 0 ) {
+				let i;
+				const range = chunk.split( '-' );
+
+				if ( range.length === 2 ) {
+					for ( i = +range[ 0 ]; i <= +range[ 1 ]; ++i ) {
+						highlightedLines.add( i - 1 );
+					}
+				}
+			} else {
+				highlightedLines.add( +chunk - 1 );
+			}
+		}
+
+		return highlightedLines;
+	};
+
 	return {
 		...settings,
 
 		attributes: {
 			...settings.attributes,
 			language: {
+				type: 'string',
+			},
+			selectedLines: {
 				type: 'string',
 			},
 			showLines: {
@@ -49,6 +117,10 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				setAttributes( { language } );
 			};
 
+			const updateSelectedLines = ( selectedLines ) => {
+				setAttributes( { selectedLines } );
+			};
+
 			const updateShowLines = ( showLines ) => {
 				setAttributes( { showLines } );
 			};
@@ -59,9 +131,10 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 			);
 
 			const plainTextProps = {
-				value: attributes.content,
+				value: attributes.content || '',
+				highlightedLines: parseSelectedLines( attributes.selectedLines ),
 				onChange: ( content ) => setAttributes( { content } ),
-				placeholder: __( 'Write 2code…', 'syntax-highlighting-code-block' ),
+				placeholder: __( 'Write code…', 'syntax-highlighting-code-block' ),
 				'aria-label': __( 'Code', 'syntax-highlighting-code-block' ),
 			};
 
@@ -85,6 +158,14 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 							/>
 						</PanelRow>
 						<PanelRow>
+							<TextControl
+								label={ __( 'Highlighted Lines', 'syntax-highlighting-code-block' ) }
+								value={ attributes.selectedLines }
+								onChange={ updateSelectedLines }
+								help={ __( 'Supported format: 1, 3-5', 'syntax-highlighting-code-block' ) }
+							/>
+						</PanelRow>
+						<PanelRow>
 							<CheckboxControl
 								label={ __( 'Show Line Numbers', 'syntax-highlighting-code-block' ) }
 								checked={ attributes.showLines }
@@ -97,14 +178,14 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 					useLightBlockWrapper ?
 						// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
 						<BlockEditor.__experimentalBlock.pre>
-							<PlainText
+							<HighlightablePlainText
 								{ ...plainTextProps }
 								__experimentalVersion={ 2 }
 								tagName="code"
 							/>
 						</BlockEditor.__experimentalBlock.pre> :
 						<div key="editor-wrapper" className={ className }>
-							<PlainText { ...plainTextProps } />
+							<HighlightablePlainText { ...plainTextProps } />
 						</div>
 				}
 			</Fragment>;
