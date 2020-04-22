@@ -5,7 +5,6 @@ module.exports = function( grunt ) {
 	'use strict';
 
 	grunt.initConfig( {
-
 		pkg: grunt.file.readJSON( 'package.json' ),
 
 		// Deploys a git Repo to the WordPress SVN repo.
@@ -18,7 +17,6 @@ module.exports = function( grunt ) {
 				},
 			},
 		},
-
 	} );
 
 	// Load tasks.
@@ -26,25 +24,27 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-wp-deploy' );
 
 	// Register tasks.
-	grunt.registerTask( 'default', [
-		'dist',
-	] );
+	grunt.registerTask( 'default', [ 'dist' ] );
 
 	grunt.registerTask( 'dist', function() {
 		const done = this.async();
 		const spawnQueue = [];
 		const stdout = [];
 
-		spawnQueue.push(
-			{
-				cmd: 'git',
-				args: [ '--no-pager', 'log', '-1', '--format=%h', '--date=short' ],
-			}
-		);
+		spawnQueue.push( {
+			cmd: 'git',
+			args: [ '--no-pager', 'log', '-1', '--format=%h', '--date=short' ],
+		} );
 
 		function finalize() {
 			const commitHash = stdout.shift();
-			const versionAppend = new Date().toISOString().replace( /\.\d+/, '' ).replace( /-|:/g, '' ) + '-' + commitHash;
+			const versionAppend =
+				new Date()
+					.toISOString()
+					.replace( /\.\d+/, '' )
+					.replace( /-|:/g, '' ) +
+				'-' +
+				commitHash;
 
 			const paths = [
 				'syntax-highlighting-code-block.php',
@@ -64,7 +64,11 @@ module.exports = function( grunt ) {
 					options: {
 						noProcess: [ '*/**', 'LICENSE' ], // That is, only process syntax-highlighting-code-block.php and readme.txt.
 						process( content, srcpath ) {
-							if ( ! /syntax-highlighting-code-block\.php$/.test( srcpath ) ) {
+							if (
+								! /syntax-highlighting-code-block\.php$/.test(
+									srcpath
+								)
+							) {
 								return content;
 							}
 							let updatedContent = content;
@@ -75,28 +79,40 @@ module.exports = function( grunt ) {
 							const matches = content.match( versionRegex );
 							if ( matches ) {
 								version = matches[ 2 ] + '-' + versionAppend;
-								console.log( 'Updating version in plugin version to ' + version );
-								updatedContent = updatedContent.replace( versionRegex, '$1' + version );
-								updatedContent = updatedContent.replace( /(const PLUGIN_VERSION = ')(.+?)(?=')/, '$1' + version );
+								console.log(
+									'Updating version in plugin version to ' +
+										version
+								);
+								updatedContent = updatedContent.replace(
+									versionRegex,
+									'$1' + version
+								);
+								updatedContent = updatedContent.replace(
+									/(const PLUGIN_VERSION = ')(.+?)(?=')/,
+									'$1' + version
+								);
 							}
 
-							updatedContent = updatedContent.replace( /const DEVELOPMENT_MODE = true;.*/, 'const DEVELOPMENT_MODE = false;' );
+							updatedContent = updatedContent.replace(
+								/const DEVELOPMENT_MODE = true;.*/,
+								'const DEVELOPMENT_MODE = false;'
+							);
 
 							return updatedContent;
 						},
 					},
 				},
 				composer: {
-					src: [
-						'vendor/autoload.php',
-						'vendor/composer/**',
-					],
+					src: [ 'vendor/autoload.php', 'vendor/composer/**' ],
 					dest: 'dist',
 					expand: true,
 					options: {
 						noProcess: [ 'vendor/composer/installed.json' ],
 						process( content ) {
-							return content.replace( /\/highlight\.php/g, '/highlight-php' );
+							return content.replace(
+								/\/highlight\.php/g,
+								'/highlight-php'
+							);
 						},
 					},
 				},
@@ -121,16 +137,13 @@ module.exports = function( grunt ) {
 			if ( ! nextSpawnArgs ) {
 				finalize();
 			} else {
-				grunt.util.spawn(
-					nextSpawnArgs,
-					function( err, res ) {
-						if ( err ) {
-							throw new Error( err.message );
-						}
-						stdout.push( res.stdout );
-						doNext();
+				grunt.util.spawn( nextSpawnArgs, function( err, res ) {
+					if ( err ) {
+						throw new Error( err.message );
 					}
-				);
+					stdout.push( res.stdout );
+					doNext();
+				} );
 			}
 		}
 
