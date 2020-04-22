@@ -336,7 +336,7 @@ function render_block( $attributes, $content ) {
 			$line_color = get_option( 'selected_line_bg_color' );
 		}
 
-		$inline_css = ".hljs .loc.highlighted { background-color: $line_color; }";
+		$inline_css = ".hljs > mark.shcb-loc { background-color: $line_color; }";
 
 		wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
 		$added_highlighted_color_style = true;
@@ -349,12 +349,16 @@ function render_block( $attributes, $content ) {
 			$added_classes .= " language-{$attributes['language']}";
 		}
 
+		if ( $attributes['showLines'] || $attributes['selectedLines'] ) {
+			$added_classes .= ' shcb-code-table';
+		}
+
 		if ( $attributes['showLines'] ) {
-			$added_classes .= ' line-numbers';
+			$added_classes .= ' shcb-line-numbers';
 		}
 
 		if ( $attributes['selectedLines'] ) {
-			$added_classes .= ' selected-lines';
+			$added_classes .= ' shcb-selected-lines';
 		}
 
 		$start_tags = preg_replace(
@@ -434,19 +438,8 @@ function render_block( $attributes, $content ) {
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
 			// by our `table-row`.
 			foreach ( $lines as $i => $line ) {
-				$class_name = 'loc';
-
-				if ( in_array( $i, $selected_lines, true ) ) {
-					$class_name .= ' highlighted';
-				}
-
-				// Since we're using `display: table-row` in our CSS, empty spans won't render as their own line. So we
-				// need to be explicit about new lines in our spans to render them properly.
-				if ( strlen( $line ) === 0 || preg_match( '#^<span[^>]*></span>$#', $line ) ) {
-					$line = "\n";
-				}
-
-				$content .= sprintf( '<div class="%s"><span>%s</span></div>%s', $class_name, $line, PHP_EOL );
+				$tag_name = in_array( $i, $selected_lines, true ) ? 'mark' : 'span';
+				$content .= "<$tag_name class='shcb-loc'><span>$line</span></$tag_name>\n";
 			}
 		}
 

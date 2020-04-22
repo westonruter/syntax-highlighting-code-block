@@ -1,29 +1,31 @@
-.hljs.line-numbers,
-.hljs.selected-lines {
+.hljs.shcb-code-table {
 	display: table;
 	width: 100%;
 }
 
-.hljs.line-numbers .loc,
-.hljs.selected-lines .loc {
+.hljs.shcb-code-table > .shcb-loc {
 	display: table-row;
 	width: 100%;
 }
 
-.hljs.line-numbers {
+.hljs.shcb-line-numbers {
 	border-spacing: 0;
 	counter-reset: line;
 }
 
-.hljs.line-numbers .loc {
+.hljs.shcb-line-numbers > .shcb-loc {
 	counter-increment: line;
 }
 
-.hljs.line-numbers .loc > span {
+.hljs.shcb-code-table > .shcb-loc > span::after {
+	content: "\200B"; /* Hack to force empty spans to render as table cells */
+}
+
+.hljs.shcb-line-numbers .shcb-loc > span {
 	padding-left: 0.75em;
 }
 
-.hljs.line-numbers .loc::before {
+.hljs.shcb-line-numbers .shcb-loc::before {
 	border-right: 1px solid #ddd;
 	content: counter(line);
 	display: table-cell;
