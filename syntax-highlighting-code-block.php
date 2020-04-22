@@ -386,10 +386,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		if ( isset( $highlighted['language'] ) ) {
-			$matches['before'] = $inject_classes( $matches['before'], $highlighted['attributes'] );
-		}
-		return $matches['before'] . $highlighted['content'] . $after;
+		return $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $after;
 	}
 
 	try {
