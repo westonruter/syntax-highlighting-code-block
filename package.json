@@ -53,7 +53,7 @@
     "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
     "start": "wp-scripts start"
   },
-  "npmPackageJsonLintConfig": {
+  "npmpackagejsonlint": {
     "extends": "@wordpress/npm-package-json-lint-config",
     "rules": {
       "require-version": "off"
