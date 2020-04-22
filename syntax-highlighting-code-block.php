@@ -150,15 +150,6 @@ function get_option( $option_name ) {
 }
 
 /**
- * Get path to script deps file.
- *
- * @return string Path.
- */
-function get_script_deps_path() {
-	return __DIR__ . '/build/index.deps.json';
-}
-
-/**
  * Require the highlight.php functions file.
  */
 function require_highlight_php_functions() {
@@ -177,7 +168,7 @@ function init() {
 		return;
 	}
 
-	if ( DEVELOPMENT_MODE && ! file_exists( get_script_deps_path() ) ) {
+	if ( DEVELOPMENT_MODE && ! file_exists( __DIR__ . '/build/index.asset.php' ) ) {
 		add_action( 'admin_notices', __NAMESPACE__ . '\print_build_required_admin_notice' );
 		return;
 	}
@@ -223,7 +214,7 @@ function enqueue_editor_assets() {
 	$script_path   = '/build/index.js';
 	$style_handle  = 'syntax-highlighting-code-block-styles';
 	$style_path    = '/editor-styles.css';
-	$script_deps   = json_decode( file_get_contents( get_script_deps_path() ), false ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	$script_asset  = require __DIR__ . '/build/index.asset.php';
 	$in_footer     = true;
 
 	wp_enqueue_style(
@@ -236,7 +227,7 @@ function enqueue_editor_assets() {
 	wp_enqueue_script(
 		$script_handle,
 		plugins_url( $script_path, __FILE__ ),
-		$script_deps,
+		$script_asset['dependencies'],
 		DEVELOPMENT_MODE ? filemtime( plugin_dir_path( __FILE__ ) . $script_path ) : PLUGIN_VERSION,
 		$in_footer
 	);
