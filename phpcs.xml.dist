@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Coding Standards for Syntax-highlighting Code Block">
 
-	<rule ref="WordPress-Core" />
+	<rule ref="WordPress-Core">
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
+	</rule>
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-Extra" />
 
@@ -10,6 +12,8 @@
 			<property name="text_domain" value="syntax-highlighting-code-block" />
 		</properties>
 	</rule>
+
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found" />
 
 	<!-- Include sniffs for PHP cross-version compatibility. -->
 	<config name="testVersion" value="5.6-99.0"/>
