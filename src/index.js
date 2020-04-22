@@ -9,7 +9,13 @@ import { sortBy } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { PlainText, InspectorControls } from '@wordpress/editor';
-import { SelectControl, TextControl, CheckboxControl, PanelBody, PanelRow } from '@wordpress/components';
+import {
+	SelectControl,
+	TextControl,
+	CheckboxControl,
+	PanelBody,
+	PanelRow,
+} from '@wordpress/components';
 import { Fragment, createRef, useEffect, useState } from '@wordpress/element';
 import * as BlockEditor from '@wordpress/block-editor';
 
@@ -29,7 +35,11 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 		return settings;
 	}
 
-	const useLightBlockWrapper = settings.supports && settings.supports.lightBlockWrapper && BlockEditor.__experimentalBlock && BlockEditor.__experimentalBlock.pre;
+	const useLightBlockWrapper =
+		settings.supports &&
+		settings.supports.lightBlockWrapper &&
+		BlockEditor.__experimentalBlock &&
+		BlockEditor.__experimentalBlock.pre;
 
 	const HighlightablePlainText = ( props ) => {
 		const plainTextRef = createRef();
@@ -49,32 +59,43 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				const computedStyles = window.getComputedStyle( element );
 
 				setStyles( {
-					fontFamily: computedStyles.getPropertyValue( 'font-family' ),
+					fontFamily: computedStyles.getPropertyValue(
+						'font-family'
+					),
 					fontSize: computedStyles.getPropertyValue( 'font-size' ),
 					overflow: computedStyles.getPropertyValue( 'overflow' ),
-					overflowWrap: computedStyles.getPropertyValue( 'overflow-wrap' ),
+					overflowWrap: computedStyles.getPropertyValue(
+						'overflow-wrap'
+					),
 					resize: computedStyles.getPropertyValue( 'resize' ),
 				} );
 			}
 		}, [] );
 
-		return <Fragment>
-			<PlainText
-				ref={ plainTextRef }
-				{ ...props }
-			/>
-			<div aria-hidden={ true } className="code-block-overlay" style={ styles }>
-				{ props.value.split( /\n/ ).map( ( v, i ) => {
-					let cName = 'loc';
+		return (
+			<Fragment>
+				<PlainText ref={ plainTextRef } { ...props } />
+				<div
+					aria-hidden={ true }
+					className="code-block-overlay"
+					style={ styles }
+				>
+					{ props.value.split( /\n/ ).map( ( v, i ) => {
+						let cName = 'loc';
 
-					if ( props.highlightedLines.has( i ) ) {
-						cName += ' highlighted';
-					}
+						if ( props.highlightedLines.has( i ) ) {
+							cName += ' highlighted';
+						}
 
-					return <span key={ i } className={ cName }>{ v || ' ' }</span>;
-				} ) }
-			</div>
-		</Fragment>;
+						return (
+							<span key={ i } className={ cName }>
+								{ v || ' ' }
+							</span>
+						);
+					} ) }
+				</div>
+			</Fragment>
+		);
 	};
 
 	const parseSelectedLines = ( selectedLines ) => {
@@ -135,56 +156,61 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 			};
 
 			const sortedLanguageNames = sortBy(
-				Object.entries( languagesNames ).map( ( [ value, label ] ) => ( { label, value } ) ),
+				Object.entries(
+					languagesNames
+				).map( ( [ value, label ] ) => ( { label, value } ) ),
 				( languageOption ) => languageOption.label.toLowerCase()
 			);
 
 			const plainTextProps = {
 				value: attributes.content || '',
-				highlightedLines: parseSelectedLines( attributes.selectedLines ),
+				highlightedLines: parseSelectedLines(
+					attributes.selectedLines
+				),
 				onChange: ( content ) => setAttributes( { content } ),
-				placeholder: __( 'Write code…', 'syntax-highlighting-code-block' ),
-				'aria-label': __( 'Code', 'syntax-highlighting-code-block' ),
+				placeholder: __( 'Write code…' ),
+				'aria-label': __( 'Code' ),
 			};
 
-			return <Fragment>
-				<InspectorControls key="controls">
-					<PanelBody
-						title={ __( 'Syntax Highlighting', 'syntax-highlighting-code-block' ) }
-						initialOpen={ true }
-					>
-						<PanelRow>
-							<SelectControl
-								label={ __( 'Language', 'syntax-highlighting-code-block' ) }
-								value={ attributes.language }
-								options={
-									[
-										{ label: __( 'Auto-detect', 'syntax-highlighting-code-block' ), value: '' },
+			return (
+				<Fragment>
+					<InspectorControls key="controls">
+						<PanelBody
+							title={ __( 'Syntax Highlighting' ) }
+							initialOpen={ true }
+						>
+							<PanelRow>
+								<SelectControl
+									label={ __( 'Language' ) }
+									value={ attributes.language }
+									options={ [
+										{
+											label: __( 'Auto-detect' ),
+											value: '',
+										},
 										...sortedLanguageNames,
-									]
-								}
-								onChange={ updateLanguage }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<TextControl
-								label={ __( 'Highlighted Lines', 'syntax-highlighting-code-block' ) }
-								value={ attributes.selectedLines }
-								onChange={ updateSelectedLines }
-								help={ __( 'Supported format: 1, 3-5', 'syntax-highlighting-code-block' ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<CheckboxControl
-								label={ __( 'Show Line Numbers', 'syntax-highlighting-code-block' ) }
-								checked={ attributes.showLines }
-								onChange={ updateShowLines }
-							/>
-						</PanelRow>
-					</PanelBody>
-				</InspectorControls>
-				{
-					useLightBlockWrapper ?
+									] }
+									onChange={ updateLanguage }
+								/>
+							</PanelRow>
+							<PanelRow>
+								<TextControl
+									label={ __( 'Highlighted Lines' ) }
+									value={ attributes.selectedLines }
+									onChange={ updateSelectedLines }
+									help={ __( 'Supported format: 1, 3-5' ) }
+								/>
+							</PanelRow>
+							<PanelRow>
+								<CheckboxControl
+									label={ __( 'Show Line Numbers' ) }
+									checked={ attributes.showLines }
+									onChange={ updateShowLines }
+								/>
+							</PanelRow>
+						</PanelBody>
+					</InspectorControls>
+					{ useLightBlockWrapper ? (
 						// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
 						<BlockEditor.__experimentalBlock.pre>
 							<HighlightablePlainText
@@ -192,18 +218,22 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 								__experimentalVersion={ 2 }
 								tagName="code"
 							/>
-						</BlockEditor.__experimentalBlock.pre> :
+						</BlockEditor.__experimentalBlock.pre>
+					) : (
 						<div key="editor-wrapper" className={ className }>
 							<HighlightablePlainText { ...plainTextProps } />
 						</div>
-				}
-			</Fragment>;
+					) }
+				</Fragment>
+			);
 		},
 
 		save( { attributes } ) {
-			return <pre>
-				<code>{ attributes.content }</code>
-			</pre>;
+			return (
+				<pre>
+					<code>{ attributes.content }</code>
+				</pre>
+			);
 		},
 
 		// Automatically convert core code blocks to this new extended code block.
@@ -218,10 +248,19 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				},
 
 				save( { attributes } ) {
-					const className = ( attributes.language ) ? 'language-' + attributes.language : '';
-					return <pre>
-						<code lang={ attributes.language } className={ className }>{ attributes.content }</code>
-					</pre>;
+					const className = attributes.language
+						? 'language-' + attributes.language
+						: '';
+					return (
+						<pre>
+							<code
+								lang={ attributes.language }
+								className={ className }
+							>
+								{ attributes.content }
+							</code>
+						</pre>
+					);
 				},
 			},
 		],
