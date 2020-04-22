@@ -191,7 +191,7 @@ function print_build_required_admin_notice() {
 	?>
 	<div class="notice notice-error">
 		<p>
-			<strong><?php esc_html_e( 'Syntax-highlighting Code Block', 'amp' ); ?>:</strong>
+			<strong><?php esc_html_e( 'Syntax-highlighting Code Block', 'syntax-highlighting-code-block' ); ?>:</strong>
 			<?php
 			echo wp_kses_post(
 				sprintf(
