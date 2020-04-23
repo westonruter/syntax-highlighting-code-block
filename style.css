@@ -1,11 +1,20 @@
+.wp-block-code > div {
+	overflow: auto;
+}
+
 .hljs.shcb-code-table {
 	display: table;
 	width: 100%;
 }
 
 .hljs.shcb-code-table > .shcb-loc {
+	color: inherit;
 	display: table-row;
 	width: 100%;
+}
+
+.hljs.shcb-wrap-lines > .shcb-loc {
+	white-space: pre-wrap;
 }
 
 .hljs.shcb-line-numbers {
@@ -18,6 +27,7 @@
 }
 
 .hljs.shcb-line-numbers .shcb-loc > span {
+	display: table-cell;
 	padding-left: 0.75em;
 }
 

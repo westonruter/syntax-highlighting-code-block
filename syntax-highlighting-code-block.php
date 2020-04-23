@@ -287,19 +287,20 @@ function render_block( $attributes, $content ) {
 
 	$pattern  = '(?P<before><pre.*?><code.*?>)';
 	$pattern .= '(?P<content>.*)';
-	$after    = '</code></pre>';
-	$pattern .= $after;
+	$pattern .= '</code></pre>';
 
 	if ( ! preg_match( '#^\s*' . $pattern . '\s*$#s', $content, $matches ) ) {
 		return $content;
 	}
 
+	$end_tags   = '</code></div></pre>';
 	$attributes = wp_parse_args(
 		$attributes,
 		[
 			'language'      => '',
 			'showLines'     => '',
 			'selectedLines' => '',
+			'wrapLines'     => '',
 		]
 	);
 
@@ -361,6 +362,10 @@ function render_block( $attributes, $content ) {
 			$added_classes .= ' shcb-selected-lines';
 		}
 
+		if ( $attributes['wrapLines'] ) {
+			$added_classes .= ' shcb-wrap-lines';
+		}
+
 		$start_tags = preg_replace(
 			'/(<code[^>]*class=")/',
 			'$1 ' . esc_attr( $added_classes ),
@@ -376,7 +381,8 @@ function render_block( $attributes, $content ) {
 				1
 			);
 		}
-		return $start_tags;
+
+		return preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
 	};
 
 	/**
@@ -390,7 +396,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		return $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $after;
+		return $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
 	}
 
 	try {
@@ -450,7 +456,7 @@ function render_block( $attributes, $content ) {
 			$attributes
 		);
 
-		return $matches['before'] . $content . $after;
+		return $matches['before'] . $content . $end_tags;
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',

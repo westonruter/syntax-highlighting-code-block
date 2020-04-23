@@ -141,6 +141,9 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 			showLines: {
 				type: 'boolean',
 			},
+			wrapLines: {
+				type: 'boolean',
+			},
 		},
 
 		edit( { attributes, setAttributes, className } ) {
@@ -154,6 +157,10 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 
 			const updateShowLines = ( showLines ) => {
 				setAttributes( { showLines } );
+			};
+
+			const updateWrapLines = ( wrapLines ) => {
+				setAttributes( { wrapLines } );
 			};
 
 			const sortedLanguageNames = sortBy(
@@ -207,6 +214,13 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 									label={ __( 'Show Line Numbers' ) }
 									checked={ attributes.showLines }
 									onChange={ updateShowLines }
+								/>
+							</PanelRow>
+							<PanelRow>
+								<CheckboxControl
+									label={ __( 'Wrap Lines' ) }
+									checked={ attributes.wrapLines }
+									onChange={ updateWrapLines }
 								/>
 							</PanelRow>
 						</PanelBody>
