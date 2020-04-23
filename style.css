@@ -13,6 +13,10 @@
 	width: 100%;
 }
 
+.hljs.shcb-code-table .shcb-loc > span {
+	display: table-cell;
+}
+
 .hljs.shcb-wrap-lines > .shcb-loc {
 	white-space: pre-wrap;
 }
@@ -27,7 +31,6 @@
 }
 
 .hljs.shcb-line-numbers .shcb-loc > span {
-	display: table-cell;
 	padding-left: 0.75em;
 }
 
