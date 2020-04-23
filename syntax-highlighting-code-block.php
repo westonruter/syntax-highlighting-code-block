@@ -439,7 +439,7 @@ function render_block( $attributes, $content ) {
 			// by our `table-row`.
 			foreach ( $lines as $i => $line ) {
 				$tag_name = in_array( $i, $selected_lines, true ) ? 'mark' : 'span';
-				$content .= "<$tag_name class='shcb-loc'><span>$line</span></$tag_name>\n";
+				$content .= "<$tag_name class='shcb-loc'><span>$line\n</span></$tag_name>";
 			}
 		}
 

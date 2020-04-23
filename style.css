@@ -17,10 +17,6 @@
 	counter-increment: line;
 }
 
-.hljs.shcb-code-table > .shcb-loc > span::after {
-	content: "\200B"; /* Hack to force empty spans to render as table cells */
-}
-
 .hljs.shcb-line-numbers .shcb-loc > span {
 	padding-left: 0.75em;
 }
