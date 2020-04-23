@@ -1,3 +1,17 @@
+.shcb-plain-text.shcb-plain-text-wrap-lines {
+	overflow: auto !important;
+}
+
+/* Gutenberg 7.9+ uses a `<code>` element */
+code.shcb-plain-text.shcb-plain-text-wrap-lines {
+	white-space: pre !important;
+}
+
+/* Gutenberg 7.8 and below uses a `<textarea>` element */
+textarea.shcb-plain-text.shcb-plain-text-wrap-lines {
+	white-space: nowrap;
+}
+
 .code-block-overlay {
 	height: 100%;
 	left: 0;
