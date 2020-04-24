@@ -178,10 +178,10 @@ const extendCodeBlockWithSyntaxHighlighting = ( settings ) => {
 				onChange: ( content ) => setAttributes( { content } ),
 				placeholder: __( 'Write code…' ),
 				'aria-label': __( 'Code' ),
-				'className': [
+				className: [
 					'shcb-plain-text',
 					attributes.wrapLines ? 'shcb-plain-text-wrap-lines' : '',
-				].join(' '),
+				].join( ' ' ),
 			};
 
 			return (
