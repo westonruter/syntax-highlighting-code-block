@@ -2,6 +2,10 @@
 	overflow: auto;
 }
 
+.hljs {
+	box-sizing: border-box;
+}
+
 .hljs.shcb-code-table {
 	display: table;
 	width: 100%;
