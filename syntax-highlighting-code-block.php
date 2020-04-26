@@ -344,7 +344,9 @@ function render_block( $attributes, $content ) {
 	// wp_enqueue_scripts action because this could result in the stylesheet being printed when it would never be used.
 	// When a stylesheet is printed in the body it has the additional benefit of not being render-blocking. When
 	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
+	ob_start();
 	wp_print_styles( FRONTEND_STYLE_HANDLE );
+	$styles = ob_get_clean();
 
 	$inject_classes = function( $start_tags, $attributes ) {
 		$added_classes = 'hljs';
@@ -385,7 +387,7 @@ function render_block( $attributes, $content ) {
 			);
 		}
 
-		return preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
+		return $styles . preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
 	};
 
 	/**
