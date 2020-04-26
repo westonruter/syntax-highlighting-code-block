@@ -3,13 +3,23 @@
 }
 
 /* Gutenberg 7.9+ uses a `<code>` element */
-code.shcb-plain-text.shcb-plain-text-wrap-lines {
+code.shcb-plain-text {
 	white-space: pre !important;
+	overflow-x: auto !important;
+}
+
+code.shcb-plain-text.shcb-plain-text-wrap-lines {
+	white-space: pre-wrap !important;
 }
 
 /* Gutenberg 7.8 and below uses a `<textarea>` element */
+textarea.shcb-plain-text {
+	white-space: pre !important;
+	overflow-x: auto !important;
+}
+
 textarea.shcb-plain-text.shcb-plain-text-wrap-lines {
-	white-space: nowrap;
+	white-space: pre-wrap !important;
 }
 
 .code-block-overlay {
@@ -19,9 +29,13 @@ textarea.shcb-plain-text.shcb-plain-text-wrap-lines {
 	pointer-events: none;
 	position: absolute;
 	top: 0;
-	white-space: pre-wrap;
+	white-space: pre;
 	width: 100%;
 	z-index: 10;
+}
+
+.shcb-plain-text-wrap-lines + .code-block-overlay {
+	white-space: pre-wrap;
 }
 
 .code-block-overlay .loc {

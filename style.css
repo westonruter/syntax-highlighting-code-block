@@ -17,6 +17,10 @@
 	display: table-cell;
 }
 
+.hljs:not(.shcb-wrap-lines) > .shcb-loc {
+	white-space: pre;
+}
+
 .hljs.shcb-wrap-lines > .shcb-loc {
 	white-space: pre-wrap;
 }

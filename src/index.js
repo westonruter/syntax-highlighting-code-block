@@ -132,15 +132,19 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 			...settings.attributes,
 			language: {
 				type: 'string',
+				default: '',
 			},
 			selectedLines: {
 				type: 'string',
+				default: '',
 			},
 			showLines: {
 				type: 'boolean',
+				default: false,
 			},
 			wrapLines: {
 				type: 'boolean',
+				default: false,
 			},
 		},
 

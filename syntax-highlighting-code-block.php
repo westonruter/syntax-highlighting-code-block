@@ -298,9 +298,9 @@ function render_block( $attributes, $content ) {
 		$attributes,
 		[
 			'language'      => '',
-			'showLines'     => '',
 			'selectedLines' => '',
-			'wrapLines'     => '',
+			'showLines'     => false,
+			'wrapLines'     => false,
 		]
 	);
 
