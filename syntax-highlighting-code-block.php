@@ -228,7 +228,7 @@ function enqueue_editor_assets() {
 		$script_handle,
 		plugins_url( $script_path, __FILE__ ),
 		$script_asset['dependencies'],
-		DEVELOPMENT_MODE ? filemtime( plugin_dir_path( __FILE__ ) . $script_path ) : PLUGIN_VERSION,
+		$script_asset['version'],
 		$in_footer
 	);
 
@@ -287,19 +287,20 @@ function render_block( $attributes, $content ) {
 
 	$pattern  = '(?P<before><pre.*?><code.*?>)';
 	$pattern .= '(?P<content>.*)';
-	$after    = '</code></pre>';
-	$pattern .= $after;
+	$pattern .= '</code></pre>';
 
 	if ( ! preg_match( '#^\s*' . $pattern . '\s*$#s', $content, $matches ) ) {
 		return $content;
 	}
 
+	$end_tags   = '</code></div></pre>';
 	$attributes = wp_parse_args(
 		$attributes,
 		[
 			'language'      => '',
-			'showLines'     => '',
 			'selectedLines' => '',
+			'showLines'     => false,
+			'wrapLines'     => false,
 		]
 	);
 
@@ -307,15 +308,18 @@ function render_block( $attributes, $content ) {
 		register_styles( wp_styles() );
 	}
 
-	// Enqueue the style now that we know it will be needed.
-	wp_enqueue_style( FRONTEND_STYLE_HANDLE );
+	// Print stylesheet now that we know it will be needed. Note that the stylesheet is not being enqueued at the
+	// wp_enqueue_scripts action because this could result in the stylesheet being printed when it would never be used.
+	// When a stylesheet is printed in the body it has the additional benefit of not being render-blocking. When
+	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
+	ob_start();
+	wp_print_styles( FRONTEND_STYLE_HANDLE );
+	$styles = ob_get_clean();
 
 	// Include line-number styles if requesting to show lines.
 	if ( ! $added_inline_style && ( $attributes['selectedLines'] || $attributes['showLines'] ) ) {
-		wp_add_inline_style(
-			FRONTEND_STYLE_HANDLE,
-			file_get_contents( __DIR__ . '/style.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		);
+		$styles .= sprintf( '<style>%s</style>', file_get_contents( __DIR__ . '/style.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
 		$added_inline_style = true;
 	}
 
@@ -336,9 +340,10 @@ function render_block( $attributes, $content ) {
 			$line_color = get_option( 'selected_line_bg_color' );
 		}
 
-		$inline_css = ".hljs .loc.highlighted { background-color: $line_color; }";
+		$inline_css = ".hljs > mark.shcb-loc { background-color: $line_color; }";
 
-		wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
+		$styles .= sprintf( '<style>%s</style>', $inline_css );
+
 		$added_highlighted_color_style = true;
 	}
 
@@ -349,12 +354,20 @@ function render_block( $attributes, $content ) {
 			$added_classes .= " language-{$attributes['language']}";
 		}
 
+		if ( $attributes['showLines'] || $attributes['selectedLines'] ) {
+			$added_classes .= ' shcb-code-table';
+		}
+
 		if ( $attributes['showLines'] ) {
-			$added_classes .= ' line-numbers';
+			$added_classes .= ' shcb-line-numbers';
 		}
 
 		if ( $attributes['selectedLines'] ) {
-			$added_classes .= ' selected-lines';
+			$added_classes .= ' shcb-selected-lines';
+		}
+
+		if ( $attributes['wrapLines'] ) {
+			$added_classes .= ' shcb-wrap-lines';
 		}
 
 		$start_tags = preg_replace(
@@ -372,7 +385,8 @@ function render_block( $attributes, $content ) {
 				1
 			);
 		}
-		return $start_tags;
+
+		return preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
 	};
 
 	/**
@@ -386,7 +400,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		return $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $after;
+		return $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
 	}
 
 	try {
@@ -434,19 +448,8 @@ function render_block( $attributes, $content ) {
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
 			// by our `table-row`.
 			foreach ( $lines as $i => $line ) {
-				$class_name = 'loc';
-
-				if ( in_array( $i, $selected_lines, true ) ) {
-					$class_name .= ' highlighted';
-				}
-
-				// Since we're using `display: table-row` in our CSS, empty spans won't render as their own line. So we
-				// need to be explicit about new lines in our spans to render them properly.
-				if ( strlen( $line ) === 0 || preg_match( '#^<span[^>]*></span>$#', $line ) ) {
-					$line = "\n";
-				}
-
-				$content .= sprintf( '<div class="%s"><span>%s</span></div>%s', $class_name, $line, PHP_EOL );
+				$tag_name = in_array( $i, $selected_lines, true ) ? 'mark' : 'span';
+				$content .= "<$tag_name class='shcb-loc'><span>$line\n</span></$tag_name>";
 			}
 		}
 
@@ -457,7 +460,7 @@ function render_block( $attributes, $content ) {
 			$attributes
 		);
 
-		return $matches['before'] . $content . $after;
+		return $styles . $matches['before'] . $content . $end_tags;
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
