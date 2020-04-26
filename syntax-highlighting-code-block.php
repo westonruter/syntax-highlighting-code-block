@@ -308,12 +308,18 @@ function render_block( $attributes, $content ) {
 		register_styles( wp_styles() );
 	}
 
+	// Print stylesheet now that we know it will be needed. Note that the stylesheet is not being enqueued at the
+	// wp_enqueue_scripts action because this could result in the stylesheet being printed when it would never be used.
+	// When a stylesheet is printed in the body it has the additional benefit of not being render-blocking. When
+	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
+	ob_start();
+	wp_print_styles( FRONTEND_STYLE_HANDLE );
+	$styles = ob_get_clean();
+
 	// Include line-number styles if requesting to show lines.
 	if ( ! $added_inline_style && ( $attributes['selectedLines'] || $attributes['showLines'] ) ) {
-		wp_add_inline_style(
-			FRONTEND_STYLE_HANDLE,
-			file_get_contents( __DIR__ . '/style.css' ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		);
+		$styles .= sprintf( '<style>%s</style>', file_get_contents( __DIR__ . '/style.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents;
+
 		$added_inline_style = true;
 	}
 
@@ -336,17 +342,10 @@ function render_block( $attributes, $content ) {
 
 		$inline_css = ".hljs > mark.shcb-loc { background-color: $line_color; }";
 
-		wp_add_inline_style( FRONTEND_STYLE_HANDLE, $inline_css );
+		$styles .= sprintf( '<style>%s</style>', $inline_css );
+
 		$added_highlighted_color_style = true;
 	}
-
-	// Print stylesheet now that we know it will be needed. Note that the stylesheet is not being enqueued at the
-	// wp_enqueue_scripts action because this could result in the stylesheet being printed when it would never be used.
-	// When a stylesheet is printed in the body it has the additional benefit of not being render-blocking. When
-	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
-	ob_start();
-	wp_print_styles( FRONTEND_STYLE_HANDLE );
-	$styles = ob_get_clean();
 
 	$inject_classes = function( $start_tags, $attributes ) {
 		$added_classes = 'hljs';
