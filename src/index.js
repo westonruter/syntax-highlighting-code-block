@@ -1,3 +1,5 @@
+/* global syntaxHighlightingCodeBlockType */
+
 /**
  * External dependencies
  */
@@ -31,7 +33,7 @@ import languagesNames from './language-names';
  * @return {Object} Modified settings.
  */
 const extendCodeBlockWithSyntaxHighlighting = (settings) => {
-	if ('core/code' !== settings.name) {
+	if (syntaxHighlightingCodeBlockType.name !== settings.name) {
 		return settings;
 	}
 
@@ -128,24 +130,14 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 	return {
 		...settings,
 
+		/*
+		 * @todo Why do the attributes need to be augmented here when they have already been declared for the block type in PHP?
+		 * There seems to be a race condition, as wp.blocks.getBlockType('core/code') returns the PHP-augmented data after the
+		 * page loads, but at the moment this filter calls it is still undefined.
+		 */
 		attributes: {
 			...settings.attributes,
-			language: {
-				type: 'string',
-				default: '',
-			},
-			selectedLines: {
-				type: 'string',
-				default: '',
-			},
-			showLines: {
-				type: 'boolean',
-				default: false,
-			},
-			wrapLines: {
-				type: 'boolean',
-				default: false,
-			},
+			...syntaxHighlightingCodeBlockType.attributes, // @todo Why can't this be supplied via a blocks.getBlockAttributes filter?
 		},
 
 		edit({ attributes, setAttributes, className }) {
@@ -276,40 +268,11 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				</pre>
 			);
 		},
-
-		// Automatically convert core code blocks to this new extended code block.
-		deprecated: [
-			...(settings.deprecated || []),
-			{
-				attributes: {
-					...settings.attributes,
-					language: {
-						type: 'string',
-					},
-				},
-
-				save({ attributes }) {
-					const className = attributes.language
-						? 'language-' + attributes.language
-						: '';
-					return (
-						<pre>
-							<code
-								lang={attributes.language}
-								className={className}
-							>
-								{attributes.content}
-							</code>
-						</pre>
-					);
-				},
-			},
-		],
 	};
 };
 
 addFilter(
 	'blocks.registerBlockType',
-	'westonruter/syntax-highlighting-code-block',
+	'westonruter/syntax-highlighting-code-block-type',
 	extendCodeBlockWithSyntaxHighlighting
 );
