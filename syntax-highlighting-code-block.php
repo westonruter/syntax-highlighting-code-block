@@ -387,7 +387,7 @@ function render_block( $attributes, $content ) {
 			);
 		}
 
-		return $styles . preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
+		return preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
 	};
 
 	/**
@@ -461,7 +461,7 @@ function render_block( $attributes, $content ) {
 			$attributes
 		);
 
-		return $matches['before'] . $content . $end_tags;
+		return $styles . $matches['before'] . $content . $end_tags;
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
