@@ -247,33 +247,6 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				</pre>
 			);
 		},
-
-		// Automatically convert core code blocks to this new extended code block.
-		deprecated: [
-			...(settings.deprecated || []),
-			{
-				attributes: {
-					...settings.attributes,
-					...syntaxHighlightingCodeBlockType.attributes, // @todo Is this needed?
-				},
-
-				save({ attributes }) {
-					const className = attributes.language
-						? 'language-' + attributes.language
-						: '';
-					return (
-						<pre>
-							<code
-								lang={attributes.language}
-								className={className}
-							>
-								{attributes.content}
-							</code>
-						</pre>
-					);
-				},
-			},
-		],
 	};
 };
 
