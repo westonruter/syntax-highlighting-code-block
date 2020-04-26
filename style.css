@@ -17,11 +17,11 @@
 	display: table-cell;
 }
 
-.hljs:not(.shcb-wrap-lines) > .shcb-loc {
+.wp-block-code code.hljs:not(.shcb-wrap-lines) {
 	white-space: pre;
 }
 
-.hljs.shcb-wrap-lines > .shcb-loc {
+.wp-block-code code.hljs.shcb-wrap-lines {
 	white-space: pre-wrap;
 }
 
