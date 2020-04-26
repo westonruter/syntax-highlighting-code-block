@@ -17,11 +17,14 @@
 namespace Syntax_Highlighting_Code_Block;
 
 use Exception;
+use WP_Block_Type_Registry;
 use WP_Error;
 use WP_Customize_Manager;
 use WP_Styles;
 
 const PLUGIN_VERSION = '1.2-beta';
+
+const BLOCK_NAME = 'core/code';
 
 const DEVELOPMENT_MODE = true; // This is automatically rewritten to false during dist build.
 
@@ -174,9 +177,27 @@ function init() {
 	}
 
 	register_block_type(
-		'core/code',
+		BLOCK_NAME,
 		[
 			'render_callback' => __NAMESPACE__ . '\render_block',
+			'attributes'      => [
+				'language'      => [
+					'type'    => 'string',
+					'default' => '',
+				],
+				'selectedLines' => [
+					'type'    => 'string',
+					'default' => '',
+				],
+				'showLines'     => [
+					'type'    => 'boolean',
+					'default' => false,
+				],
+				'wrapLines'     => [
+					'type'    => 'boolean',
+					'default' => false,
+				],
+			],
 		]
 	);
 
@@ -233,6 +254,17 @@ function enqueue_editor_assets() {
 	);
 
 	wp_set_script_translations( $script_handle, 'syntax-highlighting-code-block' );
+
+	$block = WP_Block_Type_Registry::get_instance()->get_registered( BLOCK_NAME );
+	$data  = [
+		'name'       => BLOCK_NAME,
+		'attributes' => $block->attributes,
+	];
+	wp_add_inline_script(
+		$script_handle,
+		sprintf( 'const syntaxHighlightingCodeBlockType = %s;', wp_json_encode( $data ) ),
+		'before'
+	);
 }
 
 /**
@@ -293,16 +325,7 @@ function render_block( $attributes, $content ) {
 		return $content;
 	}
 
-	$end_tags   = '</code></div></pre>';
-	$attributes = wp_parse_args(
-		$attributes,
-		[
-			'language'      => '',
-			'selectedLines' => '',
-			'showLines'     => false,
-			'wrapLines'     => false,
-		]
-	);
+	$end_tags = '</code></div></pre>';
 
 	if ( ! wp_style_is( FRONTEND_STYLE_HANDLE, 'registered' ) ) {
 		register_styles( wp_styles() );
