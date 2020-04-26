@@ -317,7 +317,7 @@ function render_block( $attributes, $content ) {
 	$styles = ob_get_clean();
 
 	// Include line-number styles if requesting to show lines.
-	if ( ! $added_inline_style && ( $attributes['selectedLines'] || $attributes['showLines'] ) ) {
+	if ( ! $added_inline_style ) {
 		$styles .= sprintf( '<style>%s</style>', file_get_contents( __DIR__ . '/style.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		$added_inline_style = true;
@@ -340,9 +340,7 @@ function render_block( $attributes, $content ) {
 			$line_color = get_option( 'selected_line_bg_color' );
 		}
 
-		$inline_css = ".hljs > mark.shcb-loc { background-color: $line_color; }";
-
-		$styles .= sprintf( '<style>%s</style>', $inline_css );
+		$styles .= "<style>.hljs > mark.shcb-loc { background-color: $line_color; }</style>";
 
 		$added_highlighted_color_style = true;
 	}
