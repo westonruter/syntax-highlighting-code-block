@@ -228,7 +228,7 @@ function enqueue_editor_assets() {
 		$script_handle,
 		plugins_url( $script_path, __FILE__ ),
 		$script_asset['dependencies'],
-		DEVELOPMENT_MODE ? filemtime( plugin_dir_path( __FILE__ ) . $script_path ) : PLUGIN_VERSION,
+		$script_asset['version'],
 		$in_footer
 	);
 
