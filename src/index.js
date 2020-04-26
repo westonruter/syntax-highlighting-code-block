@@ -17,7 +17,6 @@ import {
 	PanelRow,
 } from '@wordpress/components';
 import { Fragment, createRef, useEffect, useState } from '@wordpress/element';
-import { hasBlockSupport } from '@wordpress/blocks';
 import * as BlockEditor from '@wordpress/block-editor';
 
 /**
@@ -37,7 +36,8 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 	}
 
 	const useLightBlockWrapper =
-		hasBlockSupport(settings, 'core/code', 'lightBlockWrapper', false) &&
+		settings.supports &&
+		settings.supports.lightBlockWrapper &&
 		BlockEditor.__experimentalBlock &&
 		BlockEditor.__experimentalBlock.pre;
 
