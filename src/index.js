@@ -189,16 +189,25 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				<Fragment>
 					<InspectorControls key="controls">
 						<PanelBody
-							title={__('Syntax Highlighting')}
+							title={__(
+								'Syntax Highlighting',
+								'syntax-highlighting-code-block'
+							)}
 							initialOpen={true}
 						>
 							<PanelRow>
 								<SelectControl
-									label={__('Language')}
+									label={__(
+										'Language',
+										'syntax-highlighting-code-block'
+									)}
 									value={attributes.language}
 									options={[
 										{
-											label: __('Auto-detect'),
+											label: __(
+												'Auto-detect',
+												'syntax-highlighting-code-block'
+											),
 											value: '',
 										},
 										...sortedLanguageNames,
@@ -208,22 +217,34 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 							</PanelRow>
 							<PanelRow>
 								<TextControl
-									label={__('Highlighted Lines')}
+									label={__(
+										'Highlighted Lines',
+										'syntax-highlighting-code-block'
+									)}
 									value={attributes.selectedLines}
 									onChange={updateSelectedLines}
-									help={__('Supported format: 1, 3-5')}
+									help={__(
+										'Supported format: 1, 3-5',
+										'syntax-highlighting-code-block'
+									)}
 								/>
 							</PanelRow>
 							<PanelRow>
 								<CheckboxControl
-									label={__('Show Line Numbers')}
+									label={__(
+										'Show Line Numbers',
+										'syntax-highlighting-code-block'
+									)}
 									checked={attributes.showLines}
 									onChange={updateShowLines}
 								/>
 							</PanelRow>
 							<PanelRow>
 								<CheckboxControl
-									label={__('Wrap Lines')}
+									label={__(
+										'Wrap Lines',
+										'syntax-highlighting-code-block'
+									)}
 									checked={attributes.wrapLines}
 									onChange={updateWrapLines}
 								/>
