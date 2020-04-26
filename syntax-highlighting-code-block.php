@@ -318,7 +318,7 @@ function render_block( $attributes, $content ) {
 
 	// Include line-number styles if requesting to show lines.
 	if ( ! $added_inline_style && ( $attributes['selectedLines'] || $attributes['showLines'] ) ) {
-		$styles .= sprintf( '<style>%s</style>', file_get_contents( __DIR__ . '/style.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents;
+		$styles .= sprintf( '<style>%s</style>', file_get_contents( __DIR__ . '/style.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		$added_inline_style = true;
 	}
