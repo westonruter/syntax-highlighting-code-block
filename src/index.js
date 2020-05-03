@@ -99,15 +99,15 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		);
 	};
 
-	const parseSelectedLines = (selectedLines) => {
-		const highlightedLines = new Set();
+	const parseSelectedLines = (highlightedLines) => {
+		const highlightedLinesSet = new Set();
 
-		if (!selectedLines || selectedLines.trim().length === 0) {
-			return highlightedLines;
+		if (!highlightedLines || highlightedLines.trim().length === 0) {
+			return highlightedLinesSet;
 		}
 
 		let chunk;
-		const ranges = selectedLines.replace(/\s/, '').split(',');
+		const ranges = highlightedLines.replace(/\s/, '').split(',');
 
 		for (chunk of ranges) {
 			if (chunk.indexOf('-') >= 0) {
@@ -116,15 +116,15 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 
 				if (range.length === 2) {
 					for (i = +range[0]; i <= +range[1]; ++i) {
-						highlightedLines.add(i - 1);
+						highlightedLinesSet.add(i - 1);
 					}
 				}
 			} else {
-				highlightedLines.add(+chunk - 1);
+				highlightedLinesSet.add(+chunk - 1);
 			}
 		}
 
-		return highlightedLines;
+		return highlightedLinesSet;
 	};
 
 	return {
@@ -145,12 +145,12 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				setAttributes({ language });
 			};
 
-			const updateSelectedLines = (selectedLines) => {
-				setAttributes({ selectedLines });
+			const updateHighlightedLines = (highlightedLines) => {
+				setAttributes({ highlightedLines });
 			};
 
-			const updateShowLines = (showLines) => {
-				setAttributes({ showLines });
+			const updateShowLineNumbers = (showLineNumbers) => {
+				setAttributes({ showLineNumbers });
 			};
 
 			const updateWrapLines = (wrapLines) => {
@@ -167,7 +167,9 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 
 			const plainTextProps = {
 				value: attributes.content || '',
-				highlightedLines: parseSelectedLines(attributes.selectedLines),
+				highlightedLines: parseSelectedLines(
+					attributes.highlightedLines
+				),
 				onChange: (content) => setAttributes({ content }),
 				placeholder: __('Write code…'),
 				'aria-label': __('Code'),
@@ -213,8 +215,8 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 										'Highlighted Lines',
 										'syntax-highlighting-code-block'
 									)}
-									value={attributes.selectedLines}
-									onChange={updateSelectedLines}
+									value={attributes.highlightedLines}
+									onChange={updateHighlightedLines}
 									help={__(
 										'Supported format: 1, 3-5',
 										'syntax-highlighting-code-block'
@@ -227,8 +229,8 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 										'Show Line Numbers',
 										'syntax-highlighting-code-block'
 									)}
-									checked={attributes.showLines}
-									onChange={updateShowLines}
+									checked={attributes.showLineNumbers}
+									onChange={updateShowLineNumbers}
 								/>
 							</PanelRow>
 							<PanelRow>

@@ -181,19 +181,19 @@ function init() {
 		[
 			'render_callback' => __NAMESPACE__ . '\render_block',
 			'attributes'      => [
-				'language'      => [
+				'language'         => [
 					'type'    => 'string',
 					'default' => '',
 				],
-				'selectedLines' => [
+				'highlightedLines' => [
 					'type'    => 'string',
 					'default' => '',
 				],
-				'showLines'     => [
+				'showLineNumbers'  => [
 					'type'    => 'boolean',
 					'default' => false,
 				],
-				'wrapLines'     => [
+				'wrapLines'        => [
 					'type'    => 'boolean',
 					'default' => false,
 				],
@@ -317,6 +317,16 @@ function render_block( $attributes, $content ) {
 	static $added_inline_style            = false;
 	static $added_highlighted_color_style = false;
 
+	// Migrate legacy attribute names.
+	if ( isset( $attributes['selectedLines'] ) ) {
+		$attributes['highlightedLines'] = $attributes['selectedLines'];
+		unset( $attributes['selectedLines'] );
+	}
+	if ( isset( $attributes['showLines'] ) ) {
+		$attributes['showLineNumbers'] = $attributes['showLines'];
+		unset( $attributes['showLines'] );
+	}
+
 	$pattern  = '(?P<before><pre.*?><code.*?>)';
 	$pattern .= '(?P<content>.*)';
 	$pattern .= '</code></pre>';
@@ -346,7 +356,7 @@ function render_block( $attributes, $content ) {
 		$added_inline_style = true;
 	}
 
-	if ( ! $added_highlighted_color_style && $attributes['selectedLines'] ) {
+	if ( ! $added_highlighted_color_style && $attributes['highlightedLines'] ) {
 		if ( has_filter( SELECTED_LINE_BG_FILTER ) ) {
 			/**
 			 * Filters the background color of a selected line.
@@ -375,15 +385,15 @@ function render_block( $attributes, $content ) {
 			$added_classes .= " language-{$attributes['language']}";
 		}
 
-		if ( $attributes['showLines'] || $attributes['selectedLines'] ) {
+		if ( $attributes['showLineNumbers'] || $attributes['highlightedLines'] ) {
 			$added_classes .= ' shcb-code-table';
 		}
 
-		if ( $attributes['showLines'] ) {
+		if ( $attributes['showLineNumbers'] ) {
 			$added_classes .= ' shcb-line-numbers';
 		}
 
-		if ( $attributes['selectedLines'] ) {
+		if ( $attributes['highlightedLines'] ) {
 			$added_classes .= ' shcb-selected-lines';
 		}
 
@@ -459,10 +469,10 @@ function render_block( $attributes, $content ) {
 		$attributes['language'] = $r->language;
 
 		$content = $r->value;
-		if ( $attributes['showLines'] || $attributes['selectedLines'] ) {
+		if ( $attributes['showLineNumbers'] || $attributes['highlightedLines'] ) {
 			require_highlight_php_functions();
 
-			$selected_lines = parse_selected_lines( $attributes['selectedLines'] );
+			$selected_lines = parse_selected_lines( $attributes['highlightedLines'] );
 			$lines          = \HighlightUtilities\splitCodeIntoArray( $content );
 			$content        = '';
 
