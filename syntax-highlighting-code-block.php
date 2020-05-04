@@ -307,25 +307,18 @@ function register_styles( WP_Styles $styles ) {
 }
 
 /**
- * Render code block.
+ * Get styles.
  *
- * @param array  $attributes Attributes.
- * @param string $content    Content.
- * @return string Highlighted content.
+ * @param array $attributes Attributes.
+ * @return string Attributes.
  */
-function render_block( $attributes, $content ) {
-	static $added_inline_style            = false;
-	static $added_highlighted_color_style = false;
-
-	$pattern  = '(?P<before><pre.*?><code.*?>)';
-	$pattern .= '(?P<content>.*)';
-	$pattern .= '</code></pre>';
-
-	if ( ! preg_match( '#^\s*' . $pattern . '\s*$#s', $content, $matches ) ) {
-		return $content;
+function get_styles( $attributes ) {
+	if ( is_feed() || defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		return '';
 	}
 
-	$end_tags = '</code></div></pre>';
+	static $added_inline_style            = false;
+	static $added_highlighted_color_style = false;
 
 	if ( ! wp_style_is( FRONTEND_STYLE_HANDLE, 'registered' ) ) {
 		register_styles( wp_styles() );
@@ -367,6 +360,27 @@ function render_block( $attributes, $content ) {
 
 		$added_highlighted_color_style = true;
 	}
+
+	return $styles;
+}
+
+/**
+ * Render code block.
+ *
+ * @param array  $attributes Attributes.
+ * @param string $content    Content.
+ * @return string Highlighted content.
+ */
+function render_block( $attributes, $content ) {
+	$pattern  = '(?P<before><pre.*?><code.*?>)';
+	$pattern .= '(?P<content>.*)';
+	$pattern .= '</code></pre>';
+
+	if ( ! preg_match( '#^\s*' . $pattern . '\s*$#s', $content, $matches ) ) {
+		return $content;
+	}
+
+	$end_tags = '</code></div></pre>';
 
 	$inject_classes = function( $start_tags, $attributes ) {
 		$added_classes = 'hljs';
@@ -481,7 +495,7 @@ function render_block( $attributes, $content ) {
 			$attributes
 		);
 
-		return $styles . $matches['before'] . $content . $end_tags;
+		return get_styles( $attributes ) . $matches['before'] . $content . $end_tags;
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
