@@ -34,7 +34,7 @@ const DEFAULT_THEME = 'default';
 
 const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
 
-const SELECTED_LINE_BG_FILTER = 'syntax_highlighting_code_selected_line_bg';
+const HIGHLIGHTED_LINE_BG_FILTER = 'syntax_highlighting_code_highlighted_line_bg';
 
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
@@ -98,7 +98,7 @@ function get_hex_from_rgb( $rgb_array ) {
 }
 
 /**
- * Get the default selected line background color.
+ * Get the default highlighted line background color.
  *
  * In a dark theme, the background color is decided by adding a 15% tint to the
  * color.
@@ -134,8 +134,8 @@ function get_options() {
 	$theme_name = isset( $options['theme_name'] ) ? $options['theme_name'] : DEFAULT_THEME;
 	return array_merge(
 		[
-			'theme_name'             => DEFAULT_THEME,
-			'selected_line_bg_color' => get_default_line_bg_color( $theme_name ),
+			'theme_name'                => DEFAULT_THEME,
+			'highlighted_line_bg_color' => get_default_line_bg_color( $theme_name ),
 		],
 		$options
 	);
@@ -344,7 +344,7 @@ function get_styles( $attributes ) {
 	}
 
 	if ( ! $added_highlighted_color_style && $attributes['highlightedLines'] ) {
-		if ( has_filter( SELECTED_LINE_BG_FILTER ) ) {
+		if ( has_filter( HIGHLIGHTED_LINE_BG_FILTER ) ) {
 			/**
 			 * Filters the background color of a selected line.
 			 *
@@ -355,9 +355,9 @@ function get_styles( $attributes ) {
 			 *
 			 * @since 1.1.5
 			 */
-			$line_color = apply_filters( SELECTED_LINE_BG_FILTER, get_default_line_bg_color( DEFAULT_THEME ) );
+			$line_color = apply_filters( HIGHLIGHTED_LINE_BG_FILTER, get_default_line_bg_color( DEFAULT_THEME ) );
 		} else {
-			$line_color = get_option( 'selected_line_bg_color' );
+			$line_color = get_option( 'highlighted_line_bg_color' );
 		}
 
 		$styles .= "<style>.hljs > mark.shcb-loc { background-color: $line_color; }</style>";
@@ -490,14 +490,14 @@ function render_block( $attributes, $content ) {
 		if ( $attributes['showLineNumbers'] || $attributes['highlightedLines'] ) {
 			require_highlight_php_functions();
 
-			$selected_lines = parse_selected_lines( $attributes['highlightedLines'] );
-			$lines          = \HighlightUtilities\splitCodeIntoArray( $content );
-			$content        = '';
+			$highlighted_lines = parse_highlighted_lines( $attributes['highlightedLines'] );
+			$lines             = \HighlightUtilities\splitCodeIntoArray( $content );
+			$content           = '';
 
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
 			// by our `table-row`.
 			foreach ( $lines as $i => $line ) {
-				$tag_name = in_array( $i, $selected_lines, true ) ? 'mark' : 'span';
+				$tag_name = in_array( $i, $highlighted_lines, true ) ? 'mark' : 'span';
 				$content .= "<$tag_name class='shcb-loc'><span>$line\n</span></$tag_name>";
 			}
 		}
@@ -522,20 +522,19 @@ function render_block( $attributes, $content ) {
 }
 
 /**
- * Parse the selected line syntax from the front-end and return an array of selected lines.
+ * Parse the highlighted line syntax from the front-end and return an array of highlighted line numbers.
  *
- * @param string $selected_lines The selected line syntax.
- *
+ * @param string $highlighted_lines The highlighted line syntax.
  * @return int[]
  */
-function parse_selected_lines( $selected_lines ) {
-	$highlighted_lines = [];
+function parse_highlighted_lines( $highlighted_lines ) {
+	$highlighted_line_numbers = [];
 
-	if ( ! $selected_lines || empty( trim( $selected_lines ) ) ) {
-		return $highlighted_lines;
+	if ( ! $highlighted_lines || empty( trim( $highlighted_lines ) ) ) {
+		return $highlighted_line_numbers;
 	}
 
-	$ranges = explode( ',', preg_replace( '/\s/', '', $selected_lines ) );
+	$ranges = explode( ',', preg_replace( '/\s/', '', $highlighted_lines ) );
 
 	foreach ( $ranges as $chunk ) {
 		if ( strpos( $chunk, '-' ) !== false ) {
@@ -543,15 +542,15 @@ function parse_selected_lines( $selected_lines ) {
 
 			if ( count( $range ) === 2 ) {
 				for ( $i = (int) $range[0]; $i <= (int) $range[1]; $i++ ) {
-					$highlighted_lines[] = $i - 1;
+					$highlighted_line_numbers[] = $i - 1;
 				}
 			}
 		} else {
-			$highlighted_lines[] = (int) $chunk - 1;
+			$highlighted_line_numbers[] = (int) $chunk - 1;
 		}
 	}
 
-	return $highlighted_lines;
+	return $highlighted_line_numbers;
 }
 
 /**
@@ -580,7 +579,7 @@ function validate_theme_name( $validity, $input ) {
  * @param WP_Customize_Manager $wp_customize The Customizer object.
  */
 function customize_register( $wp_customize ) {
-	if ( has_filter( BLOCK_STYLE_FILTER ) && has_filter( SELECTED_LINE_BG_FILTER ) ) {
+	if ( has_filter( BLOCK_STYLE_FILTER ) && has_filter( HIGHLIGHTED_LINE_BG_FILTER ) ) {
 		return;
 	}
 
@@ -611,9 +610,9 @@ function customize_register( $wp_customize ) {
 		);
 	}
 
-	if ( ! has_filter( SELECTED_LINE_BG_FILTER ) ) {
+	if ( ! has_filter( HIGHLIGHTED_LINE_BG_FILTER ) ) {
 		$wp_customize->add_setting(
-			'syntax_highlighting[selected_line_bg_color]',
+			'syntax_highlighting[highlighted_line_bg_color]',
 			[
 				'type'              => 'option',
 				'sanitize_callback' => 'sanitize_hex_color',
@@ -622,12 +621,12 @@ function customize_register( $wp_customize ) {
 		$wp_customize->add_control(
 			new \WP_Customize_Color_Control(
 				$wp_customize,
-				'syntax_highlighting[selected_line_bg_color]',
+				'syntax_highlighting[highlighted_line_bg_color]',
 				[
 					'section'     => 'colors',
-					'settings'    => 'syntax_highlighting[selected_line_bg_color]',
+					'settings'    => 'syntax_highlighting[highlighted_line_bg_color]',
 					'label'       => __( 'Highlighted Line Color', 'syntax-highlighting-code-block' ),
-					'description' => __( 'The background color of a selected line.', 'syntax-highlighting-code-block' ),
+					'description' => __( 'The background color of a highlighted line.', 'syntax-highlighting-code-block' ),
 				]
 			)
 		);
@@ -636,19 +635,19 @@ function customize_register( $wp_customize ) {
 add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
 
 /**
- * Override the post value for the selected line background color when the theme has been selected.
+ * Override the post value for the highlighted line background color when the theme has been highlighted.
  *
  * This is an unfortunate workaround for the Customizer not respecting dynamic updates to the default setting value.
  *
- * @todo What's missing is dynamically changing the default value of the selected_line_bg_color control based on the selected theme.
+ * @todo What's missing is dynamically changing the default value of the highlighted_line_bg_color control based on the selected theme.
  *
  * @param \WP_Customize_Manager $wp_customize Customize manager.
  */
-function override_selected_line_bg_color_post_value( \WP_Customize_Manager $wp_customize ) {
-	$selected_line_bg_color_setting = $wp_customize->get_setting( 'syntax_highlighting[selected_line_bg_color]' );
-	if ( $selected_line_bg_color_setting && ! $selected_line_bg_color_setting->post_value() ) {
-		$selected_line_bg_color_setting->default = get_default_line_bg_color( get_option( 'theme_name' ) ); // This has no effect.
-		$wp_customize->set_post_value( $selected_line_bg_color_setting->id, $selected_line_bg_color_setting->default );
+function override_highlighted_line_bg_color_post_value( \WP_Customize_Manager $wp_customize ) {
+	$highlighted_line_bg_color_setting = $wp_customize->get_setting( 'syntax_highlighting[highlighted_line_bg_color]' );
+	if ( $highlighted_line_bg_color_setting && ! $highlighted_line_bg_color_setting->post_value() ) {
+		$highlighted_line_bg_color_setting->default = get_default_line_bg_color( get_option( 'theme_name' ) ); // This has no effect.
+		$wp_customize->set_post_value( $highlighted_line_bg_color_setting->id, $highlighted_line_bg_color_setting->default );
 	}
 }
-add_action( 'customize_preview_init', __NAMESPACE__ . '\override_selected_line_bg_color_post_value' );
+add_action( 'customize_preview_init', __NAMESPACE__ . '\override_highlighted_line_bg_color_post_value' );
