@@ -340,12 +340,12 @@ function get_styles( $attributes ) {
 	if ( ! $added_highlighted_color_style && $attributes['highlightedLines'] ) {
 		if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
 			/**
-			 * Filters the background color of a selected line.
+			 * Filters the background color of a highlighted line.
 			 *
 			 * This filter takes precedence over any settings set in the database as an option. Additionally, if this filter
 			 * is provided, then a color selector will not be provided in Customizer.
 			 *
-			 * @param string $rgb_color An RGB hexadecimal (with the #) to be used as the background color of a selected line.
+			 * @param string $rgb_color An RGB hexadecimal (with the #) to be used as the background color of a highlighted line.
 			 *
 			 * @since 1.1.5
 			 */
