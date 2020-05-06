@@ -341,7 +341,7 @@ function get_styles( $attributes ) {
 		$added_inline_style = true;
 	}
 
-	if ( ! $added_highlighted_color_style && $attributes['highlightedLines'] ) {
+	if ( ! $added_highlighted_color_style && ! empty( $attributes['highlightedLines'] ) ) {
 		if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
 			/**
 			 * Filters the background color of a highlighted line.
