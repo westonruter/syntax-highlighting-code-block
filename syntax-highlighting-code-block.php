@@ -443,7 +443,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		return $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
+		return get_styles( $attributes ) . $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
 	}
 
 	try {
