@@ -43,7 +43,6 @@ const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
  *
  * @param float[] $rgb_array An array representing an RGB color.
  * @param float   $tint      How much of a tint to apply; a number between 0 and 1.
- *
  * @return float[] The new color as an RGB array.
  */
 function add_tint_to_rgb( $rgb_array, $tint ) {
@@ -57,10 +56,9 @@ function add_tint_to_rgb( $rgb_array, $tint ) {
 /**
  * Get the relative luminance of a color.
  *
- * @param float[] $rgb_array An array representing an RGB color.
- *
  * @link https://en.wikipedia.org/wiki/Relative_luminance
  *
+ * @param float[] $rgb_array An array representing an RGB color.
  * @return float A value between 0 and 100 representing the luminance of a color.
  *     The closer to to 100, the higher the luminance is; i.e. the lighter it is.
  */
@@ -74,7 +72,6 @@ function get_relative_luminance( $rgb_array ) {
  * Check whether or not a given RGB array is considered a "dark theme."
  *
  * @param float[] $rgb_array The RGB array to test.
- *
  * @return bool True if the theme's background has a "dark" luminance.
  */
 function is_dark_theme( $rgb_array ) {
@@ -85,7 +82,6 @@ function is_dark_theme( $rgb_array ) {
  * Convert an RGB array to hexadecimal representation.
  *
  * @param float[] $rgb_array The RGB array to convert.
- *
  * @return string A hexadecimal representation.
  */
 function get_hex_from_rgb( $rgb_array ) {
@@ -144,7 +140,6 @@ function get_options() {
  * Get the single, specified plugin option.
  *
  * @param string $option_name The plugin option name.
- *
  * @return mixed
  */
 function get_option( $option_name ) {
@@ -557,7 +552,6 @@ function parse_highlighted_lines( $highlighted_lines ) {
  *
  * @param WP_Error $validity Validator object.
  * @param string   $input    Incoming theme name.
- *
  * @return mixed
  */
 function validate_theme_name( $validity, $input ) {
