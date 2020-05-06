@@ -34,7 +34,7 @@ const DEFAULT_THEME = 'default';
 
 const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
 
-const HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER = 'syntax_highlighting_code_highlighted_line_background_color';
+const HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER = 'syntax_highlighted_line_background_color';
 
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
