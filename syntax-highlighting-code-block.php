@@ -140,10 +140,14 @@ function get_plugin_options() {
  * Get the single, specified plugin option.
  *
  * @param string $option_name The plugin option name.
- * @return mixed
+ * @return string|null
  */
 function get_plugin_option( $option_name ) {
-	return get_plugin_options()[ $option_name ];
+	$options = get_plugin_options();
+	if ( array_key_exists( $option_name, $options ) ) {
+		return $options[ $option_name ];
+	}
+	return null;
 }
 
 /**
