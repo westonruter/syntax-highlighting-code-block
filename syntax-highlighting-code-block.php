@@ -447,7 +447,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		return $render_output($highlighted['attributes'], $matches['before'], $highlighted['content'], $end_tags);
+		return $render_output( $highlighted['attributes'], $matches['before'], $highlighted['content'], $end_tags );
 	}
 
 	try {
@@ -502,7 +502,7 @@ function render_block( $attributes, $content ) {
 
 		set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
 
-		return $render_output($attributes, $matches['before'], $content, $end_tags);
+		return $render_output( $attributes, $matches['before'], $content, $end_tags );
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
