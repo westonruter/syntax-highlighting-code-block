@@ -405,10 +405,6 @@ function render_block( $attributes, $content ) {
 			$added_classes .= ' shcb-line-numbers';
 		}
 
-		if ( $attributes['highlightedLines'] ) {
-			$added_classes .= ' shcb-selected-lines';
-		}
-
 		if ( $attributes['wrapLines'] ) {
 			$added_classes .= ' shcb-wrap-lines';
 		}
