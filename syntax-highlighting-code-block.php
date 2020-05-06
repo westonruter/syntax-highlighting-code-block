@@ -420,7 +420,7 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes ) {
  * @return string Highlighted content.
  */
 function render_block( $attributes, $content ) {
-	$pattern  = '(?P<pre_start_tag><pre[^>]*?>)(?P<code_start_tag><code[^>]*?>)';
+	$pattern  = '(?P<pre_start_tag><pre\b[^>]*?>)(?P<code_start_tag><code\b[^>]*?>)';
 	$pattern .= '(?P<content>.*)';
 	$pattern .= '</code></pre>';
 
