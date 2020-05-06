@@ -432,6 +432,10 @@ function render_block( $attributes, $content ) {
 		return preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
 	};
 
+	$render_output = function ( $attributes, $before, $content, $end_tags ) use ( $inject_classes ) {
+		return get_styles( $attributes ) . $inject_classes( $before, $attributes ) . $content . $end_tags;
+	};
+
 	/**
 	 * Filters the list of languages that are used for auto-detection.
 	 *
@@ -443,7 +447,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		return get_styles( $attributes ) . $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
+		return $render_output($highlighted['attributes'], $matches['before'], $highlighted['content'], $end_tags);
 	}
 
 	try {
@@ -498,12 +502,7 @@ function render_block( $attributes, $content ) {
 
 		set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
 
-		$matches['before'] = $inject_classes(
-			$matches['before'],
-			$attributes
-		);
-
-		return get_styles( $attributes ) . $matches['before'] . $content . $end_tags;
+		return $render_output($attributes, $matches['before'], $content, $end_tags);
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
