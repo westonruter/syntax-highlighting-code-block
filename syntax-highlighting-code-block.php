@@ -123,7 +123,7 @@ function get_default_line_background_color( $theme_name ) {
  *
  * @return array
  */
-function get_options() {
+function get_plugin_options() {
 	$options = \get_option( OPTION_NAME, [] );
 
 	$theme_name = isset( $options['theme_name'] ) ? $options['theme_name'] : DEFAULT_THEME;
@@ -142,8 +142,8 @@ function get_options() {
  * @param string $option_name The plugin option name.
  * @return mixed
  */
-function get_option( $option_name ) {
-	return get_options()[ $option_name ];
+function get_plugin_option( $option_name ) {
+	return get_plugin_options()[ $option_name ];
 }
 
 /**
@@ -288,7 +288,7 @@ function register_styles( WP_Styles $styles ) {
 		 */
 		$style = apply_filters( BLOCK_STYLE_FILTER, DEFAULT_THEME );
 	} else {
-		$style = get_option( 'theme_name' );
+		$style = get_plugin_option( 'theme_name' );
 	}
 
 	$default_style_path = sprintf(
@@ -351,7 +351,7 @@ function get_styles( $attributes ) {
 			 */
 			$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, get_default_line_background_color( DEFAULT_THEME ) );
 		} else {
-			$line_color = get_option( 'highlighted_line_background_color' );
+			$line_color = get_plugin_option( 'highlighted_line_background_color' );
 		}
 
 		$styles .= "<style>.hljs > mark.shcb-loc { background-color: $line_color; }</style>";
@@ -635,7 +635,7 @@ add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
 function override_highlighted_line_background_color_post_value( WP_Customize_Manager $wp_customize ) {
 	$highlighted_line_background_color_setting = $wp_customize->get_setting( 'syntax_highlighting[highlighted_line_background_color]' );
 	if ( $highlighted_line_background_color_setting && ! $highlighted_line_background_color_setting->post_value() ) {
-		$highlighted_line_background_color_setting->default = get_default_line_background_color( get_option( 'theme_name' ) ); // This has no effect.
+		$highlighted_line_background_color_setting->default = get_default_line_background_color( get_plugin_option( 'theme_name' ) ); // This has no effect.
 		$wp_customize->set_post_value( $highlighted_line_background_color_setting->id, $highlighted_line_background_color_setting->default );
 	}
 }
