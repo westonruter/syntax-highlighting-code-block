@@ -332,7 +332,7 @@ function get_styles( $attributes ) {
 	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
 	ob_start();
 	wp_print_styles( FRONTEND_STYLE_HANDLE );
-	$styles = ob_get_clean();
+	$styles = trim( ob_get_clean() );
 
 	// Include line-number styles if requesting to show lines.
 	if ( ! $added_inline_style ) {
@@ -374,7 +374,7 @@ function get_styles( $attributes ) {
  * @return string Highlighted content.
  */
 function render_block( $attributes, $content ) {
-	$pattern  = '(?P<before><pre.*?><code.*?>)';
+	$pattern  = '(?P<pre_start_tag><pre[^>]*?>)(?P<code_start_tag><code[^>]*?>)';
 	$pattern .= '(?P<content>.*)';
 	$pattern .= '</code></pre>';
 
@@ -394,7 +394,15 @@ function render_block( $attributes, $content ) {
 
 	$end_tags = '</code></div></pre>';
 
-	$inject_classes = function( $start_tags, $attributes ) {
+	/**
+	 * Inject class names and styles into the
+	 *
+	 * @param string $pre_start_tag  The `<pre>` start tag.
+	 * @param string $code_start_tag The `<code>` start tag.
+	 * @param array  $attributes     Attributes.
+	 * @return string Injected markup.
+	 */
+	$inject_markup = function( $pre_start_tag, $code_start_tag, $attributes ) {
 		$added_classes = 'hljs';
 
 		if ( $attributes['language'] ) {
@@ -413,23 +421,23 @@ function render_block( $attributes, $content ) {
 			$added_classes .= ' shcb-wrap-lines';
 		}
 
-		$start_tags = preg_replace(
-			'/(<code[^>]*class=")/',
+		$code_start_tag = preg_replace(
+			'/(<code[^>]*class=["\'])/',
 			'$1 ' . esc_attr( $added_classes ),
-			$start_tags,
+			$code_start_tag,
 			1,
 			$count
 		);
 		if ( 0 === $count ) {
-			$start_tags = preg_replace(
-				'/(?<=<code)(?=>)/',
+			$code_start_tag = preg_replace(
+				'/(?<=<code\b)/',
 				sprintf( ' class="%s"', esc_attr( $added_classes ) ),
-				$start_tags,
+				$code_start_tag,
 				1
 			);
 		}
 
-		return preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
+		return $pre_start_tag . get_styles( $attributes ) . '<div>' . $code_start_tag;
 	};
 
 	/**
@@ -443,7 +451,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		return get_styles( $attributes ) . $inject_classes( $matches['before'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
+		return $inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
 	}
 
 	try {
@@ -496,14 +504,11 @@ function render_block( $attributes, $content ) {
 			}
 		}
 
-		set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
+		if ( ! DEVELOPMENT_MODE ) {
+			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
+		}
 
-		$matches['before'] = $inject_classes(
-			$matches['before'],
-			$attributes
-		);
-
-		return get_styles( $attributes ) . $matches['before'] . $content . $end_tags;
+		return $inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes ) . $content . $end_tags;
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
