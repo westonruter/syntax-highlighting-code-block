@@ -332,7 +332,7 @@ function get_styles( $attributes ) {
 	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
 	ob_start();
 	wp_print_styles( FRONTEND_STYLE_HANDLE );
-	$styles = ob_get_clean();
+	$styles = trim( ob_get_clean() );
 
 	// Include line-number styles if requesting to show lines.
 	if ( ! $added_inline_style ) {
@@ -367,6 +367,52 @@ function get_styles( $attributes ) {
 }
 
 /**
+ * Inject class names and styles into the
+ *
+ * @param string $pre_start_tag  The `<pre>` start tag.
+ * @param string $code_start_tag The `<code>` start tag.
+ * @param array  $attributes     Attributes.
+ * @return string Injected markup.
+ */
+function inject_markup( $pre_start_tag, $code_start_tag, $attributes ) {
+	$added_classes = 'hljs';
+
+	if ( $attributes['language'] ) {
+		$added_classes .= " language-{$attributes['language']}";
+	}
+
+	if ( $attributes['showLineNumbers'] || $attributes['highlightedLines'] ) {
+		$added_classes .= ' shcb-code-table';
+	}
+
+	if ( $attributes['showLineNumbers'] ) {
+		$added_classes .= ' shcb-line-numbers';
+	}
+
+	if ( $attributes['wrapLines'] ) {
+		$added_classes .= ' shcb-wrap-lines';
+	}
+
+	$code_start_tag = preg_replace(
+		'/(<code[^>]*class=["\'])/',
+		'$1 ' . esc_attr( $added_classes ),
+		$code_start_tag,
+		1,
+		$count
+	);
+	if ( 0 === $count ) {
+		$code_start_tag = preg_replace(
+			'/(?<=<code\b)/',
+			sprintf( ' class="%s"', esc_attr( $added_classes ) ),
+			$code_start_tag,
+			1
+		);
+	}
+
+	return $pre_start_tag . get_styles( $attributes ) . '<div>' . $code_start_tag;
+}
+
+/**
  * Render code block.
  *
  * @param array  $attributes Attributes.
@@ -374,7 +420,7 @@ function get_styles( $attributes ) {
  * @return string Highlighted content.
  */
 function render_block( $attributes, $content ) {
-	$pattern  = '(?P<before><pre.*?><code.*?>)';
+	$pattern  = '(?P<pre_start_tag><pre\b[^>]*?>)(?P<code_start_tag><code\b[^>]*?>)';
 	$pattern .= '(?P<content>.*)';
 	$pattern .= '</code></pre>';
 
@@ -394,48 +440,6 @@ function render_block( $attributes, $content ) {
 
 	$end_tags = '</code></div></pre>';
 
-	$inject_classes = function( $start_tags, $attributes ) {
-		$added_classes = 'hljs';
-
-		if ( $attributes['language'] ) {
-			$added_classes .= " language-{$attributes['language']}";
-		}
-
-		if ( $attributes['showLineNumbers'] || $attributes['highlightedLines'] ) {
-			$added_classes .= ' shcb-code-table';
-		}
-
-		if ( $attributes['showLineNumbers'] ) {
-			$added_classes .= ' shcb-line-numbers';
-		}
-
-		if ( $attributes['wrapLines'] ) {
-			$added_classes .= ' shcb-wrap-lines';
-		}
-
-		$start_tags = preg_replace(
-			'/(<code[^>]*class=")/',
-			'$1 ' . esc_attr( $added_classes ),
-			$start_tags,
-			1,
-			$count
-		);
-		if ( 0 === $count ) {
-			$start_tags = preg_replace(
-				'/(?<=<code)(?=>)/',
-				sprintf( ' class="%s"', esc_attr( $added_classes ) ),
-				$start_tags,
-				1
-			);
-		}
-
-		return preg_replace( '/(<pre[^>]*>)(<code)/', '$1<div>$2', $start_tags, 1 );
-	};
-
-	$render_output = function ( $attributes, $before, $content, $end_tags ) use ( $inject_classes ) {
-		return get_styles( $attributes ) . $inject_classes( $before, $attributes ) . $content . $end_tags;
-	};
-
 	/**
 	 * Filters the list of languages that are used for auto-detection.
 	 *
@@ -447,7 +451,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		return $render_output( $highlighted['attributes'], $matches['before'], $highlighted['content'], $end_tags );
+		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
 	}
 
 	try {
@@ -500,9 +504,11 @@ function render_block( $attributes, $content ) {
 			}
 		}
 
-		set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
+		if ( ! DEVELOPMENT_MODE ) {
+			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
+		}
 
-		return $render_output( $attributes, $matches['before'], $content, $end_tags );
+		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes ) . $content . $end_tags;
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
