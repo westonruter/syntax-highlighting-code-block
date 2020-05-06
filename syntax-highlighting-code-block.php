@@ -313,7 +313,7 @@ function register_styles( WP_Styles $styles ) {
  * @return string Attributes.
  */
 function get_styles( $attributes ) {
-	if ( is_feed() || defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+	if ( is_feed() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 		return '';
 	}
 
