@@ -34,7 +34,7 @@ const DEFAULT_THEME = 'default';
 
 const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
 
-const HIGHLIGHTED_LINE_BG_FILTER = 'syntax_highlighting_code_highlighted_line_bg';
+const HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER = 'syntax_highlighting_code_highlighted_line_background_color';
 
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
@@ -106,10 +106,9 @@ function get_hex_from_rgb( $rgb_array ) {
  * In a light theme, a default light blue is used.
  *
  * @param string $theme_name The theme name to get a color for.
- *
  * @return string A hexadecimal value.
  */
-function get_default_line_bg_color( $theme_name ) {
+function get_default_line_background_color( $theme_name ) {
 	require_highlight_php_functions();
 
 	$theme_rgb = \HighlightUtilities\getThemeBackgroundColor( $theme_name );
@@ -134,8 +133,8 @@ function get_options() {
 	$theme_name = isset( $options['theme_name'] ) ? $options['theme_name'] : DEFAULT_THEME;
 	return array_merge(
 		[
-			'theme_name'                => DEFAULT_THEME,
-			'highlighted_line_bg_color' => get_default_line_bg_color( $theme_name ),
+			'theme_name'                        => DEFAULT_THEME,
+			'highlighted_line_background_color' => get_default_line_background_color( $theme_name ),
 		],
 		$options
 	);
@@ -344,7 +343,7 @@ function get_styles( $attributes ) {
 	}
 
 	if ( ! $added_highlighted_color_style && $attributes['highlightedLines'] ) {
-		if ( has_filter( HIGHLIGHTED_LINE_BG_FILTER ) ) {
+		if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
 			/**
 			 * Filters the background color of a selected line.
 			 *
@@ -355,9 +354,9 @@ function get_styles( $attributes ) {
 			 *
 			 * @since 1.1.5
 			 */
-			$line_color = apply_filters( HIGHLIGHTED_LINE_BG_FILTER, get_default_line_bg_color( DEFAULT_THEME ) );
+			$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, get_default_line_background_color( DEFAULT_THEME ) );
 		} else {
-			$line_color = get_option( 'highlighted_line_bg_color' );
+			$line_color = get_option( 'highlighted_line_background_color' );
 		}
 
 		$styles .= "<style>.hljs > mark.shcb-loc { background-color: $line_color; }</style>";
@@ -579,7 +578,7 @@ function validate_theme_name( $validity, $input ) {
  * @param WP_Customize_Manager $wp_customize The Customizer object.
  */
 function customize_register( $wp_customize ) {
-	if ( has_filter( BLOCK_STYLE_FILTER ) && has_filter( HIGHLIGHTED_LINE_BG_FILTER ) ) {
+	if ( has_filter( BLOCK_STYLE_FILTER ) && has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
 		return;
 	}
 
@@ -610,9 +609,9 @@ function customize_register( $wp_customize ) {
 		);
 	}
 
-	if ( ! has_filter( HIGHLIGHTED_LINE_BG_FILTER ) ) {
+	if ( ! has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
 		$wp_customize->add_setting(
-			'syntax_highlighting[highlighted_line_bg_color]',
+			'syntax_highlighting[highlighted_line_background_color]',
 			[
 				'type'              => 'option',
 				'sanitize_callback' => 'sanitize_hex_color',
@@ -621,10 +620,10 @@ function customize_register( $wp_customize ) {
 		$wp_customize->add_control(
 			new \WP_Customize_Color_Control(
 				$wp_customize,
-				'syntax_highlighting[highlighted_line_bg_color]',
+				'syntax_highlighting[highlighted_line_background_color]',
 				[
 					'section'     => 'colors',
-					'settings'    => 'syntax_highlighting[highlighted_line_bg_color]',
+					'settings'    => 'syntax_highlighting[highlighted_line_background_color]',
 					'label'       => __( 'Highlighted Line Color', 'syntax-highlighting-code-block' ),
 					'description' => __( 'The background color of a highlighted line.', 'syntax-highlighting-code-block' ),
 				]
@@ -639,15 +638,15 @@ add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
  *
  * This is an unfortunate workaround for the Customizer not respecting dynamic updates to the default setting value.
  *
- * @todo What's missing is dynamically changing the default value of the highlighted_line_bg_color control based on the selected theme.
+ * @todo What's missing is dynamically changing the default value of the highlighted_line_background_color control based on the selected theme.
  *
- * @param \WP_Customize_Manager $wp_customize Customize manager.
+ * @param WP_Customize_Manager $wp_customize Customize manager.
  */
-function override_highlighted_line_bg_color_post_value( \WP_Customize_Manager $wp_customize ) {
-	$highlighted_line_bg_color_setting = $wp_customize->get_setting( 'syntax_highlighting[highlighted_line_bg_color]' );
-	if ( $highlighted_line_bg_color_setting && ! $highlighted_line_bg_color_setting->post_value() ) {
-		$highlighted_line_bg_color_setting->default = get_default_line_bg_color( get_option( 'theme_name' ) ); // This has no effect.
-		$wp_customize->set_post_value( $highlighted_line_bg_color_setting->id, $highlighted_line_bg_color_setting->default );
+function override_highlighted_line_background_color_post_value( WP_Customize_Manager $wp_customize ) {
+	$highlighted_line_background_color_setting = $wp_customize->get_setting( 'syntax_highlighting[highlighted_line_background_color]' );
+	if ( $highlighted_line_background_color_setting && ! $highlighted_line_background_color_setting->post_value() ) {
+		$highlighted_line_background_color_setting->default = get_default_line_background_color( get_option( 'theme_name' ) ); // This has no effect.
+		$wp_customize->set_post_value( $highlighted_line_background_color_setting->id, $highlighted_line_background_color_setting->default );
 	}
 }
-add_action( 'customize_preview_init', __NAMESPACE__ . '\override_highlighted_line_bg_color_post_value' );
+add_action( 'customize_preview_init', __NAMESPACE__ . '\override_highlighted_line_background_color_post_value' );
