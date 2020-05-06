@@ -99,7 +99,13 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		);
 	};
 
-	const parseSelectedLines = (highlightedLines) => {
+	/**
+	 * Parse a string representation of highlighted lines into a set of each highlighted line number.
+	 *
+	 * @param {string} highlightedLines Highlighted lines.
+	 * @return {Set<number>} Highlighted lines.
+	 */
+	const parseHighlightedLines = (highlightedLines) => {
 		const highlightedLinesSet = new Set();
 
 		if (!highlightedLines || highlightedLines.trim().length === 0) {
@@ -167,7 +173,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 
 			const plainTextProps = {
 				value: attributes.content || '',
-				highlightedLines: parseSelectedLines(
+				highlightedLines: parseHighlightedLines(
 					attributes.highlightedLines
 				),
 				onChange: (content) => setAttributes({ content }),
