@@ -259,6 +259,10 @@ function enqueue_editor_assets() {
 	$data  = [
 		'name'       => BLOCK_NAME,
 		'attributes' => $block->attributes,
+		'deprecated' => [
+			'selectedLines' => $block->attributes['highlightedLines'],
+			'showLines'     => $block->attributes['showLineNumbers'],
+		],
 	];
 	wp_add_inline_script(
 		$script_handle,

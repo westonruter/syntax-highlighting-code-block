@@ -270,6 +270,33 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				</pre>
 			);
 		},
+
+		deprecated: [
+			...(settings.deprecated || []),
+			{
+				attributes: {
+					...settings.attributes,
+					...syntaxHighlightingCodeBlockType.deprecated,
+				},
+				isEligible(attributes) {
+					return Object.keys(attributes).some((attribute) => {
+						return syntaxHighlightingCodeBlockType.deprecated.hasOwnProperty(
+							attribute
+						);
+					});
+				},
+				migrate(attributes, innerBlocks) {
+					return [
+						{
+							...attributes,
+							highlightedLines: attributes.selectedLines,
+							showLineNumbers: attributes.showLines,
+						},
+						innerBlocks,
+					];
+				},
+			},
+		],
 	};
 };
 
