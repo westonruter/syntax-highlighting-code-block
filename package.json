@@ -40,7 +40,7 @@
     "build:clean": "if [ -e dist ]; then rm -r dist; fi; if [ -e build ]; then rm -r build; fi",
     "build:js": "wp-scripts build",
     "build:dist": "grunt dist",
-    "build:zip": "if [ -e syntax-highlighting-code-block.zip ]; then rm syntax-highlighting-code-block.zip; fi; cd dist; zip -r ../syntax-highlighting-code-block.zip . -x '*wp-assets*'; cd ..; echo; echo \"ZIP of build: $(pwd)/syntax-highlighting-code-block.zip\"",
+    "build:zip": "if [ -e syntax-highlighting-code-block.zip ]; then rm syntax-highlighting-code-block.zip; fi; cd dist; zip -r ../syntax-highlighting-code-block.zip .; cd ..; echo; echo \"ZIP of build: $(pwd)/syntax-highlighting-code-block.zip\"",
     "deploy": "npm-run-all build deploy:*",
     "deploy:verify-versions": "php bin/verify-version-consistency.php",
     "deploy:wporg": "grunt wp_deploy",

@@ -53,7 +53,6 @@ module.exports = function (grunt) {
 				'readme.txt',
 				'LICENSE',
 				'build/*',
-				'wp-assets/*',
 			];
 
 			grunt.config.set('copy', {
