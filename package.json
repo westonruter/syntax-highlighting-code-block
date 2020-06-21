@@ -21,7 +21,6 @@
     "@wordpress/components": "^9.8.0",
     "@wordpress/editor": "^9.18.0",
     "@wordpress/element": "^2.14.0",
-    "@wordpress/escape-html": "1.8.0",
     "@wordpress/hooks": "^2.8.0",
     "@wordpress/i18n": "^3.13.0",
     "@wordpress/scripts": "^11.0.0",
