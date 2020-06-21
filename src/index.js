@@ -269,14 +269,6 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 			);
 		},
 
-		save({ attributes }) {
-			return (
-				<pre>
-					<code>{attributes.content}</code>
-				</pre>
-			);
-		},
-
 		deprecated: [
 			...(settings.deprecated || []),
 			{
