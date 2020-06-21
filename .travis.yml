@@ -22,7 +22,6 @@ cache:
 
 branches:
   only:
-    - master
     - develop
     - /^\d+\.\d+$/
 
