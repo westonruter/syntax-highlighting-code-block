@@ -163,6 +163,13 @@ function require_highlight_php_functions() {
 
 /**
  * Initialize plugin.
+ *
+ * As of Gutenberg 8.3, this must run after `init` priority 10, because at that point the core blocks are registered
+ * server-side via `gutenberg_reregister_core_block_types()`.
+ *
+ * @see gutenberg_reregister_core_block_types()
+ * @see https://github.com/WordPress/gutenberg/issues/2751
+ * @see https://github.com/WordPress/gutenberg/pull/22491
  */
 function init() {
 	if ( ! function_exists( 'register_block_type' ) ) {
@@ -174,34 +181,44 @@ function init() {
 		return;
 	}
 
-	register_block_type(
-		BLOCK_NAME,
-		[
-			'render_callback' => __NAMESPACE__ . '\render_block',
-			'attributes'      => [
-				'language'         => [
-					'type'    => 'string',
-					'default' => '',
-				],
-				'highlightedLines' => [
-					'type'    => 'string',
-					'default' => '',
-				],
-				'showLineNumbers'  => [
-					'type'    => 'boolean',
-					'default' => false,
-				],
-				'wrapLines'        => [
-					'type'    => 'boolean',
-					'default' => false,
-				],
-			],
-		]
-	);
+	$attributes = [
+		'language'         => [
+			'type'    => 'string',
+			'default' => '',
+		],
+		'highlightedLines' => [
+			'type'    => 'string',
+			'default' => '',
+		],
+		'showLineNumbers'  => [
+			'type'    => 'boolean',
+			'default' => false,
+		],
+		'wrapLines'        => [
+			'type'    => 'boolean',
+			'default' => false,
+		],
+	];
+
+	$registry = WP_Block_Type_Registry::get_instance();
+
+	if ( $registry->is_registered( BLOCK_NAME ) ) {
+		$block                  = $registry->get_registered( BLOCK_NAME );
+		$block->render_callback = __NAMESPACE__ . '\render_block';
+		$block->attributes      = array_merge( $block->attributes, $attributes );
+	} else {
+		register_block_type(
+			BLOCK_NAME,
+			[
+				'render_callback' => __NAMESPACE__ . '\render_block',
+				'attributes'      => $attributes,
+			]
+		);
+	}
 
 	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
+add_action( 'init', __NAMESPACE__ . '\init', 100 );
 
 /**
  * Print admin notice when plugin installed from source but no build being performed.
