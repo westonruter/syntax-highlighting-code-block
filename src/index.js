@@ -25,6 +25,7 @@ import * as BlockEditor from '@wordpress/block-editor';
  * Internal dependencies
  */
 import languagesNames from './language-names';
+import { escape } from './utils';
 
 /**
  * Extend code block with syntax highlighting.
@@ -272,7 +273,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		save({ attributes }) {
 			return (
 				<pre>
-					<code>{attributes.content}</code>
+					<code>{escape(attributes.content)}</code>
 				</pre>
 			);
 		},
