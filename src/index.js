@@ -18,7 +18,7 @@ import {
 	PanelBody,
 	PanelRow,
 } from '@wordpress/components';
-import { Fragment, createRef, useEffect, useState } from '@wordpress/element';
+import { Fragment, useRef, useEffect, useState } from '@wordpress/element';
 import * as BlockEditor from '@wordpress/block-editor';
 
 /**
@@ -46,7 +46,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 
 	const HighlightablePlainText = (props_) => {
 		const { highlightedLines, ...props } = props_;
-		const plainTextRef = createRef();
+		const plainTextRef = useRef();
 		const [styles, setStyles] = useState({});
 
 		useEffect(() => {
