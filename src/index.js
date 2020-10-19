@@ -22,6 +22,7 @@ import {
 	__experimentalBlock as ExperimentalBlock, // WP 5.5
 	useBlockProps,
 	PlainText,
+	RichText,
 	InspectorControls,
 } from '@wordpress/block-editor';
 
@@ -53,20 +54,20 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		ExperimentalBlock &&
 		ExperimentalBlock.pre;
 
-	const HighlightablePlainText = (props_) => {
+	const HighlightableTextArea = (props_) => {
 		const { highlightedLines, ...props } = props_;
-		const plainTextRef = useRef();
+		const textAreaRef = useRef();
 		const [styles, setStyles] = useState({});
 
 		useEffect(() => {
-			if (plainTextRef.current !== null) {
-				let element = plainTextRef.current;
+			if (textAreaRef.current !== null) {
+				let element = textAreaRef.current;
 
 				// In Gutenberg 7.8 and below, the DOM element was stored in a property with the name of the node type.
 				// In 7.9+, the DOM element is now stored in `current`. This block is here for backward-compatibility
 				// with older Gutenberg versions.
 				if (element.hasOwnProperty('textarea')) {
-					element = plainTextRef.current.textarea;
+					element = textAreaRef.current.textarea;
 				}
 
 				const computedStyles = window.getComputedStyle(element);
@@ -83,9 +84,14 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 			}
 		}, []);
 
+		const TextArea =
+			settings.attributes.content.source === 'html'
+				? RichText
+				: PlainText;
+
 		return (
 			<Fragment>
-				<PlainText ref={plainTextRef} {...props} />
+				<TextArea ref={textAreaRef} {...props} />
 				<div
 					aria-hidden={true}
 					className="code-block-overlay"
@@ -181,7 +187,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				(languageOption) => languageOption.label.toLowerCase()
 			);
 
-			const plainTextProps = {
+			const textAreaProps = {
 				value: attributes.content || '',
 				highlightedLines: parseHighlightedLines(
 					attributes.highlightedLines
@@ -202,15 +208,15 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				useLightBlockWrapper ? (
 					// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
 					<ExperimentalBlock.pre>
-						<HighlightablePlainText
-							{...plainTextProps}
+						<HighlightableTextArea
+							{...textAreaProps}
 							__experimentalVersion={2}
 							tagName="code"
 						/>
 					</ExperimentalBlock.pre>
 				) : (
 					<div key="editor-wrapper" className={className}>
-						<HighlightablePlainText {...plainTextProps} />
+						<HighlightableTextArea {...textAreaProps} />
 					</div>
 				);
 
@@ -282,7 +288,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 					</InspectorControls>
 					{blockProps ? (
 						<pre {...blockProps}>
-							<HighlightablePlainText {...plainTextProps} />
+							<HighlightableTextArea {...textAreaProps} />
 						</pre>
 					) : (
 						<OldLightBlock />
