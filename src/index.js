@@ -10,7 +10,6 @@ import { sortBy } from 'lodash';
  */
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
-import { PlainText, InspectorControls } from '@wordpress/editor';
 import {
 	SelectControl,
 	TextControl,
@@ -19,7 +18,12 @@ import {
 	PanelRow,
 } from '@wordpress/components';
 import { Fragment, useRef, useEffect, useState } from '@wordpress/element';
-import * as BlockEditor from '@wordpress/block-editor';
+import {
+	__experimentalBlock as ExperimentalBlock, // WP 5.5
+	useBlockProps,
+	PlainText,
+	InspectorControls,
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -38,11 +42,16 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		return settings;
 	}
 
+	// WP 5.5 required using a lightBlockWrapper
+	// This was replaced by the blockProps above in WP 5.6
+	// to support older versions of WordPress after 5.6 release
+	// the following is needed with the OldLightBlock ternary
+	// providing the additional support for WP prior to 5.5
 	const useLightBlockWrapper =
 		settings.supports &&
 		settings.supports.lightBlockWrapper &&
-		BlockEditor.__experimentalBlock &&
-		BlockEditor.__experimentalBlock.pre;
+		ExperimentalBlock &&
+		ExperimentalBlock.pre;
 
 	const HighlightablePlainText = (props_) => {
 		const { highlightedLines, ...props } = props_;
@@ -186,6 +195,25 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				].join(' '),
 			};
 
+			// GB 9.2, WP 5.6
+			const blockProps = useBlockProps && useBlockProps();
+
+			const OldLightBlock = () =>
+				useLightBlockWrapper ? (
+					// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
+					<ExperimentalBlock.pre>
+						<HighlightablePlainText
+							{...plainTextProps}
+							__experimentalVersion={2}
+							tagName="code"
+						/>
+					</ExperimentalBlock.pre>
+				) : (
+					<div key="editor-wrapper" className={className}>
+						<HighlightablePlainText {...plainTextProps} />
+					</div>
+				);
+
 			return (
 				<Fragment>
 					<InspectorControls key="controls">
@@ -252,25 +280,26 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 							</PanelRow>
 						</PanelBody>
 					</InspectorControls>
-					{useLightBlockWrapper ? (
-						// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
-						<BlockEditor.__experimentalBlock.pre>
-							<HighlightablePlainText
-								{...plainTextProps}
-								__experimentalVersion={2}
-								tagName="code"
-							/>
-						</BlockEditor.__experimentalBlock.pre>
-					) : (
-						<div key="editor-wrapper" className={className}>
+					{blockProps ? (
+						<pre {...blockProps}>
 							<HighlightablePlainText {...plainTextProps} />
-						</div>
+						</pre>
+					) : (
+						<OldLightBlock />
 					)}
 				</Fragment>
 			);
 		},
 
 		save({ attributes }) {
+			if (useBlockProps) {
+				return (
+					<pre {...useBlockProps.save({ title: attributes.title })}>
+						<code>{escape(attributes.content)}</code>
+					</pre>
+				);
+			}
+
 			return (
 				<pre>
 					<code>{escape(attributes.content)}</code>
