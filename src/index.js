@@ -292,17 +292,22 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		},
 
 		save({ attributes }) {
+			const innerText =
+				settings.attributes.content.source === 'html'
+					? attributes.content
+					: escape(attributes.content);
+
 			if (useBlockProps) {
 				return (
 					<pre {...useBlockProps.save({ title: attributes.title })}>
-						<code>{escape(attributes.content)}</code>
+						<code>{innerText}</code>
 					</pre>
 				);
 			}
 
 			return (
 				<pre>
-					<code>{escape(attributes.content)}</code>
+					<code>{innerText}</code>
 				</pre>
 			);
 		},
