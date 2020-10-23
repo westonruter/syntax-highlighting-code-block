@@ -20,7 +20,7 @@ import {
 import { Fragment, useRef, useEffect, useState } from '@wordpress/element';
 import {
 	__experimentalBlock as ExperimentalBlock, // WP 5.5
-	useBlockProps,
+	useBlockProps, // GB 9.2, WP 5.6
 	PlainText,
 	RichText,
 	InspectorControls,
@@ -30,7 +30,7 @@ import {
  * Internal dependencies
  */
 import languagesNames from './language-names';
-import { escape } from './utils';
+import { escape, escapeRichText } from './utils';
 
 /**
  * Extend code block with syntax highlighting.
@@ -84,10 +84,11 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 			}
 		}, []);
 
-		const TextArea =
-			settings.attributes.content.source === 'html'
-				? RichText
-				: PlainText;
+		const TextArea = useBlockProps ? RichText : PlainText;
+
+		if (useBlockProps) {
+			props.preserveWhiteSpace = true;
+		}
 
 		return (
 			<Fragment>
@@ -201,9 +202,6 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				].join(' '),
 			};
 
-			// GB 9.2, WP 5.6
-			const blockProps = useBlockProps && useBlockProps();
-
 			const OldLightBlock = () =>
 				useLightBlockWrapper ? (
 					// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
@@ -286,8 +284,8 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 							</PanelRow>
 						</PanelBody>
 					</InspectorControls>
-					{blockProps ? (
-						<pre {...blockProps}>
+					{useBlockProps ? (
+						<pre {...useBlockProps()}>
 							<HighlightableTextArea {...textAreaProps} />
 						</pre>
 					) : (
@@ -298,22 +296,21 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		},
 
 		save({ attributes }) {
-			const innerText =
-				settings.attributes.content.source === 'html'
-					? attributes.content
-					: escape(attributes.content);
-
+			// Needs to be maintained with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/save.js>.
 			if (useBlockProps) {
 				return (
-					<pre {...useBlockProps.save({ title: attributes.title })}>
-						<code>{innerText}</code>
+					<pre {...useBlockProps.save()}>
+						<RichText.Content
+							tagName="code"
+							value={escapeRichText(attributes.content)}
+						/>
 					</pre>
 				);
 			}
 
 			return (
 				<pre>
-					<code>{innerText}</code>
+					<code>{escape(attributes.content)}</code>
 				</pre>
 			);
 		},

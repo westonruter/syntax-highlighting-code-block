@@ -25,6 +25,23 @@ export function escape(content) {
 }
 
 /**
+ * Escapes ampersands, shortcodes, and links (for rich text).
+ *
+ * This is the version copied from Gutenberg v9.2.1.
+ *
+ * @see https://github.com/WordPress/gutenberg/blob/07b3ab2b4fb5e3c8d8b6e235b24cefbe779050a9/packages/block-library/src/code/utils.js
+ *
+ * @param {string} content The content of a code block.
+ * @return {string} The given content with some characters escaped.
+ */
+export function escapeRichText(content) {
+	return flow(
+		escapeOpeningSquareBrackets,
+		escapeProtocolInIsolatedUrls
+	)(content || '');
+}
+
+/**
  * Returns the given content with all opening shortcode characters converted
  * into their HTML entity counterpart (i.e. [ => &#91;). For instance, a
  * shortcode like [embed] becomes &#91;embed]
