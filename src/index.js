@@ -43,17 +43,6 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		return settings;
 	}
 
-	// WP 5.5 required using a lightBlockWrapper
-	// This was replaced by the blockProps above in WP 5.6
-	// to support older versions of WordPress after 5.6 release
-	// the following is needed with the OldLightBlock ternary
-	// providing the additional support for WP prior to 5.5
-	const useLightBlockWrapper =
-		settings.supports &&
-		settings.supports.lightBlockWrapper &&
-		ExperimentalBlock &&
-		ExperimentalBlock.pre;
-
 	const HighlightableTextArea = (props_) => {
 		const { highlightedLines, ...props } = props_;
 		const textAreaRef = useRef();
@@ -202,22 +191,6 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				].join(' '),
 			};
 
-			const OldLightBlock = () =>
-				useLightBlockWrapper ? (
-					// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
-					<ExperimentalBlock.pre>
-						<HighlightableTextArea
-							{...textAreaProps}
-							__experimentalVersion={2}
-							tagName="code"
-						/>
-					</ExperimentalBlock.pre>
-				) : (
-					<div key="editor-wrapper" className={className}>
-						<HighlightableTextArea {...textAreaProps} />
-					</div>
-				);
-
 			return (
 				<Fragment>
 					<InspectorControls key="controls">
@@ -284,19 +257,46 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 							</PanelRow>
 						</PanelBody>
 					</InspectorControls>
-					{useBlockProps ? (
-						<pre {...useBlockProps()}>
-							<HighlightableTextArea {...textAreaProps} />
-						</pre>
-					) : (
-						<OldLightBlock />
-					)}
+					{(() => {
+						if (useBlockProps) {
+							// Must be kept in sync with Gutenberg 9.2+: <https://github.com/WordPress/gutenberg/blob/v9.2.0/packages/block-library/src/code/edit.js>.
+							return (
+								<pre {...useBlockProps()}>
+									<HighlightableTextArea {...textAreaProps} />
+								</pre>
+							);
+						} else if (
+							// WP 5.5 required using a lightBlockWrapper, which was replaced by the blockProps above in WP 5.6.
+							settings.supports &&
+							settings.supports.lightBlockWrapper &&
+							ExperimentalBlock &&
+							ExperimentalBlock.pre
+						) {
+							// From Gutenberg 7.8...9.0: <https://github.com/WordPress/gutenberg/blob/v7.8.0/packages/block-library/src/code/edit.js>.
+							return (
+								<ExperimentalBlock.pre>
+									<HighlightableTextArea
+										{...textAreaProps}
+										__experimentalVersion={2}
+										tagName="code"
+									/>
+								</ExperimentalBlock.pre>
+							);
+						}
+
+						// For WordPress versions older than 5.5 (Gutenberg<7.8): <https://github.com/WordPress/gutenberg/blob/v7.7.0/packages/block-library/src/code/edit.js>.
+						return (
+							<div key="editor-wrapper" className={className}>
+								<HighlightableTextArea {...textAreaProps} />
+							</div>
+						);
+					})()}
 				</Fragment>
 			);
 		},
 
 		save({ attributes }) {
-			// Needs to be maintained with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/save.js>.
+			// From Gutenberg v9.2+: <https://github.com/WordPress/gutenberg/blob/v9.2.0/packages/block-library/src/code/save.js>.
 			if (useBlockProps) {
 				return (
 					<pre {...useBlockProps.save()}>
@@ -308,6 +308,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				);
 			}
 
+			// From Gutenberg v9.0 and before: <https://github.com/WordPress/gutenberg/blob/v9.0.0/packages/block-library/src/code/save.js>.
 			return (
 				<pre>
 					<code>{escape(attributes.content)}</code>
