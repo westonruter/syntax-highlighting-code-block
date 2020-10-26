@@ -11,12 +11,33 @@ import { flow } from 'lodash';
 import { escapeEditableHTML } from '@wordpress/escape-html';
 
 /**
- * Escapes ampersands, shortcodes, and links.
+ * Escapes ampersands, shortcodes, and links (for rich text).
+ *
+ * This is the escape() function used in the Code block starting with v9.1.0.
+ *
+ * @see https://github.com/WordPress/gutenberg/blob/v9.1.0/packages/block-library/src/code/utils.js
  *
  * @param {string} content The content of a code block.
  * @return {string} The given content with some characters escaped.
  */
 export function escape(content) {
+	return flow(
+		escapeOpeningSquareBrackets,
+		escapeProtocolInIsolatedUrls
+	)(content || '');
+}
+
+/**
+ * Escapes ampersands, shortcodes, and links.
+ *
+ * This is the escape() function used in the Code block in Gutenberg v6.9.0 until v9.0.0.
+ *
+ * @see https://github.com/WordPress/gutenberg/blob/v9.0.0/packages/block-library/src/code/utils.js
+ *
+ * @param {string} content The content of a code block.
+ * @return {string} The given content with some characters escaped.
+ */
+export function escapeIncludingEditableHTML(content) {
 	return flow(
 		escapeEditableHTML,
 		escapeOpeningSquareBrackets,
@@ -25,17 +46,18 @@ export function escape(content) {
 }
 
 /**
- * Escapes ampersands, shortcodes, and links (for rich text).
+ * Escapes ampersands, shortcodes, and links.
  *
- * This is the version copied from Gutenberg v9.2.1.
+ * This is the escape() function used in the Code block until Gutenberg v6.8.0.
  *
- * @see https://github.com/WordPress/gutenberg/blob/07b3ab2b4fb5e3c8d8b6e235b24cefbe779050a9/packages/block-library/src/code/utils.js
+ * @see https://github.com/WordPress/gutenberg/blob/v6.8.0/packages/block-library/src/code/utils.js
  *
  * @param {string} content The content of a code block.
  * @return {string} The given content with some characters escaped.
  */
-export function escapeRichText(content) {
+export function escapeIncludingAmpersands(content) {
 	return flow(
+		escapeAmpersands,
 		escapeOpeningSquareBrackets,
 		escapeProtocolInIsolatedUrls
 	)(content || '');
@@ -77,4 +99,20 @@ function escapeProtocolInIsolatedUrls(content) {
 		/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m,
 		'$1&#47;&#47;$2'
 	);
+}
+
+/**
+ * Returns the given content with all its ampersand characters converted
+ * into their HTML entity counterpart (i.e. & => &amp;)
+ *
+ * This was removed from Gutenberg in v6.9.0.
+ *
+ * @see https://github.com/WordPress/gutenberg/blob/v6.8.0/packages/block-library/src/code/utils.js
+ *
+ * @param {string}  content The content of a code block.
+ * @return {string} The given content with its ampersands converted into
+ *                  their HTML entity counterpart (i.e. & => &amp;)
+ */
+function escapeAmpersands(content) {
+	return content.replace(/&/g, '&amp;');
 }

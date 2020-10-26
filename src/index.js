@@ -25,12 +25,17 @@ import {
 	RichText,
 	InspectorControls,
 } from '@wordpress/block-editor';
+import { escapeEditableHTML } from '@wordpress/escape-html';
 
 /**
  * Internal dependencies
  */
 import languagesNames from './language-names';
-import { escape, escapeRichText } from './utils';
+import {
+	escape,
+	escapeIncludingEditableHTML,
+	escapeIncludingAmpersands,
+} from './utils';
 
 /**
  * Extend code block with syntax highlighting.
@@ -296,22 +301,31 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		},
 
 		save({ attributes }) {
-			// From Gutenberg v9.2+: <https://github.com/WordPress/gutenberg/blob/v9.2.0/packages/block-library/src/code/save.js>.
 			if (useBlockProps) {
+				// From Gutenberg v9.2+ (WordPress 5.6+): <https://github.com/WordPress/gutenberg/blob/v9.2.0/packages/block-library/src/code/save.js>.
 				return (
 					<pre {...useBlockProps.save()}>
 						<RichText.Content
 							tagName="code"
-							value={escapeRichText(attributes.content)}
+							value={escape(attributes.content)}
 						/>
+					</pre>
+				);
+			} else if (escapeEditableHTML instanceof Function) {
+				// From Gutenberg v6.9.0 until v9.0.0 (WordPress 5.4 & 5.5): <https://github.com/WordPress/gutenberg/blob/v9.0.0/packages/block-library/src/code/save.js>.
+				return (
+					<pre>
+						<code>
+							{escapeIncludingEditableHTML(attributes.content)}
+						</code>
 					</pre>
 				);
 			}
 
-			// From Gutenberg v9.0 and before: <https://github.com/WordPress/gutenberg/blob/v9.0.0/packages/block-library/src/code/save.js>.
+			// From Gutenberg v9.0 (WordPress 5.3) and before: <https://github.com/WordPress/gutenberg/blob/v9.0.0/packages/block-library/src/code/save.js>.
 			return (
 				<pre>
-					<code>{escape(attributes.content)}</code>
+					<code>{escapeIncludingAmpersands(attributes.content)}</code>
 				</pre>
 			);
 		},
