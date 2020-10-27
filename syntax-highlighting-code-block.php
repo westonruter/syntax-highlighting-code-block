@@ -404,9 +404,10 @@ function get_language_names() {
  * @param string $pre_start_tag  The `<pre>` start tag.
  * @param string $code_start_tag The `<code>` start tag.
  * @param array  $attributes     Attributes.
+ * @param string $content        Content.
  * @return string Injected markup.
  */
-function inject_markup( $pre_start_tag, $code_start_tag, $attributes ) {
+function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content ) {
 	$added_classes = 'hljs';
 
 	if ( $attributes['language'] ) {
@@ -441,20 +442,21 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes ) {
 		);
 	}
 
-	$language_names = get_language_names();
-	$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
+	$end_tags = '</code></div>';
 
-	$pre_start_tag = str_replace(
-		'>',
-		sprintf(
-			' data-language-slug="%s" data-language-name="%s">',
-			esc_attr( $attributes['language'] ),
-			esc_attr( $language_name )
-		),
-		$pre_start_tag
-	);
+	if ( ! empty( $attributes['language'] ) ) {
+		$language_names = get_language_names();
+		$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
+		$end_tags      .= sprintf(
+			'<small class="shcb-language"><span class="shcb-language__label">%s</span> <span class="shcb-language__name">%s</span> <span class="shcb-language__slug">%s</span></small>',
+			esc_html__( 'Code language:', 'syntax-highlighting-code-block' ),
+			esc_attr( $language_name ),
+			esc_attr( $attributes['language'] )
+		);
+	}
+	$end_tags .= '</pre>';
 
-	return $pre_start_tag . get_styles( $attributes ) . '<div>' . $code_start_tag;
+	return $pre_start_tag . get_styles( $attributes ) . '<div>' . $code_start_tag . $content . $end_tags;
 }
 
 /**
@@ -483,8 +485,6 @@ function render_block( $attributes, $content ) {
 		unset( $attributes['showLines'] );
 	}
 
-	$end_tags = '</code></div></pre>';
-
 	/**
 	 * Filters the list of languages that are used for auto-detection.
 	 *
@@ -496,7 +496,7 @@ function render_block( $attributes, $content ) {
 	$highlighted   = get_transient( $transient_key );
 
 	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
-		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'] ) . $highlighted['content'] . $end_tags;
+		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'], $highlighted['content'] );
 	}
 
 	try {
@@ -553,7 +553,7 @@ function render_block( $attributes, $content ) {
 			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
 		}
 
-		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes ) . $content . $end_tags;
+		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes, $content );
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',

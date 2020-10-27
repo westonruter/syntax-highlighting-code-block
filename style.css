@@ -7,6 +7,10 @@
 	overflow: auto;
 }
 
+.shcb-language {
+	display: none;
+}
+
 .hljs {
 	box-sizing: border-box;
 }
