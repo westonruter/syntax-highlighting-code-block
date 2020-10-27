@@ -48,6 +48,7 @@ module.exports = function (grunt) {
 
 			const paths = [
 				'syntax-highlighting-code-block.php',
+				'language-names.php',
 				'editor-styles.css',
 				'style.css',
 				'readme.txt',

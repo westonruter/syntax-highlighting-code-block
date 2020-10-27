@@ -22,7 +22,7 @@ npm install --save-dev "highlightjs/highlight.js#$current_highlight_js_version"
 
 php bin/generate-language-names.php
 
-git add composer.json composer.lock package-lock.json package.json src/language-names.js
+git add composer.json composer.lock package-lock.json package.json language-names.php
 
 git status
 
