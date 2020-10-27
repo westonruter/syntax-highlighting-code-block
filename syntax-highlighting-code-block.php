@@ -285,10 +285,9 @@ function enqueue_editor_assets() {
 		'before'
 	);
 
-	$language_names = require __DIR__ . '/language-names.php';
 	wp_add_inline_script(
 		$script_handle,
-		sprintf( 'const syntaxHighlightingCodeBlockLanguageNames = %s;', wp_json_encode( $language_names ) ),
+		sprintf( 'const syntaxHighlightingCodeBlockLanguageNames = %s;', wp_json_encode( get_language_names() ) ),
 		'before'
 	);
 }
@@ -391,6 +390,15 @@ function get_styles( $attributes ) {
 }
 
 /**
+ * Language names.
+ *
+ * @return array Mapping slug to name.
+ */
+function get_language_names() {
+	return require __DIR__ . '/language-names.php';
+}
+
+/**
  * Inject class names and styles into the
  *
  * @param string $pre_start_tag  The `<pre>` start tag.
@@ -417,9 +425,18 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes ) {
 		$added_classes .= ' shcb-wrap-lines';
 	}
 
+	$language_names = get_language_names();
+	$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
+
+	$added_attributes = sprintf(
+		' data-language-slug="%s" data-language-name="%s"',
+		esc_attr( $attributes['language'] ),
+		esc_attr( $language_name )
+	);
+
 	$code_start_tag = preg_replace(
-		'/(<code[^>]*class=["\'])/',
-		'$1 ' . esc_attr( $added_classes ),
+		'/(<code[^>]*)(\sclass=")/',
+		'$1' . $added_attributes . '$2' . esc_attr( $added_classes ) . ' ',
 		$code_start_tag,
 		1,
 		$count
@@ -427,7 +444,7 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes ) {
 	if ( 0 === $count ) {
 		$code_start_tag = preg_replace(
 			'/(?<=<code\b)/',
-			sprintf( ' class="%s"', esc_attr( $added_classes ) ),
+			sprintf( '%s class="%s"', $added_attributes, esc_attr( $added_classes ) ),
 			$code_start_tag,
 			1
 		);
