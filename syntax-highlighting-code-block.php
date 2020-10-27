@@ -447,11 +447,24 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 	if ( ! empty( $attributes['language'] ) ) {
 		$language_names = get_language_names();
 		$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
-		$end_tags      .= sprintf(
+
+		// Add the language info to markup with semantic label.
+		$end_tags .= sprintf(
 			'<small class="shcb-language"><span class="shcb-language__label">%s</span> <span class="shcb-language__name">%s</span> <span class="shcb-language__paren">(</span><span class="shcb-language__slug">%s</span><span class="shcb-language__paren">)</span></small>',
 			esc_html__( 'Code language:', 'syntax-highlighting-code-block' ),
-			esc_attr( $language_name ),
-			esc_attr( $attributes['language'] )
+			esc_html( $language_name ),
+			esc_html( $attributes['language'] )
+		);
+
+		// Also include the language in data attributes on the root <pre> element for maximum styling flexibility.
+		$pre_start_tag = str_replace(
+			'>',
+			sprintf(
+				' data-shcb-language-name="%s" data-shcb-language-slug="%s">',
+				esc_attr( $language_name ),
+				esc_attr( $attributes['language'] )
+			),
+			$pre_start_tag
 		);
 	}
 	$end_tags .= '</pre>';
