@@ -448,7 +448,7 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 		$language_names = get_language_names();
 		$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
 		$end_tags      .= sprintf(
-			'<small class="shcb-language"><span class="shcb-language__label">%s</span> <span class="shcb-language__name">%s</span> <span class="shcb-language__slug">%s</span></small>',
+			'<small class="shcb-language"><span class="shcb-language__label">%s</span> <span class="shcb-language__name">%s</span> <span class="shcb-language__paren">(</span><span class="shcb-language__slug">%s</span><span class="shcb-language__paren">)</span></small>',
 			esc_html__( 'Code language:', 'syntax-highlighting-code-block' ),
 			esc_attr( $language_name ),
 			esc_attr( $attributes['language'] )
