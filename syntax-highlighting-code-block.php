@@ -425,18 +425,9 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes ) {
 		$added_classes .= ' shcb-wrap-lines';
 	}
 
-	$language_names = get_language_names();
-	$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
-
-	$added_attributes = sprintf(
-		' data-language-slug="%s" data-language-name="%s"',
-		esc_attr( $attributes['language'] ),
-		esc_attr( $language_name )
-	);
-
 	$code_start_tag = preg_replace(
-		'/(<code[^>]*)(\sclass=")/',
-		'$1' . $added_attributes . '$2' . esc_attr( $added_classes ) . ' ',
+		'/(<code[^>]*\sclass=")/',
+		'$1' . esc_attr( $added_classes ) . ' ',
 		$code_start_tag,
 		1,
 		$count
@@ -444,11 +435,24 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes ) {
 	if ( 0 === $count ) {
 		$code_start_tag = preg_replace(
 			'/(?<=<code\b)/',
-			sprintf( '%s class="%s"', $added_attributes, esc_attr( $added_classes ) ),
+			sprintf( ' class="%s"', esc_attr( $added_classes ) ),
 			$code_start_tag,
 			1
 		);
 	}
+
+	$language_names = get_language_names();
+	$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
+
+	$pre_start_tag = str_replace(
+		'>',
+		sprintf(
+			' data-language-slug="%s" data-language-name="%s">',
+			esc_attr( $attributes['language'] ),
+			esc_attr( $language_name )
+		),
+		$pre_start_tag
+	);
 
 	return $pre_start_tag . get_styles( $attributes ) . '<div>' . $code_start_tag;
 }
