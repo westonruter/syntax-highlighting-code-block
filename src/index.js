@@ -10,7 +10,6 @@ import { sortBy } from 'lodash';
  */
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
-import { PlainText, InspectorControls } from '@wordpress/editor';
 import {
 	SelectControl,
 	TextControl,
@@ -19,13 +18,24 @@ import {
 	PanelRow,
 } from '@wordpress/components';
 import { Fragment, useRef, useEffect, useState } from '@wordpress/element';
-import * as BlockEditor from '@wordpress/block-editor';
+import {
+	__experimentalBlock as ExperimentalBlock, // WP 5.5
+	useBlockProps, // GB 9.2, WP 5.6
+	PlainText,
+	RichText,
+	InspectorControls,
+} from '@wordpress/block-editor';
+import { escapeEditableHTML } from '@wordpress/escape-html';
 
 /**
  * Internal dependencies
  */
 import languagesNames from './language-names';
-import { escape } from './utils';
+import {
+	escape,
+	escapeIncludingEditableHTML,
+	escapeIncludingAmpersands,
+} from './utils';
 
 /**
  * Extend code block with syntax highlighting.
@@ -38,26 +48,20 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		return settings;
 	}
 
-	const useLightBlockWrapper =
-		settings.supports &&
-		settings.supports.lightBlockWrapper &&
-		BlockEditor.__experimentalBlock &&
-		BlockEditor.__experimentalBlock.pre;
-
-	const HighlightablePlainText = (props_) => {
+	const HighlightableTextArea = (props_) => {
 		const { highlightedLines, ...props } = props_;
-		const plainTextRef = useRef();
+		const textAreaRef = useRef();
 		const [styles, setStyles] = useState({});
 
 		useEffect(() => {
-			if (plainTextRef.current !== null) {
-				let element = plainTextRef.current;
+			if (textAreaRef.current !== null) {
+				let element = textAreaRef.current;
 
 				// In Gutenberg 7.8 and below, the DOM element was stored in a property with the name of the node type.
 				// In 7.9+, the DOM element is now stored in `current`. This block is here for backward-compatibility
 				// with older Gutenberg versions.
 				if (element.hasOwnProperty('textarea')) {
-					element = plainTextRef.current.textarea;
+					element = textAreaRef.current.textarea;
 				}
 
 				const computedStyles = window.getComputedStyle(element);
@@ -74,9 +78,15 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 			}
 		}, []);
 
+		const TextArea = useBlockProps ? RichText : PlainText;
+
+		if (useBlockProps) {
+			props.preserveWhiteSpace = true;
+		}
+
 		return (
 			<Fragment>
-				<PlainText ref={plainTextRef} {...props} />
+				<TextArea ref={textAreaRef} {...props} />
 				<div
 					aria-hidden={true}
 					className="code-block-overlay"
@@ -172,7 +182,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				(languageOption) => languageOption.label.toLowerCase()
 			);
 
-			const plainTextProps = {
+			const textAreaProps = {
 				value: attributes.content || '',
 				highlightedLines: parseHighlightedLines(
 					attributes.highlightedLines
@@ -252,28 +262,70 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 							</PanelRow>
 						</PanelBody>
 					</InspectorControls>
-					{useLightBlockWrapper ? (
-						// This must be kept in sync with <https://github.com/WordPress/gutenberg/blob/master/packages/block-library/src/code/edit.js>.
-						<BlockEditor.__experimentalBlock.pre>
-							<HighlightablePlainText
-								{...plainTextProps}
-								__experimentalVersion={2}
-								tagName="code"
-							/>
-						</BlockEditor.__experimentalBlock.pre>
-					) : (
-						<div key="editor-wrapper" className={className}>
-							<HighlightablePlainText {...plainTextProps} />
-						</div>
-					)}
+					{(() => {
+						if (useBlockProps) {
+							// Must be kept in sync with Gutenberg 9.2+: <https://github.com/WordPress/gutenberg/blob/v9.2.0/packages/block-library/src/code/edit.js>.
+							return (
+								<pre {...useBlockProps()}>
+									<HighlightableTextArea {...textAreaProps} />
+								</pre>
+							);
+						} else if (
+							// WP 5.5 required using a lightBlockWrapper, which was replaced by the blockProps above in WP 5.6.
+							settings.supports &&
+							settings.supports.lightBlockWrapper &&
+							ExperimentalBlock &&
+							ExperimentalBlock.pre
+						) {
+							// From Gutenberg 7.8...9.0: <https://github.com/WordPress/gutenberg/blob/v7.8.0/packages/block-library/src/code/edit.js>.
+							return (
+								<ExperimentalBlock.pre>
+									<HighlightableTextArea
+										{...textAreaProps}
+										__experimentalVersion={2}
+										tagName="code"
+									/>
+								</ExperimentalBlock.pre>
+							);
+						}
+
+						// For WordPress versions older than 5.5 (Gutenberg<7.8): <https://github.com/WordPress/gutenberg/blob/v7.7.0/packages/block-library/src/code/edit.js>.
+						return (
+							<div key="editor-wrapper" className={className}>
+								<HighlightableTextArea {...textAreaProps} />
+							</div>
+						);
+					})()}
 				</Fragment>
 			);
 		},
 
 		save({ attributes }) {
+			if (useBlockProps) {
+				// From Gutenberg v9.2+ (WordPress 5.6+): <https://github.com/WordPress/gutenberg/blob/v9.2.0/packages/block-library/src/code/save.js>.
+				return (
+					<pre {...useBlockProps.save()}>
+						<RichText.Content
+							tagName="code"
+							value={escape(attributes.content)}
+						/>
+					</pre>
+				);
+			} else if (escapeEditableHTML instanceof Function) {
+				// From Gutenberg v6.9.0 until v9.0.0 (WordPress 5.4 & 5.5): <https://github.com/WordPress/gutenberg/blob/v9.0.0/packages/block-library/src/code/save.js>.
+				return (
+					<pre>
+						<code>
+							{escapeIncludingEditableHTML(attributes.content)}
+						</code>
+					</pre>
+				);
+			}
+
+			// From Gutenberg v9.0 (WordPress 5.3) and before: <https://github.com/WordPress/gutenberg/blob/v9.0.0/packages/block-library/src/code/save.js>.
 			return (
 				<pre>
-					<code>{escape(attributes.content)}</code>
+					<code>{escapeIncludingAmpersands(attributes.content)}</code>
 				</pre>
 			);
 		},
