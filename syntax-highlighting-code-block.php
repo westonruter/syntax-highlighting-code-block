@@ -284,6 +284,13 @@ function enqueue_editor_assets() {
 		sprintf( 'const syntaxHighlightingCodeBlockType = %s;', wp_json_encode( $data ) ),
 		'before'
 	);
+
+	$language_names = require __DIR__ . '/language-names.php';
+	wp_add_inline_script(
+		$script_handle,
+		sprintf( 'const syntaxHighlightingCodeBlockLanguageNames = %s;', wp_json_encode( $language_names ) ),
+		'before'
+	);
 }
 
 /**

@@ -1,4 +1,4 @@
-/* global syntaxHighlightingCodeBlockType */
+/* global syntaxHighlightingCodeBlockType, syntaxHighlightingCodeBlockLanguageNames */
 
 /**
  * External dependencies
@@ -30,12 +30,13 @@ import { escapeEditableHTML } from '@wordpress/escape-html';
 /**
  * Internal dependencies
  */
-import languagesNames from './language-names';
 import {
 	escape,
 	escapeIncludingEditableHTML,
 	escapeIncludingAmpersands,
 } from './utils';
+
+const languageNames = syntaxHighlightingCodeBlockLanguageNames;
 
 /**
  * Extend code block with syntax highlighting.
@@ -175,7 +176,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 			};
 
 			const sortedLanguageNames = sortBy(
-				Object.entries(languagesNames).map(([value, label]) => ({
+				Object.entries(languageNames).map(([value, label]) => ({
 					label,
 					value,
 				})),
