@@ -686,7 +686,7 @@ function customize_register( $wp_customize ) {
 				'type'        => 'select',
 				'section'     => 'colors',
 				'label'       => __( 'Syntax Highlighting Theme', 'syntax-highlighting-code-block' ),
-				'description' => __( 'Preview the theme by navigating to a page with a code block to see the different themes in action.', 'syntax-highlighting-code-block' ),
+				'description' => __( 'Preview the theme by navigating to a page with a Code block to see the different themes in action.', 'syntax-highlighting-code-block' ),
 				'choices'     => $choices,
 			]
 		);
@@ -708,13 +708,13 @@ function customize_register( $wp_customize ) {
 					'section'     => 'colors',
 					'settings'    => 'syntax_highlighting[highlighted_line_background_color]',
 					'label'       => __( 'Highlighted Line Color', 'syntax-highlighting-code-block' ),
-					'description' => __( 'The background color of a highlighted line.', 'syntax-highlighting-code-block' ),
+					'description' => __( 'The background color of a highlighted line in a Code block.', 'syntax-highlighting-code-block' ),
 				]
 			)
 		);
 	}
 }
-add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
+add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 
 /**
  * Override the post value for the highlighted line background color when the theme has been highlighted.
