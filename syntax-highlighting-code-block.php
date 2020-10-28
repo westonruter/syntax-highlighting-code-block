@@ -332,6 +332,20 @@ function register_styles( WP_Styles $styles ) {
 }
 
 /**
+ * Determines whether styling is enabled.
+ *
+ * @return bool Styling.
+ */
+function is_styling_enabled() {
+	/**
+	 * Filters whether the Syntax-highlighting Code Block's default styling is enabled.
+	 *
+	 * @param bool $enabled Default styling enabled.
+	 */
+	return (bool) apply_filters( 'syntax_highlighting_code_block_styling', true );
+}
+
+/**
  * Get styles.
  *
  * @param array $attributes Attributes.
@@ -339,6 +353,10 @@ function register_styles( WP_Styles $styles ) {
  */
 function get_styles( $attributes ) {
 	if ( is_feed() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+		return '';
+	}
+
+	if ( ! is_styling_enabled() ) {
 		return '';
 	}
 
@@ -640,6 +658,10 @@ function validate_theme_name( $validity, $input ) {
  */
 function customize_register( $wp_customize ) {
 	if ( has_filter( BLOCK_STYLE_FILTER ) && has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+		return;
+	}
+
+	if ( ! is_styling_enabled() ) {
 		return;
 	}
 
