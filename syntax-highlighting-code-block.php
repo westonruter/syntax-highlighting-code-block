@@ -332,6 +332,20 @@ function register_styles( WP_Styles $styles ) {
 }
 
 /**
+ * Determines whether styling is enabled.
+ *
+ * @return bool Styling.
+ */
+function is_styling_enabled() {
+	/**
+	 * Filters whether the Syntax-highlighting Code Block's default styling is enabled.
+	 *
+	 * @param bool $enabled Default styling enabled.
+	 */
+	return (bool) apply_filters( 'syntax_highlighting_code_block_styling', true );
+}
+
+/**
  * Get styles.
  *
  * @param array $attributes Attributes.
@@ -339,6 +353,10 @@ function register_styles( WP_Styles $styles ) {
  */
 function get_styles( $attributes ) {
 	if ( is_feed() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+		return '';
+	}
+
+	if ( ! is_styling_enabled() ) {
 		return '';
 	}
 
@@ -643,6 +661,10 @@ function customize_register( $wp_customize ) {
 		return;
 	}
 
+	if ( ! is_styling_enabled() ) {
+		return;
+	}
+
 	require_highlight_php_functions();
 
 	if ( ! has_filter( BLOCK_STYLE_FILTER ) ) {
@@ -664,7 +686,7 @@ function customize_register( $wp_customize ) {
 				'type'        => 'select',
 				'section'     => 'colors',
 				'label'       => __( 'Syntax Highlighting Theme', 'syntax-highlighting-code-block' ),
-				'description' => __( 'Preview the theme by navigating to a page with a code block to see the different themes in action.', 'syntax-highlighting-code-block' ),
+				'description' => __( 'Preview the theme by navigating to a page with a Code block to see the different themes in action.', 'syntax-highlighting-code-block' ),
 				'choices'     => $choices,
 			]
 		);
@@ -686,13 +708,13 @@ function customize_register( $wp_customize ) {
 					'section'     => 'colors',
 					'settings'    => 'syntax_highlighting[highlighted_line_background_color]',
 					'label'       => __( 'Highlighted Line Color', 'syntax-highlighting-code-block' ),
-					'description' => __( 'The background color of a highlighted line.', 'syntax-highlighting-code-block' ),
+					'description' => __( 'The background color of a highlighted line in a Code block.', 'syntax-highlighting-code-block' ),
 				]
 			)
 		);
 	}
 }
-add_action( 'customize_register', __NAMESPACE__ . '\customize_register' );
+add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 
 /**
  * Override the post value for the highlighted line background color when the theme has been highlighted.
