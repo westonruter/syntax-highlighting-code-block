@@ -22,6 +22,17 @@ textarea.shcb-plain-text.shcb-plain-text-wrap-lines {
 	white-space: pre-wrap !important;
 }
 
+/* Gutenberg 9.2+ uses a contenteditable div */
+.shcb-plain-text.rich-text {
+	white-space: pre !important;
+	overflow-x: auto !important;
+}
+
+.shcb-plain-text.rich-text.shcb-plain-text-wrap-lines {
+	white-space: pre-wrap !important;
+	overflow: auto !important;
+}
+
 .code-block-overlay {
 	height: 100%;
 	left: 0;

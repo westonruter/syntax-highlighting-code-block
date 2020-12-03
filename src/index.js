@@ -100,6 +100,18 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 							cName += ' highlighted';
 						}
 
+						if (useBlockProps) {
+							return (
+								<span
+									key={i}
+									className={cName}
+									dangerouslySetInnerHTML={{
+										__html: v || ' ',
+									}}
+								/>
+							);
+						}
+
 						return (
 							<span key={i} className={cName}>
 								{v || ' '}
