@@ -204,8 +204,8 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				placeholder: __('Write code…'),
 				'aria-label': __('Code'),
 				className: [
-					'shcb-plain-text',
-					attributes.wrapLines ? 'shcb-plain-text-wrap-lines' : '',
+					'shcb-textedit',
+					attributes.wrapLines ? 'shcb-textedit-wrap-lines' : '',
 				].join(' '),
 			};
 

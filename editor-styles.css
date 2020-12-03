@@ -1,36 +1,35 @@
-.shcb-plain-text.shcb-plain-text-wrap-lines {
+.shcb-textedit.shcb-textedit-wrap-lines {
 	overflow: auto !important;
 }
 
 /* Gutenberg 7.9+ uses a `<code>` element */
-code.shcb-plain-text {
+code.shcb-textedit {
 	white-space: pre !important;
 	overflow-x: auto !important;
 }
 
-code.shcb-plain-text.shcb-plain-text-wrap-lines {
+code.shcb-textedit.shcb-textedit-wrap-lines {
 	white-space: pre-wrap !important;
 }
 
 /* Gutenberg 7.8 and below uses a `<textarea>` element */
-textarea.shcb-plain-text {
+textarea.shcb-textedit {
 	white-space: pre !important;
 	overflow-x: auto !important;
 }
 
-textarea.shcb-plain-text.shcb-plain-text-wrap-lines {
+textarea.shcb-textedit.shcb-textedit-wrap-lines {
 	white-space: pre-wrap !important;
 }
 
 /* Gutenberg 9.2+ uses a contenteditable div */
-.shcb-plain-text.rich-text {
+.shcb-textedit.rich-text {
 	white-space: pre !important;
 	overflow-x: auto !important;
 }
 
-.shcb-plain-text.rich-text.shcb-plain-text-wrap-lines {
+.shcb-textedit.rich-text.shcb-textedit-wrap-lines {
 	white-space: pre-wrap !important;
-	overflow: auto !important;
 }
 
 .code-block-overlay {
@@ -45,7 +44,7 @@ textarea.shcb-plain-text.shcb-plain-text-wrap-lines {
 	z-index: 10;
 }
 
-.shcb-plain-text-wrap-lines + .code-block-overlay {
+.shcb-textedit-wrap-lines + .code-block-overlay {
 	white-space: pre-wrap;
 }
 
