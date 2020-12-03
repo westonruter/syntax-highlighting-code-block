@@ -19,7 +19,7 @@
   "dependencies": {},
   "devDependencies": {
     "@wordpress/components": "^11.1.2",
-    "@wordpress/editor": "^9.24.4",
+    "@wordpress/editor": "^9.24.5",
     "@wordpress/element": "^2.18.0",
     "@wordpress/escape-html": "1.10.0",
     "@wordpress/hooks": "^2.10.0",
