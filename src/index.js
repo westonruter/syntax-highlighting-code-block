@@ -77,7 +77,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 					resize: computedStyles.getPropertyValue('resize'),
 				});
 			}
-		}, []);
+		}, [props.style]);
 
 		const TextArea = useBlockProps ? RichText : PlainText;
 
@@ -265,9 +265,14 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 					</InspectorControls>
 					{(() => {
 						if (useBlockProps) {
+							const blockProps = useBlockProps();
+
+							// Copy the styles to ensure that the code-block-overlay is updated when the font size is changed in Gutenberg 9.5+.
+							textAreaProps.style = blockProps.style;
+
 							// Must be kept in sync with Gutenberg 9.2+: <https://github.com/WordPress/gutenberg/blob/v9.2.0/packages/block-library/src/code/edit.js>.
 							return (
-								<pre {...useBlockProps()}>
+								<pre {...blockProps}>
 									<HighlightableTextArea {...textAreaProps} />
 								</pre>
 							);
