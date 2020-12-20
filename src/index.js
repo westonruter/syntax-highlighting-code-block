@@ -83,6 +83,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 
 		if (useBlockProps) {
 			props.preserveWhiteSpace = true;
+			props.__unstablePastePlainText = true; // See https://github.com/WordPress/gutenberg/pull/27236
 		}
 
 		return (
