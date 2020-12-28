@@ -295,13 +295,11 @@ function enqueue_editor_assets() {
 }
 
 /**
- * Register assets for the frontend.
+ * Get highlight theme name.
  *
- * Asset(s) will only be enqueued if needed.
- *
- * @param WP_Styles $styles Styles.
+ * @return string Theme name.
  */
-function register_styles( WP_Styles $styles ) {
+function get_theme_name() {
 	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
 		/**
 		 * Filters the style used for the code syntax block.
@@ -319,6 +317,18 @@ function register_styles( WP_Styles $styles ) {
 	} else {
 		$style = get_plugin_option( 'theme_name' );
 	}
+	return $style;
+}
+
+/**
+ * Register assets for the frontend.
+ *
+ * Asset(s) will only be enqueued if needed.
+ *
+ * @param WP_Styles $styles Styles.
+ */
+function register_styles( WP_Styles $styles ) {
+	$style = get_theme_name();
 
 	$default_style_path = sprintf(
 		'vendor/scrivo/%s/styles/%s.css',
