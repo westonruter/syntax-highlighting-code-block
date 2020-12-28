@@ -709,7 +709,7 @@ function customize_register( $wp_customize ) {
 			'syntax_highlighting[highlighted_line_background_color]',
 			[
 				'type'              => 'option',
-				'default'           => DEFAULT_HIGHLIGHTED_COLOR,
+				'default'           => get_default_line_background_color( get_theme_name() ),
 				'sanitize_callback' => 'sanitize_hex_color',
 			]
 		);
@@ -741,8 +741,8 @@ add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 function override_highlighted_line_background_color_post_value( WP_Customize_Manager $wp_customize ) {
 	$highlighted_line_background_color_setting = $wp_customize->get_setting( 'syntax_highlighting[highlighted_line_background_color]' );
 	if ( $highlighted_line_background_color_setting && ! $highlighted_line_background_color_setting->post_value() ) {
-		// This is the default value used when highlighting lines on first load in Customizer.
-		$highlighted_line_background_color_setting->default = get_plugin_option( 'highlighted_line_background_color' );
+		// Make sure the default highlighted line color reflects the currently-selected theme.
+		$highlighted_line_background_color_setting->default = get_default_line_background_color( get_theme_name() );
 		$wp_customize->set_post_value( $highlighted_line_background_color_setting->id, $highlighted_line_background_color_setting->default );
 	}
 }
