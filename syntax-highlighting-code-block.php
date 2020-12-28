@@ -21,6 +21,10 @@ use WP_Block_Type_Registry;
 use WP_Error;
 use WP_Customize_Manager;
 use WP_Styles;
+use WP_REST_Server;
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_Customize_Color_Control;
 
 const PLUGIN_VERSION = '1.3.1-beta';
 
@@ -39,6 +43,8 @@ const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
 const HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER = 'syntax_highlighted_line_background_color';
 
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
+
+const REST_API_NAMESPACE = 'syntax-highlighting-code-block/v1';
 
 /**
  * Add a tint to an RGB color and make it lighter.
@@ -126,7 +132,7 @@ function get_default_line_background_color( $theme_name ) {
  * @return array
  */
 function get_plugin_options() {
-	$options = \get_option( OPTION_NAME, [] );
+	$options = get_option( OPTION_NAME, [] );
 
 	$theme_name = isset( $options['theme_name'] ) ? $options['theme_name'] : DEFAULT_THEME;
 	return array_merge(
@@ -711,16 +717,17 @@ function customize_register( $wp_customize ) {
 	}
 
 	if ( ! has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+		$default_color = strtolower( get_default_line_background_color( $theme_name ) );
 		$wp_customize->add_setting(
 			'syntax_highlighting[highlighted_line_background_color]',
 			[
 				'type'              => 'option',
-				'default'           => get_default_line_background_color( $theme_name ),
+				'default'           => $default_color,
 				'sanitize_callback' => 'sanitize_hex_color',
 			]
 		);
 		$wp_customize->add_control(
-			new \WP_Customize_Color_Control(
+			new WP_Customize_Color_Control(
 				$wp_customize,
 				'syntax_highlighting[highlighted_line_background_color]',
 				[
@@ -731,6 +738,54 @@ function customize_register( $wp_customize ) {
 				]
 			)
 		);
+
+		// Add the script to synchronize the default highlighting line color with the selected theme.
+		if ( ! has_filter( BLOCK_STYLE_FILTER ) ) {
+			add_action( 'customize_controls_enqueue_scripts', __NAMESPACE__ . '\enqueue_customize_scripts' );
+		}
 	}
 }
 add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
+
+/**
+ * Enqueue scripts for Customizer.
+ */
+function enqueue_customize_scripts() {
+	$script_handle = 'syntax-highlighting-code-block-scripts';
+	$script_path   = '/build/customize-controls.js';
+	$script_asset  = require __DIR__ . '/build/customize-controls.asset.php';
+	$in_footer     = true;
+
+	wp_enqueue_script(
+		$script_handle,
+		plugins_url( $script_path, __FILE__ ),
+		array_merge( [ 'customize-controls' ], $script_asset['dependencies'] ),
+		$script_asset['version'],
+		$in_footer
+	);
+}
+
+/**
+ * Register REST endpoint.
+ */
+function register_rest_endpoint() {
+	register_rest_route(
+		REST_API_NAMESPACE,
+		'/highlighted-line-background-color/(?P<theme_name>[^/]+)',
+		[
+			'methods'             => WP_REST_Server::READABLE,
+			'permission_callback' => static function () {
+				return current_user_can( 'customize' );
+			},
+			'callback'            => static function ( WP_REST_Request $request ) {
+				$theme_name = $request['theme_name'];
+				$validity   = validate_theme_name( new WP_Error(), $theme_name );
+				if ( $validity->errors ) {
+					return $validity;
+				}
+				return new WP_REST_Response( get_default_line_background_color( $theme_name ) );
+			},
+		]
+	);
+}
+add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_endpoint' );

@@ -18,6 +18,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@wordpress/api-fetch": "^3.21.0",
     "@wordpress/components": "^12.0.0",
     "@wordpress/editor": "^9.25.0",
     "@wordpress/element": "^2.19.0",
@@ -53,7 +54,7 @@
     "lint:php": "vendor/bin/phpcs",
     "lint:js": "wp-scripts lint-js",
     "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
-    "start": "wp-scripts start"
+    "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build"
   },
   "npmpackagejsonlint": {
     "extends": "@wordpress/npm-package-json-lint-config",
