@@ -731,7 +731,7 @@ add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 function override_highlighted_line_background_color_post_value( WP_Customize_Manager $wp_customize ) {
 	$highlighted_line_background_color_setting = $wp_customize->get_setting( 'syntax_highlighting[highlighted_line_background_color]' );
 	if ( $highlighted_line_background_color_setting && ! $highlighted_line_background_color_setting->post_value() ) {
-		// This is the default value used when highlighting lines on first load in Customizer
+		// This is the default value used when highlighting lines on first load in Customizer.
 		$highlighted_line_background_color_setting->default = get_plugin_option( 'highlighted_line_background_color' );
 		$wp_customize->set_post_value( $highlighted_line_background_color_setting->id, $highlighted_line_background_color_setting->default );
 	}
