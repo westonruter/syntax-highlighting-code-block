@@ -679,12 +679,14 @@ function customize_register( $wp_customize ) {
 
 	require_highlight_php_functions();
 
+	$theme_name = get_theme_name();
+
 	if ( ! has_filter( BLOCK_STYLE_FILTER ) ) {
 		$themes = \HighlightUtilities\getAvailableStyleSheets();
 		sort( $themes );
 		$choices = array_combine( $themes, $themes );
 
-		$wp_customize->add_setting(
+		$setting = $wp_customize->add_setting(
 			'syntax_highlighting[theme_name]',
 			[
 				'type'              => 'option',
@@ -692,6 +694,10 @@ function customize_register( $wp_customize ) {
 				'validate_callback' => __NAMESPACE__ . '\validate_theme_name',
 			]
 		);
+
+		// Obtain the working theme name in the changeset.
+		$theme_name = $setting->post_value( $theme_name );
+
 		$wp_customize->add_control(
 			'syntax_highlighting[theme_name]',
 			[
@@ -709,7 +715,7 @@ function customize_register( $wp_customize ) {
 			'syntax_highlighting[highlighted_line_background_color]',
 			[
 				'type'              => 'option',
-				'default'           => get_default_line_background_color( get_theme_name() ),
+				'default'           => get_default_line_background_color( $theme_name ),
 				'sanitize_callback' => 'sanitize_hex_color',
 			]
 		);
@@ -728,22 +734,3 @@ function customize_register( $wp_customize ) {
 	}
 }
 add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
-
-/**
- * Override the post value for the highlighted line background color when the theme has been highlighted.
- *
- * This is an unfortunate workaround for the Customizer not respecting dynamic updates to the default setting value.
- *
- * @todo What's missing is dynamically changing the default value of the highlighted_line_background_color control based on the selected theme.
- *
- * @param WP_Customize_Manager $wp_customize Customize manager.
- */
-function override_highlighted_line_background_color_post_value( WP_Customize_Manager $wp_customize ) {
-	$highlighted_line_background_color_setting = $wp_customize->get_setting( 'syntax_highlighting[highlighted_line_background_color]' );
-	if ( $highlighted_line_background_color_setting && ! $highlighted_line_background_color_setting->post_value() ) {
-		// Make sure the default highlighted line color reflects the currently-selected theme.
-		$highlighted_line_background_color_setting->default = get_default_line_background_color( get_theme_name() );
-		$wp_customize->set_post_value( $highlighted_line_background_color_setting->id, $highlighted_line_background_color_setting->default );
-	}
-}
-add_action( 'customize_preview_init', __NAMESPACE__ . '\override_highlighted_line_background_color_post_value' );
