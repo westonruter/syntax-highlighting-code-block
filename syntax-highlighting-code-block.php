@@ -751,7 +751,7 @@ add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
  * Enqueue scripts for Customizer.
  */
 function enqueue_customize_scripts() {
-	$script_handle = 'syntax-highlighting-code-block-scripts';
+	$script_handle = 'syntax-highlighting-code-block-customize-controls';
 	$script_path   = '/build/customize-controls.js';
 	$script_asset  = require __DIR__ . '/build/customize-controls.asset.php';
 	$in_footer     = true;
