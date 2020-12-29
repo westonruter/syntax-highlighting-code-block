@@ -25,6 +25,10 @@ use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Customize_Color_Control;
+use Highlight\Highlighter;
+use function HighlightUtilities\splitCodeIntoArray;
+use function HighlightUtilities\getAvailableStyleSheets;
+use function HighlightUtilities\getThemeBackgroundColor;
 
 const PLUGIN_VERSION = '1.3.1-beta';
 
@@ -115,7 +119,7 @@ function get_hex_from_rgb( $rgb_array ) {
 function get_default_line_background_color( $theme_name ) {
 	require_highlight_php_functions();
 
-	$theme_rgb = \HighlightUtilities\getThemeBackgroundColor( $theme_name );
+	$theme_rgb = getThemeBackgroundColor( $theme_name );
 
 	if ( is_dark_theme( $theme_rgb ) ) {
 		return get_hex_from_rgb(
@@ -562,7 +566,7 @@ function render_block( $attributes, $content ) {
 			spl_autoload_register( 'Highlight\Autoloader::load' );
 		}
 
-		$highlighter = new \Highlight\Highlighter();
+		$highlighter = new Highlighter();
 		if ( ! empty( $auto_detect_languages ) ) {
 			$highlighter->setAutodetectLanguages( $auto_detect_languages );
 		}
@@ -591,7 +595,7 @@ function render_block( $attributes, $content ) {
 			require_highlight_php_functions();
 
 			$highlighted_lines = parse_highlighted_lines( $attributes['highlightedLines'] );
-			$lines             = \HighlightUtilities\splitCodeIntoArray( $content );
+			$lines             = splitCodeIntoArray( $content );
 			$content           = '';
 
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
@@ -660,7 +664,7 @@ function parse_highlighted_lines( $highlighted_lines ) {
 function validate_theme_name( $validity, $input ) {
 	require_highlight_php_functions();
 
-	$themes = \HighlightUtilities\getAvailableStyleSheets();
+	$themes = getAvailableStyleSheets();
 
 	if ( ! in_array( $input, $themes, true ) ) {
 		$validity->add( 'invalid_theme', __( 'Unrecognized theme', 'syntax-highlighting-code-block' ) );
@@ -688,7 +692,7 @@ function customize_register( $wp_customize ) {
 	$theme_name = get_theme_name();
 
 	if ( ! has_filter( BLOCK_STYLE_FILTER ) ) {
-		$themes = \HighlightUtilities\getAvailableStyleSheets();
+		$themes = getAvailableStyleSheets();
 		sort( $themes );
 		$choices = array_combine( $themes, $themes );
 
