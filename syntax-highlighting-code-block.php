@@ -21,6 +21,14 @@ use WP_Block_Type_Registry;
 use WP_Error;
 use WP_Customize_Manager;
 use WP_Styles;
+use WP_REST_Server;
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_Customize_Color_Control;
+use Highlight\Highlighter;
+use function HighlightUtilities\splitCodeIntoArray;
+use function HighlightUtilities\getAvailableStyleSheets;
+use function HighlightUtilities\getThemeBackgroundColor;
 
 const PLUGIN_VERSION = '1.3.1-beta';
 
@@ -32,11 +40,15 @@ const OPTION_NAME = 'syntax_highlighting';
 
 const DEFAULT_THEME = 'default';
 
+const DEFAULT_HIGHLIGHTED_COLOR = '#ddf6ff';
+
 const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
 
 const HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER = 'syntax_highlighted_line_background_color';
 
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
+
+const REST_API_NAMESPACE = 'syntax-highlighting-code-block/v1';
 
 /**
  * Add a tint to an RGB color and make it lighter.
@@ -107,7 +119,7 @@ function get_hex_from_rgb( $rgb_array ) {
 function get_default_line_background_color( $theme_name ) {
 	require_highlight_php_functions();
 
-	$theme_rgb = \HighlightUtilities\getThemeBackgroundColor( $theme_name );
+	$theme_rgb = getThemeBackgroundColor( $theme_name );
 
 	if ( is_dark_theme( $theme_rgb ) ) {
 		return get_hex_from_rgb(
@@ -115,7 +127,7 @@ function get_default_line_background_color( $theme_name ) {
 		);
 	}
 
-	return '#ddf6ff';
+	return DEFAULT_HIGHLIGHTED_COLOR;
 }
 
 /**
@@ -124,7 +136,7 @@ function get_default_line_background_color( $theme_name ) {
  * @return array
  */
 function get_plugin_options() {
-	$options = \get_option( OPTION_NAME, [] );
+	$options = get_option( OPTION_NAME, [] );
 
 	$theme_name = isset( $options['theme_name'] ) ? $options['theme_name'] : DEFAULT_THEME;
 	return array_merge(
@@ -293,13 +305,11 @@ function enqueue_editor_assets() {
 }
 
 /**
- * Register assets for the frontend.
+ * Get highlight theme name.
  *
- * Asset(s) will only be enqueued if needed.
- *
- * @param WP_Styles $styles Styles.
+ * @return string Theme name.
  */
-function register_styles( WP_Styles $styles ) {
+function get_theme_name() {
 	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
 		/**
 		 * Filters the style used for the code syntax block.
@@ -317,6 +327,18 @@ function register_styles( WP_Styles $styles ) {
 	} else {
 		$style = get_plugin_option( 'theme_name' );
 	}
+	return $style;
+}
+
+/**
+ * Register assets for the frontend.
+ *
+ * Asset(s) will only be enqueued if needed.
+ *
+ * @param WP_Styles $styles Styles.
+ */
+function register_styles( WP_Styles $styles ) {
+	$style = get_theme_name();
 
 	$default_style_path = sprintf(
 		'vendor/scrivo/%s/styles/%s.css',
@@ -544,7 +566,7 @@ function render_block( $attributes, $content ) {
 			spl_autoload_register( 'Highlight\Autoloader::load' );
 		}
 
-		$highlighter = new \Highlight\Highlighter();
+		$highlighter = new Highlighter();
 		if ( ! empty( $auto_detect_languages ) ) {
 			$highlighter->setAutodetectLanguages( $auto_detect_languages );
 		}
@@ -573,7 +595,7 @@ function render_block( $attributes, $content ) {
 			require_highlight_php_functions();
 
 			$highlighted_lines = parse_highlighted_lines( $attributes['highlightedLines'] );
-			$lines             = \HighlightUtilities\splitCodeIntoArray( $content );
+			$lines             = splitCodeIntoArray( $content );
 			$content           = '';
 
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
@@ -642,7 +664,7 @@ function parse_highlighted_lines( $highlighted_lines ) {
 function validate_theme_name( $validity, $input ) {
 	require_highlight_php_functions();
 
-	$themes = \HighlightUtilities\getAvailableStyleSheets();
+	$themes = getAvailableStyleSheets();
 
 	if ( ! in_array( $input, $themes, true ) ) {
 		$validity->add( 'invalid_theme', __( 'Unrecognized theme', 'syntax-highlighting-code-block' ) );
@@ -667,12 +689,14 @@ function customize_register( $wp_customize ) {
 
 	require_highlight_php_functions();
 
+	$theme_name = get_theme_name();
+
 	if ( ! has_filter( BLOCK_STYLE_FILTER ) ) {
-		$themes = \HighlightUtilities\getAvailableStyleSheets();
+		$themes = getAvailableStyleSheets();
 		sort( $themes );
 		$choices = array_combine( $themes, $themes );
 
-		$wp_customize->add_setting(
+		$setting = $wp_customize->add_setting(
 			'syntax_highlighting[theme_name]',
 			[
 				'type'              => 'option',
@@ -680,6 +704,10 @@ function customize_register( $wp_customize ) {
 				'validate_callback' => __NAMESPACE__ . '\validate_theme_name',
 			]
 		);
+
+		// Obtain the working theme name in the changeset.
+		$theme_name = $setting->post_value( $theme_name );
+
 		$wp_customize->add_control(
 			'syntax_highlighting[theme_name]',
 			[
@@ -693,15 +721,17 @@ function customize_register( $wp_customize ) {
 	}
 
 	if ( ! has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+		$default_color = strtolower( get_default_line_background_color( $theme_name ) );
 		$wp_customize->add_setting(
 			'syntax_highlighting[highlighted_line_background_color]',
 			[
 				'type'              => 'option',
+				'default'           => $default_color,
 				'sanitize_callback' => 'sanitize_hex_color',
 			]
 		);
 		$wp_customize->add_control(
-			new \WP_Customize_Color_Control(
+			new WP_Customize_Color_Control(
 				$wp_customize,
 				'syntax_highlighting[highlighted_line_background_color]',
 				[
@@ -712,24 +742,54 @@ function customize_register( $wp_customize ) {
 				]
 			)
 		);
+
+		// Add the script to synchronize the default highlighting line color with the selected theme.
+		if ( ! has_filter( BLOCK_STYLE_FILTER ) ) {
+			add_action( 'customize_controls_enqueue_scripts', __NAMESPACE__ . '\enqueue_customize_scripts' );
+		}
 	}
 }
 add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 
 /**
- * Override the post value for the highlighted line background color when the theme has been highlighted.
- *
- * This is an unfortunate workaround for the Customizer not respecting dynamic updates to the default setting value.
- *
- * @todo What's missing is dynamically changing the default value of the highlighted_line_background_color control based on the selected theme.
- *
- * @param WP_Customize_Manager $wp_customize Customize manager.
+ * Enqueue scripts for Customizer.
  */
-function override_highlighted_line_background_color_post_value( WP_Customize_Manager $wp_customize ) {
-	$highlighted_line_background_color_setting = $wp_customize->get_setting( 'syntax_highlighting[highlighted_line_background_color]' );
-	if ( $highlighted_line_background_color_setting && ! $highlighted_line_background_color_setting->post_value() ) {
-		$highlighted_line_background_color_setting->default = get_default_line_background_color( get_plugin_option( 'theme_name' ) ); // This has no effect.
-		$wp_customize->set_post_value( $highlighted_line_background_color_setting->id, $highlighted_line_background_color_setting->default );
-	}
+function enqueue_customize_scripts() {
+	$script_handle = 'syntax-highlighting-code-block-customize-controls';
+	$script_path   = '/build/customize-controls.js';
+	$script_asset  = require __DIR__ . '/build/customize-controls.asset.php';
+	$in_footer     = true;
+
+	wp_enqueue_script(
+		$script_handle,
+		plugins_url( $script_path, __FILE__ ),
+		array_merge( [ 'customize-controls' ], $script_asset['dependencies'] ),
+		$script_asset['version'],
+		$in_footer
+	);
 }
-add_action( 'customize_preview_init', __NAMESPACE__ . '\override_highlighted_line_background_color_post_value' );
+
+/**
+ * Register REST endpoint.
+ */
+function register_rest_endpoint() {
+	register_rest_route(
+		REST_API_NAMESPACE,
+		'/highlighted-line-background-color/(?P<theme_name>[^/]+)',
+		[
+			'methods'             => WP_REST_Server::READABLE,
+			'permission_callback' => static function () {
+				return current_user_can( 'customize' );
+			},
+			'callback'            => static function ( WP_REST_Request $request ) {
+				$theme_name = $request['theme_name'];
+				$validity   = validate_theme_name( new WP_Error(), $theme_name );
+				if ( $validity->errors ) {
+					return $validity;
+				}
+				return new WP_REST_Response( get_default_line_background_color( $theme_name ) );
+			},
+		]
+	);
+}
+add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_endpoint' );
