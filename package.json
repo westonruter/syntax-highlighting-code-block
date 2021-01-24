@@ -47,7 +47,6 @@
     "deploy:verify-versions": "php bin/verify-version-consistency.php",
     "deploy:wporg": "grunt wp_deploy",
     "generate-language-names": "php ./bin/generate-language-names.php",
-    "generate-markdown-readme": "php ./vendor/xwp/wp-dev-lib/scripts/generate-markdown-readme",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
     "lint": "npm-run-all --parallel lint:*",
