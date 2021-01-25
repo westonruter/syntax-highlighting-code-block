@@ -13,7 +13,8 @@ Requires PHP: 5.6
 
 Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.
 
-[![Build Status](https://travis-ci.org/westonruter/syntax-highlighting-code-block.svg?branch=develop)](https://travis-ci.org/westonruter/syntax-highlighting-code-block) [![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com) 
+[![Build Status](https://travis-ci.org/westonruter/syntax-highlighting-code-block.svg?branch=develop)](https://travis-ci.org/westonruter/syntax-highlighting-code-block)
+[![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com)
 
 ## Description
 
