@@ -9,7 +9,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 Requires PHP: 5.6
 
-![Banner](wp-assets/banner-1544x500.png)
+![Banner](.wordpress-org/banner-1544x500.png)
 
 Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.
 
@@ -36,9 +36,9 @@ This is a fork of [Code Syntax Block](https://github.com/mkaz/code-syntax-block)
 
 ## Screenshots
 
-1. Code blocks can be added as normal, optionally overriding the auto-detected language. Also specify any lines to be highlighted, whether to show line numbers, and if the lines should wrap.<br>![Code blocks can be added as normal, optionally overriding the auto-detected language. Also specify any lines to be highlighted, whether to show line numbers, and if the lines should wrap.](wp-assets/screenshot-1.png)
+1. Code blocks can be added as normal, optionally overriding the auto-detected language. Also specify any lines to be highlighted, whether to show line numbers, and if the lines should wrap.<br>![Code blocks can be added as normal, optionally overriding the auto-detected language. Also specify any lines to be highlighted, whether to show line numbers, and if the lines should wrap.](.wordpress-org/screenshot-1.png)
 
-2. The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued. Stylesheets are added only when block is on the page.<br>![The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued. Stylesheets are added only when block is on the page.](wp-assets/screenshot-2.png)
+2. The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued. Stylesheets are added only when block is on the page.<br>![The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued. Stylesheets are added only when block is on the page.](.wordpress-org/screenshot-2.png)
 
 ## Changelog
 

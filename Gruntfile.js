@@ -13,7 +13,7 @@ module.exports = function (grunt) {
 				options: {
 					plugin_slug: 'syntax-highlighting-code-block',
 					build_dir: 'dist',
-					assets_dir: 'wp-assets',
+					assets_dir: '.wordpress-org',
 				},
 			},
 		},
