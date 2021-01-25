@@ -13,7 +13,7 @@ module.exports = function (grunt) {
 				options: {
 					plugin_slug: 'syntax-highlighting-code-block',
 					build_dir: 'dist',
-					assets_dir: 'wp-assets',
+					assets_dir: '.wordpress-org',
 				},
 			},
 		},
@@ -51,7 +51,7 @@ module.exports = function (grunt) {
 				'language-names.php',
 				'editor-styles.css',
 				'style.css',
-				'readme.txt',
+				'README.md',
 				'LICENSE',
 				'build/*',
 			];
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
 					dest: 'dist',
 					expand: true,
 					options: {
-						noProcess: ['*/**', 'LICENSE'], // That is, only process syntax-highlighting-code-block.php and readme.txt.
+						noProcess: ['*/**', 'LICENSE'], // That is, only process syntax-highlighting-code-block.php and README.md.
 						process(content, srcpath) {
 							if (
 								!/syntax-highlighting-code-block\.php$/.test(
