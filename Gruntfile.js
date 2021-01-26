@@ -51,7 +51,7 @@ module.exports = function (grunt) {
 				'language-names.php',
 				'editor-styles.css',
 				'style.css',
-				'README.md',
+				'readme.txt',
 				'LICENSE',
 				'build/*',
 			];
