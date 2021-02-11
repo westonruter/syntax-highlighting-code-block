@@ -3,7 +3,8 @@
 	padding: 0;
 }
 
-.wp-block-code > div {
+.wp-block-code > span {
+	display: block;
 	overflow: auto;
 }
 
