@@ -482,7 +482,7 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 		);
 	}
 
-	$end_tags = '</code></div>';
+	$end_tags = '</code></span>';
 
 	if ( ! empty( $attributes['language'] ) ) {
 		$language_names = get_language_names();
@@ -513,7 +513,7 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 	}
 	$end_tags .= '</pre>';
 
-	return $pre_start_tag . get_styles( $attributes ) . '<div>' . $code_start_tag . $content . $end_tags;
+	return $pre_start_tag . get_styles( $attributes ) . '<span>' . $code_start_tag . $content . $end_tags;
 }
 
 /**
