@@ -1,8 +1,8 @@
 .wp-block-code {
 	border: 0;
 	padding: 0;
-	-webkit-text-size-adjust: none;
-	text-size-adjust: none;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
 .wp-block-code > span {
