@@ -5,3 +5,6 @@
 /vendor
 /node_modules
 /dist
+
+# Generated via bin/transform-readme.php
+/readme.txt

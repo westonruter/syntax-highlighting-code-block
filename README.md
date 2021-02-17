@@ -1,17 +1,16 @@
 # Syntax-highlighting Code Block (with Server-side Rendering)
 
-Contributors: westonruter, allejo  
-Tags: block, code, code syntax, syntax highlight, code highlighting  
-Requires at least: 5.5  
-Tested up to: 5.6  
-Stable tag: 1.3.1  
-License: GPLv2 or later  
-License URI: http://www.gnu.org/licenses/gpl-2.0.html  
-Requires PHP: 5.6
-
 ![Banner](.wordpress-org/banner-1544x500.png)
 
 Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.
+
+**Contributors:** [westonruter](https://profiles.wordpress.org/westonruter), [allejo](https://profiles.wordpress.org/allejo)  
+**Tags:** [block](https://wordpress.org/plugins/tags/block), [code](https://wordpress.org/plugins/tags/code), [code syntax](https://wordpress.org/plugins/tags/code-syntax), [syntax highlight](https://wordpress.org/plugins/tags/syntax-highlight), [code highlighting](https://wordpress.org/plugins/tags/code-highlighting)  
+**Requires at least:** 5.5  
+**Tested up to:** 5.6  
+**Stable tag:** 1.3.1  
+**License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
+**Requires PHP:** 5.6
 
 [![Build Status](https://travis-ci.org/westonruter/syntax-highlighting-code-block.svg?branch=develop)](https://travis-ci.org/westonruter/syntax-highlighting-code-block)
 [![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com)
@@ -37,9 +36,13 @@ This is a fork of [Code Syntax Block](https://github.com/mkaz/code-syntax-block)
 
 ## Screenshots
 
-1. Code blocks can be added as normal, optionally overriding the auto-detected language. Also specify any lines to be highlighted, whether to show line numbers, and if the lines should wrap.<br>![Code blocks can be added as normal, optionally overriding the auto-detected language. Also specify any lines to be highlighted, whether to show line numbers, and if the lines should wrap.](.wordpress-org/screenshot-1.png)
+### Code blocks can be added as normal, optionally overriding the auto-detected language. Also specify any lines to be highlighted, whether to show line numbers, and if the lines should wrap.
 
-2. The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued. Stylesheets are added only when block is on the page.<br>![The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued. Stylesheets are added only when block is on the page.](.wordpress-org/screenshot-2.png)
+![Code blocks can be added as normal, optionally overriding the auto-detected language. Also specify any lines to be highlighted, whether to show line numbers, and if the lines should wrap.](.wordpress-org/screenshot-1.png)
+
+### The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued. Stylesheets are added only when block is on the page.
+
+![The Code block renders with syntax highlighting on the frontend without any JavaScript enqueued. Stylesheets are added only when block is on the page.](.wordpress-org/screenshot-2.png)
 
 ## Changelog
 
