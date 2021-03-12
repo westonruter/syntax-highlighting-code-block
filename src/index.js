@@ -70,7 +70,7 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 				setStyles({
 					fontFamily: computedStyles.getPropertyValue('font-family'),
 					fontSize: computedStyles.getPropertyValue('font-size'),
-					overflow: computedStyles.getPropertyValue('overflow'),
+					overflow: 'hidden', // Prevent doubled-scrollbars from appearing.
 					overflowWrap: computedStyles.getPropertyValue(
 						'overflow-wrap'
 					),
