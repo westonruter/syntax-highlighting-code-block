@@ -382,9 +382,6 @@ function get_styles( $attributes ) {
 		return '';
 	}
 
-	static $added_inline_style            = false;
-	static $added_highlighted_color_style = false;
-
 	if ( ! wp_style_is( FRONTEND_STYLE_HANDLE, 'registered' ) ) {
 		register_styles( wp_styles() );
 	}
@@ -393,18 +390,21 @@ function get_styles( $attributes ) {
 	// wp_enqueue_scripts action because this could result in the stylesheet being printed when it would never be used.
 	// When a stylesheet is printed in the body it has the additional benefit of not being render-blocking. When
 	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
+	// Note that the done handles are reset prior to printing so that the stylesheets will be included with each
+	// instance of the block. This is the account for a case where a user calls do_blocks() on the content prior to it
+	// being printed, which can result in the stylesheets being rendered but never added to the page.
+	// Browsers appear to be smart enough to skip loading duplicate references to the same stylesheet.
 	ob_start();
-	wp_print_styles( FRONTEND_STYLE_HANDLE );
-	$styles = trim( ob_get_clean() );
+	$old_done_handles = wp_styles()->done;
+	wp_styles()->done = [];
+	wp_styles()->do_items( [ FRONTEND_STYLE_HANDLE ] );
+	wp_styles()->done = $old_done_handles;
+	$styles           = trim( ob_get_clean() );
 
 	// Include line-number styles if requesting to show lines.
-	if ( ! $added_inline_style ) {
-		$styles .= sprintf( '<style>%s</style>', file_get_contents( __DIR__ . '/style.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	$styles .= sprintf( '<style>%s</style>', file_get_contents( __DIR__ . '/style.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
-		$added_inline_style = true;
-	}
-
-	if ( ! $added_highlighted_color_style && ! empty( $attributes['highlightedLines'] ) ) {
+	if ( ! empty( $attributes['highlightedLines'] ) ) {
 		if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
 			/**
 			 * Filters the background color of a highlighted line.
@@ -422,8 +422,6 @@ function get_styles( $attributes ) {
 		}
 
 		$styles .= "<style>.hljs > mark.shcb-loc { background-color: $line_color; }</style>";
-
-		$added_highlighted_color_style = true;
 	}
 
 	return $styles;
