@@ -23,7 +23,7 @@
     "@wordpress/editor": "^9.25.0",
     "@wordpress/element": "^2.19.0",
     "@wordpress/escape-html": "1.11.0",
-    "@wordpress/hooks": "^2.11.0",
+    "@wordpress/hooks": "^3.1.0",
     "@wordpress/i18n": "^3.17.0",
     "@wordpress/scripts": "^12.6.0",
     "eslint": "^7.23.0",
