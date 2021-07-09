@@ -1,0 +1,53 @@
+name: Continuous Integration
+on:
+  push:
+    branches:
+      - actions-playground # TODO: Remove this after it works
+      - develop
+      - "*.*"
+  pull_request_target: ~
+
+jobs:
+  lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
+
+      - name: Cache multiple paths
+        uses: actions/cache@v2
+        with:
+          path: |-
+            $HOME/.composer/cache
+            $HOME/.npm
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock', '**/package-lock.json') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: |
+          npm install
+          composer install
+
+      - name: Build Plug-in
+        run: npm run build
+
+      - name: Lint
+        run: npm run lint
