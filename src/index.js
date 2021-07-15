@@ -19,7 +19,7 @@ import {
 } from '@wordpress/components';
 import { Fragment, useRef, useEffect, useState } from '@wordpress/element';
 import {
-	__experimentalBlock as ExperimentalBlock, // WP 5.5
+	__experimentalBlock as ExperimentalBlock, /* eslint-disable-line -- WP 5.5 */
 	useBlockProps, // GB 9.2, WP 5.6
 	PlainText,
 	RichText,
@@ -71,9 +71,8 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 					fontFamily: computedStyles.getPropertyValue('font-family'),
 					fontSize: computedStyles.getPropertyValue('font-size'),
 					overflow: 'hidden', // Prevent doubled-scrollbars from appearing.
-					overflowWrap: computedStyles.getPropertyValue(
-						'overflow-wrap'
-					),
+					overflowWrap:
+						computedStyles.getPropertyValue('overflow-wrap'),
 					resize: computedStyles.getPropertyValue('resize'),
 				});
 			}
