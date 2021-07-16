@@ -72,7 +72,8 @@ module.exports = function (grunt) {
 								return content;
 							}
 							let updatedContent = content;
-							const versionRegex = /(\*\s+Version:\s+)(\d+(\.\d+)+-\w+)/;
+							const versionRegex =
+								/(\*\s+Version:\s+)(\d+(\.\d+)+-\w+)/;
 							let version;
 
 							// If not a stable build (e.g. 0.7.0-beta), amend the version with the git commit and current timestamp.
