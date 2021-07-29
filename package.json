@@ -24,7 +24,7 @@
     "@wordpress/element": "^3.1.1",
     "@wordpress/escape-html": "2.1.1",
     "@wordpress/hooks": "^3.1.1",
-    "@wordpress/i18n": "^4.1.1",
+    "@wordpress/i18n": "^4.2.1",
     "@wordpress/scripts": "^16.1.4",
     "eslint": "^7.30.0",
     "eslint-config-wordpress": "^2.0.0",
