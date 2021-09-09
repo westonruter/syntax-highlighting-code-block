@@ -17,7 +17,7 @@
     "url": "https://github.com/westonruter/syntax-highlighting-code-block/issues"
   },
   "devDependencies": {
-    "@wordpress/api-fetch": "^5.1.1",
+    "@wordpress/api-fetch": "^5.2.2",
     "@wordpress/block-editor": "^6.1.13",
     "@wordpress/components": "^14.1.10",
     "@wordpress/editor": "^10.1.13",
