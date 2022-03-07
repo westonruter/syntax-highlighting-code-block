@@ -17,7 +17,7 @@ const lineColorCustomizeId =
 /**
  * Init.
  *
- * @param {Object} args
+ * @param {Object}               args
  * @param {wp.customize.Control} args.themeNameControl
  * @param {wp.customize.Control} args.lineColorControl
  */
