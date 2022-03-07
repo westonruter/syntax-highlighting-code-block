@@ -9,7 +9,7 @@
       "version": "16.6"
     }
   },
-  "globals": {
+  "env": {
     "browser": true
   },
   "rules": {
