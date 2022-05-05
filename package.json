@@ -22,7 +22,7 @@
     "@wordpress/components": "^19.5.0",
     "@wordpress/editor": "^12.2.2",
     "@wordpress/element": "^4.1.1",
-    "@wordpress/escape-html": "2.3.1",
+    "@wordpress/escape-html": "2.8.0",
     "@wordpress/hooks": "^3.3.1",
     "@wordpress/i18n": "^4.3.1",
     "@wordpress/scripts": "^22.1.0",
