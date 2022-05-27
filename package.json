@@ -54,7 +54,8 @@
     "lint:js": "wp-scripts lint-js",
     "lint:js:fix": "wp-scripts lint-js --fix",
     "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
-    "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build"
+    "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
+    "update-wordpress-packages": "npm install --save-dev --save-exact $(npm outdated --parseable | cut -d':' -f 4 | grep @wordpress)"
   },
   "npmpackagejsonlint": {
     "extends": "@wordpress/npm-package-json-lint-config",
