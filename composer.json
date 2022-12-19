@@ -4,7 +4,7 @@
   "license": "GPL-2.0-or-later",
   "type": "wordpress-plugin",
   "require": {
-    "scrivo/highlight.php": "v9.18.1.9"
+    "scrivo/highlight.php": "v9.18.1.10"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
