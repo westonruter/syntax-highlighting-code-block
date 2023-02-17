@@ -22,6 +22,7 @@
     "@wordpress/components": "23.4.0",
     "@wordpress/editor": "13.4.0",
     "@wordpress/element": "5.4.0",
+    "@wordpress/env": "5.12.0",
     "@wordpress/escape-html": "2.27.0",
     "@wordpress/hooks": "3.27.0",
     "@wordpress/i18n": "4.27.0",
@@ -55,7 +56,8 @@
     "lint:js:fix": "wp-scripts lint-js --fix",
     "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
     "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
-    "update-wordpress-packages": "npm install --save-dev --save-exact $(npm outdated --parseable | cut -d':' -f 4 | grep @wordpress)"
+    "update-wordpress-packages": "npm install --save-dev --save-exact $(npm outdated --parseable | cut -d':' -f 4 | grep @wordpress)",
+    "wp-env": "wp-env"
   },
   "npmpackagejsonlint": {
     "extends": "@wordpress/npm-package-json-lint-config",
