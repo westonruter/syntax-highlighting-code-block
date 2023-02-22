@@ -16,9 +16,7 @@
   "bugs": {
     "url": "https://github.com/westonruter/syntax-highlighting-code-block/issues"
   },
-  "dependencies": {
-    "@wordpress/block-library": "8.4.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@wordpress/api-fetch": "6.24.0",
     "@wordpress/block-editor": "11.4.0",

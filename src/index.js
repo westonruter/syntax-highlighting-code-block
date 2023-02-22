@@ -4,14 +4,6 @@
  * WordPress dependencies
  */
 import { addFilter } from '@wordpress/hooks';
-import { useBlockProps, RichText } from '@wordpress/block-editor';
-
-/*
- @todo This does not work. It tries to load a 'wp-block-library/code/utils' file.
- This is due to DependencyExtractionWebpackPlugin https://developer.wordpress.org/block-editor/reference-guides/packages/packages-dependency-extraction-webpack-plugin/
- The block-library package also must not be dev package, since it will need to be bundled.
- */
-import { escape } from '@wordpress/block-library/code/utils';
 
 /**
  * Internal dependencies
@@ -43,18 +35,6 @@ const extendCodeBlockWithSyntaxHighlighting = (settings) => {
 		},
 
 		edit,
-
-		save({ attributes }) {
-			// Keep in sync with <https://github.com/WordPress/gutenberg/blob/a42fd75/packages/block-library/src/code/save.js#L13-L18>.
-			return (
-				<pre {...useBlockProps.save()}>
-					<RichText.Content
-						tagName="code"
-						value={escape(attributes.content)}
-					/>
-				</pre>
-			);
-		},
 
 		deprecated: [
 			...(settings.deprecated || []),
