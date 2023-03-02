@@ -1,5 +1,5 @@
 module.exports = {
-	"composer.*": () => "vendor/bin/composer-normalize",
+	"composer.*": () => "npm run lint:composer",
 	"package.json": [
 		"npm run lint:pkg-json"
 	],
@@ -9,5 +9,5 @@ module.exports = {
 	"**/*.php": [
 		"npm run lint:php",
 	],
-	'*.php': () => 'composer analyze'
+	'*.php': () => 'npm run lint:phpstan'
 };

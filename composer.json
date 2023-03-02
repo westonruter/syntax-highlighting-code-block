@@ -39,7 +39,9 @@
   },
   "scripts": {
     "analyze": "if [ -z $TEST_SKIP_PHPSTAN ]; then phpstan --version; phpstan analyze --ansi; fi",
+    "normalize": "composer-normalize",
     "phpcs": "phpcs",
+    "phpcbf": "bin/phpcbf.sh",
     "zip": "git archive --format=zip HEAD > syntax-highlighting-code-block.zip && unzip -l syntax-highlighting-code-block.zip"
   }
 }
