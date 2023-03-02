@@ -32,6 +32,8 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-wp-deploy": "^2.1.2",
     "highlight.js": "git+https://github.com/highlightjs/highlight.js.git#9.18.1",
+    "husky": "8.0.3",
+    "lint-staged": "13.1.2",
     "lodash": "^4.17.21",
     "npm-run-all": "^4.1.5",
     "prettier": "2.8.4"
@@ -49,11 +51,17 @@
     "generate-language-names": "php ./bin/generate-language-names.php",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
+
     "lint": "npm-run-all --parallel lint:*",
-    "lint:php": "vendor/bin/phpcs",
+    "lint:css": "wp-scripts lint-style",
+    "lint:css:fix": "npm run lint:css -- --fix",
     "lint:js": "wp-scripts lint-js",
     "lint:js:fix": "wp-scripts lint-js --fix",
+    "lint:js:report": "npm run lint:js -- --output-file lint-js-report.json --format json .",
+    "lint:php": "vendor/bin/phpcs",
+    "lint:php:fix": "./bin/phpcbf.sh",
     "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
+    "lint:staged": "lint-staged",
     "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
     "update-wordpress-packages": "npm install --save-dev --save-exact $(npm outdated --parseable | cut -d':' -f 4 | grep @wordpress)",
     "wp-env": "wp-env"

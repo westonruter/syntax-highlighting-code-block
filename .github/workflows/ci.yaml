@@ -50,3 +50,6 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: PHPStan
+        run: composer analyze

@@ -278,10 +278,10 @@ function print_build_required_admin_notice() {
 /**
  * Register assets for editor.
  *
- * @param {WP_Block_Type} $block Block.
+ * @param WP_Block_Type $block Block.
  */
 function register_editor_assets( WP_Block_Type $block ) {
-	$style_path    = '/editor-styles.css';
+	$style_path = '/editor-styles.css';
 	wp_register_style(
 		EDITOR_STYLE_HANDLE,
 		plugins_url( $style_path, __FILE__ ),
@@ -289,9 +289,9 @@ function register_editor_assets( WP_Block_Type $block ) {
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $style_path ) : PLUGIN_VERSION
 	);
 
-	$script_path   = '/build/index.js';
-	$script_asset  = require __DIR__ . '/build/index.asset.php';
-	$in_footer     = true;
+	$script_path  = '/build/index.js';
+	$script_asset = require __DIR__ . '/build/index.asset.php';
+	$in_footer    = true;
 	wp_register_script(
 		EDITOR_SCRIPT_HANDLE,
 		plugins_url( $script_path, __FILE__ ),
@@ -302,7 +302,7 @@ function register_editor_assets( WP_Block_Type $block ) {
 
 	wp_set_script_translations( EDITOR_SCRIPT_HANDLE, 'syntax-highlighting-code-block' );
 
-	$data  = [
+	$data = [
 		'name'       => $block->name,
 		'attributes' => $block->attributes,
 		'deprecated' => [
@@ -415,7 +415,7 @@ function get_styles( $attributes ) {
 	// TODO: Nevertheless, really it would be more reliable define the styles via the `style_handles` prop on the registered block.
 	// The downside is it would prevent deferred async loading of the stylesheet. But by forcing the styles to be printed
 	// inline, we prevent WordPress from making other possible optimizations.
-	// See https://github.com/westonruter/syntax-highlighting-code-block/issues/286
+	// See <https://github.com/westonruter/syntax-highlighting-code-block/issues/286>.
 	ob_start();
 	wp_print_styles( FRONTEND_STYLE_HANDLE );
 	$styles = trim( ob_get_clean() );
