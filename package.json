@@ -61,7 +61,6 @@
     "lint:php": "vendor/bin/phpcs",
     "lint:php:fix": "./bin/phpcbf.sh",
     "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
-    "lint:staged": "lint-staged",
     "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
     "update-wordpress-packages": "npm install --save-dev --save-exact $(npm outdated --parseable | cut -d':' -f 4 | grep @wordpress)",
     "wp-env": "wp-env"
