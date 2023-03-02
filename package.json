@@ -51,9 +51,8 @@
     "generate-language-names": "php ./bin/generate-language-names.php",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
-
     "lint": "npm-run-all --parallel lint:*",
-    "lint:composer": "composer normalize --dry-run",
+    "lint:composer": "composer normalize -- --dry-run",
     "lint:composer:fix": "composer normalize",
     "lint:css": "wp-scripts lint-style",
     "lint:css:fix": "npm run lint:css -- --fix",
