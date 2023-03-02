@@ -1,11 +1,10 @@
 name: Continuous Integration
 on:
+  pull_request:
   push:
     branches:
-      - actions-playground # TODO: Remove this after it works
       - develop
       - "*.*"
-  pull_request_target: ~
 
 jobs:
   lint:
