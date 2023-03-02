@@ -17,6 +17,7 @@
 namespace Syntax_Highlighting_Code_Block;
 
 use Exception;
+use WP_Block_Type;
 use WP_Block_Type_Registry;
 use WP_Error;
 use WP_Customize_Manager;
@@ -49,6 +50,10 @@ const HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER = 'syntax_highlighted_line_backgr
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
 const REST_API_NAMESPACE = 'syntax-highlighting-code-block/v1';
+
+const EDITOR_SCRIPT_HANDLE = 'syntax-highlighting-code-block-scripts';
+
+const EDITOR_STYLE_HANDLE = 'syntax-highlighting-code-block-styles';
 
 /**
  * Add a tint to an RGB color and make it lighter.
@@ -219,7 +224,7 @@ function init() {
 		$block->render_callback = __NAMESPACE__ . '\render_block';
 		$block->attributes      = array_merge( $block->attributes, $attributes );
 	} else {
-		register_block_type(
+		$block = register_block_type(
 			BLOCK_NAME,
 			[
 				'render_callback' => __NAMESPACE__ . '\render_block',
@@ -228,7 +233,23 @@ function init() {
 		);
 	}
 
-	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
+	if ( $block instanceof WP_Block_Type ) {
+		register_editor_assets( $block );
+
+		if ( property_exists( $block, 'editor_script_handles' ) ) {
+			// As of WP>=6.1.
+			$block->editor_script_handles[] = EDITOR_SCRIPT_HANDLE;
+		} else {
+			$block->editor_script = EDITOR_SCRIPT_HANDLE;
+		}
+
+		if ( property_exists( $block, 'editor_style_handles' ) ) {
+			// As of WP>=6.1.
+			$block->editor_style_handles[] = EDITOR_STYLE_HANDLE;
+		} else {
+			$block->editor_style = EDITOR_STYLE_HANDLE;
+		}
+	}
 }
 add_action( 'init', __NAMESPACE__ . '\init', 100 );
 
@@ -255,36 +276,34 @@ function print_build_required_admin_notice() {
 }
 
 /**
- * Enqueue assets for editor.
+ * Register assets for editor.
+ *
+ * @param {WP_Block_Type} $block Block.
  */
-function enqueue_editor_assets() {
-	$script_handle = 'syntax-highlighting-code-block-scripts';
-	$script_path   = '/build/index.js';
-	$style_handle  = 'syntax-highlighting-code-block-styles';
+function register_editor_assets( WP_Block_Type $block ) {
 	$style_path    = '/editor-styles.css';
-	$script_asset  = require __DIR__ . '/build/index.asset.php';
-	$in_footer     = true;
-
-	wp_enqueue_style(
-		$style_handle,
+	wp_register_style(
+		EDITOR_STYLE_HANDLE,
 		plugins_url( $style_path, __FILE__ ),
 		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $style_path ) : PLUGIN_VERSION
 	);
 
-	wp_enqueue_script(
-		$script_handle,
+	$script_path   = '/build/index.js';
+	$script_asset  = require __DIR__ . '/build/index.asset.php';
+	$in_footer     = true;
+	wp_register_script(
+		EDITOR_SCRIPT_HANDLE,
 		plugins_url( $script_path, __FILE__ ),
 		$script_asset['dependencies'],
 		$script_asset['version'],
 		$in_footer
 	);
 
-	wp_set_script_translations( $script_handle, 'syntax-highlighting-code-block' );
+	wp_set_script_translations( EDITOR_SCRIPT_HANDLE, 'syntax-highlighting-code-block' );
 
-	$block = WP_Block_Type_Registry::get_instance()->get_registered( BLOCK_NAME );
 	$data  = [
-		'name'       => BLOCK_NAME,
+		'name'       => $block->name,
 		'attributes' => $block->attributes,
 		'deprecated' => [
 			'selectedLines' => $block->attributes['highlightedLines'],
@@ -292,13 +311,13 @@ function enqueue_editor_assets() {
 		],
 	];
 	wp_add_inline_script(
-		$script_handle,
+		EDITOR_SCRIPT_HANDLE,
 		sprintf( 'const syntaxHighlightingCodeBlockType = %s;', wp_json_encode( $data ) ),
 		'before'
 	);
 
 	wp_add_inline_script(
-		$script_handle,
+		EDITOR_SCRIPT_HANDLE,
 		sprintf( 'const syntaxHighlightingCodeBlockLanguageNames = %s;', wp_json_encode( get_language_names() ) ),
 		'before'
 	);
@@ -393,6 +412,10 @@ function get_styles( $attributes ) {
 	// wp_enqueue_scripts action because this could result in the stylesheet being printed when it would never be used.
 	// When a stylesheet is printed in the body it has the additional benefit of not being render-blocking. When
 	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
+	// TODO: Nevertheless, really it would be more reliable define the styles via the `style_handles` prop on the registered block.
+	// The downside is it would prevent deferred async loading of the stylesheet. But by forcing the styles to be printed
+	// inline, we prevent WordPress from making other possible optimizations.
+	// See https://github.com/westonruter/syntax-highlighting-code-block/issues/286
 	ob_start();
 	wp_print_styles( FRONTEND_STYLE_HANDLE );
 	$styles = trim( ob_get_clean() );
