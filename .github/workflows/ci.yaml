@@ -22,28 +22,38 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libxml2-utils
 
-      - name: Cache multiple paths
-        uses: actions/cache@v3.2.5
-        with:
-          path: |-
-            $HOME/.composer/cache
-            $HOME/.npm
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock', '**/package-lock.json') }}
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: '8.0'
+          coverage: none
+          tools: cs2pr
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Configure Composer cache
+        uses: actions/cache@v3.2.5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --optimize-autoloader --no-progress --no-interaction
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3.6.0
         with:
-          node-version: 14
+          node-version-file: '.nvmrc'
+          cache: npm
 
-      - name: Install Dependencies
-        run: |
-          npm install
-          composer install
+      - name: Install Node dependencies
+        run: npm ci
+        env:
+          CI: true
 
       - name: Build Plug-in
         run: npm run build
