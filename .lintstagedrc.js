@@ -1,5 +1,8 @@
 module.exports = {
-	"composer.*": () => "npm run lint:composer",
+	"composer.*": [
+		() => "composer --no-interaction validate --no-check-all",
+		() => "npm run lint:composer"
+	],
 	"package.json": [
 		"npm run lint:pkg-json"
 	],
