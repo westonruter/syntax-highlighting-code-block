@@ -11,6 +11,6 @@ module.exports = {
 	],
 	"**/*.php": [
 		"npm run lint:php",
-	],
-	'*.php': () => 'npm run lint:phpstan'
+		() => 'npm run lint:phpstan'
+	]
 };
