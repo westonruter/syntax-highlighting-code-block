@@ -69,7 +69,7 @@ jobs:
           php-version: '8.0'
           extensions: dom, iconv, json, libxml, zip
           coverage: none
-          tools: cs2pr
+          tools: phpstan, cs2pr
 
       - name: Get Composer Cache Directory
         id: composer-cache
