@@ -1,0 +1,15 @@
+includes:
+	# @see https://github.com/phpstan/phpstan-src/blob/b9f62d63f2deaa0a5e97f51073e41a422c48aa01/conf/bleedingEdge.neon
+	- phar://phpstan.phar/conf/bleedingEdge.neon
+	- phpstan-baseline.php
+parameters:
+	level: 3
+	paths:
+		- %currentWorkingDirectory%/syntax-highlighting-code-block.php
+		- %currentWorkingDirectory%/language-names.php
+		- %currentWorkingDirectory%/uninstall.php
+	bootstrapFiles:
+		- %currentWorkingDirectory%/tests/static-analysis-stubs/wordpress-defines.stub
+		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+	dynamicConstantNames:
+		- SCRIPT_DEBUG

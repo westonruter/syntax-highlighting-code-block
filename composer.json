@@ -7,17 +7,40 @@
     "scrivo/highlight.php": "v9.18.1.10"
   },
   "require-dev": {
+    "civicrm/composer-downloads-plugin": "^3.0",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
+    "php-stubs/wordpress-stubs": "^6.1",
     "phpcompatibility/php-compatibility": "^9.1",
     "wp-coding-standards/wpcs": "^2"
   },
   "config": {
     "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "civicrm/composer-downloads-plugin": true
+    },
+    "platform": {
+      "php": "5.6"
     },
     "sort-packages": true
   },
+  "extra": {
+    "downloads": {
+      "composer-normalize": {
+        "path": "vendor/bin/composer-normalize",
+        "type": "phar",
+        "url": "https://github.com/ergebnis/composer-normalize/releases/latest/download/composer-normalize.phar"
+      },
+      "phpstan": {
+        "path": "vendor/bin/phpstan",
+        "type": "phar",
+        "url": "https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar"
+      }
+    }
+  },
   "scripts": {
+    "analyze": "if [ -z $TEST_SKIP_PHPSTAN ]; then phpstan --version; phpstan analyze --ansi; fi",
+    "normalize": "composer-normalize",
+    "phpcbf": "bin/phpcbf.sh",
     "phpcs": "phpcs",
     "zip": "git archive --format=zip HEAD > syntax-highlighting-code-block.zip && unzip -l syntax-highlighting-code-block.zip"
   }
