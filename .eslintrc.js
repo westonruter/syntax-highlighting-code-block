@@ -4,7 +4,7 @@ module.exports = {
 	settings: {
 		react: {
 			pragma: 'wp',
-			version: '16.6',
+			version: 'detect',
 		},
 	},
 	env: {
