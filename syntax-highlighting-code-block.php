@@ -536,7 +536,33 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 	}
 	$end_tags .= '</pre>';
 
-	return $pre_start_tag . get_styles( $attributes ) . '<span>' . $code_start_tag . $content . $end_tags;
+	return $pre_start_tag . get_styles( $attributes ) . '<span>' . $code_start_tag . escape( $content ) . $end_tags;
+}
+
+/**
+ * Escape content.
+ *
+ * In order to prevent WordPress the_content filters from rendering embeds/shortcodes, it's important
+ * to re-escape the content in the same way as the editor is doing with the Code block's save function.
+ * Note this does not need to escape ampersands because they will already be escaped by highlight.php.
+ * Also, escaping of ampersands was removed in <https://github.com/WordPress/gutenberg/commit/f5c32f8>
+ * once HTML editing of Code blocks was implemented.
+ *
+ * @link <https://github.com/westonruter/syntax-highlighting-code-block/issues/668>
+ * @link <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js>
+ * @link <https://github.com/WordPress/gutenberg/pull/13996>
+ *
+ * @param string $content Highlighted content.
+ * @return string Escaped content.
+ */
+function escape( $content ) {
+	// See escapeOpeningSquareBrackets: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L19-L34>.
+	$content = str_replace( '[', '&#91;', $content );
+
+	// See escapeProtocolInIsolatedUrls: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L36-L55>.
+	$content = preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
+
+	return $content;
 }
 
 /**
@@ -595,7 +621,10 @@ function render_block( $attributes, $content ) {
 		}
 
 		$language = $attributes['language'];
-		$content  = html_entity_decode( $matches['content'], ENT_QUOTES );
+
+		// Note that the decoding here is reversed later in the escape() function.
+		// @todo Now that Code blocks may have markup (e.g. bolding, italics, and hyperlinks), these need to be removed and then restored after highlighting is completed.
+		$content = html_entity_decode( $matches['content'], ENT_QUOTES );
 
 		// Convert from Prism.js languages names.
 		if ( 'clike' === $language ) {
