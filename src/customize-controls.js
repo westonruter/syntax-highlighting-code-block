@@ -17,14 +17,13 @@ const lineColorCustomizeId =
 /**
  * Init.
  *
- * @param {Object} args
+ * @param {Object}               args
  * @param {wp.customize.Control} args.themeNameControl
  * @param {wp.customize.Control} args.lineColorControl
  */
 function init({ themeNameControl, lineColorControl }) {
-	const colorPickerElement = lineColorControl.container.find(
-		'.color-picker-hex'
-	);
+	const colorPickerElement =
+		lineColorControl.container.find('.color-picker-hex');
 
 	themeNameControl.setting.bind(async (newThemeName) => {
 		const isColorCustomized =

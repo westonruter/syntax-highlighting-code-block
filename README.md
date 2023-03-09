@@ -6,9 +6,9 @@ Extending the Code block with syntax highlighting rendered on the server, thus b
 
 **Contributors:** [westonruter](https://profiles.wordpress.org/westonruter), [allejo](https://profiles.wordpress.org/allejo)  
 **Tags:** [block](https://wordpress.org/plugins/tags/block), [code](https://wordpress.org/plugins/tags/code), [code syntax](https://wordpress.org/plugins/tags/code-syntax), [syntax highlight](https://wordpress.org/plugins/tags/syntax-highlight), [code highlighting](https://wordpress.org/plugins/tags/code-highlighting)  
-**Requires at least:** 5.5  
-**Tested up to:** 5.6  
-**Stable tag:** 1.3.1  
+**Requires at least:** 5.6  
+**Tested up to:** 6.2  
+**Stable tag:** 1.4.0  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
 **Requires PHP:** 5.6
 

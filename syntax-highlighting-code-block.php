@@ -3,7 +3,7 @@
  * Plugin Name:  Syntax-highlighting Code Block (with Server-side Rendering)
  * Plugin URI:   https://github.com/westonruter/syntax-highlighting-code-block
  * Description:  Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.
- * Version:      1.3.1
+ * Version:      1.4.0
  * Author:       Weston Ruter
  * Author URI:   https://weston.ruter.net/
  * License:      GPL2
@@ -17,6 +17,7 @@
 namespace Syntax_Highlighting_Code_Block;
 
 use Exception;
+use WP_Block_Type;
 use WP_Block_Type_Registry;
 use WP_Error;
 use WP_Customize_Manager;
@@ -30,7 +31,7 @@ use function HighlightUtilities\splitCodeIntoArray;
 use function HighlightUtilities\getAvailableStyleSheets;
 use function HighlightUtilities\getThemeBackgroundColor;
 
-const PLUGIN_VERSION = '1.3.1';
+const PLUGIN_VERSION = '1.4.0';
 
 const BLOCK_NAME = 'core/code';
 
@@ -49,6 +50,10 @@ const HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER = 'syntax_highlighted_line_backgr
 const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
 
 const REST_API_NAMESPACE = 'syntax-highlighting-code-block/v1';
+
+const EDITOR_SCRIPT_HANDLE = 'syntax-highlighting-code-block-scripts';
+
+const EDITOR_STYLE_HANDLE = 'syntax-highlighting-code-block-styles';
 
 /**
  * Add a tint to an RGB color and make it lighter.
@@ -219,7 +224,7 @@ function init() {
 		$block->render_callback = __NAMESPACE__ . '\render_block';
 		$block->attributes      = array_merge( $block->attributes, $attributes );
 	} else {
-		register_block_type(
+		$block = register_block_type(
 			BLOCK_NAME,
 			[
 				'render_callback' => __NAMESPACE__ . '\render_block',
@@ -228,7 +233,23 @@ function init() {
 		);
 	}
 
-	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );
+	if ( $block instanceof WP_Block_Type ) {
+		register_editor_assets( $block );
+
+		if ( property_exists( $block, 'editor_script_handles' ) ) {
+			// As of WP>=6.1.
+			$block->editor_script_handles[] = EDITOR_SCRIPT_HANDLE;
+		} else {
+			$block->editor_script = EDITOR_SCRIPT_HANDLE;
+		}
+
+		if ( property_exists( $block, 'editor_style_handles' ) ) {
+			// As of WP>=6.1.
+			$block->editor_style_handles[] = EDITOR_STYLE_HANDLE;
+		} else {
+			$block->editor_style = EDITOR_STYLE_HANDLE;
+		}
+	}
 }
 add_action( 'init', __NAMESPACE__ . '\init', 100 );
 
@@ -255,36 +276,34 @@ function print_build_required_admin_notice() {
 }
 
 /**
- * Enqueue assets for editor.
+ * Register assets for editor.
+ *
+ * @param WP_Block_Type $block Block.
  */
-function enqueue_editor_assets() {
-	$script_handle = 'syntax-highlighting-code-block-scripts';
-	$script_path   = '/build/index.js';
-	$style_handle  = 'syntax-highlighting-code-block-styles';
-	$style_path    = '/editor-styles.css';
-	$script_asset  = require __DIR__ . '/build/index.asset.php';
-	$in_footer     = true;
-
-	wp_enqueue_style(
-		$style_handle,
+function register_editor_assets( WP_Block_Type $block ) {
+	$style_path = '/editor-styles.css';
+	wp_register_style(
+		EDITOR_STYLE_HANDLE,
 		plugins_url( $style_path, __FILE__ ),
 		[],
 		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $style_path ) : PLUGIN_VERSION
 	);
 
-	wp_enqueue_script(
-		$script_handle,
+	$script_path  = '/build/index.js';
+	$script_asset = require __DIR__ . '/build/index.asset.php';
+	$in_footer    = true;
+	wp_register_script(
+		EDITOR_SCRIPT_HANDLE,
 		plugins_url( $script_path, __FILE__ ),
 		$script_asset['dependencies'],
 		$script_asset['version'],
 		$in_footer
 	);
 
-	wp_set_script_translations( $script_handle, 'syntax-highlighting-code-block' );
+	wp_set_script_translations( EDITOR_SCRIPT_HANDLE, 'syntax-highlighting-code-block' );
 
-	$block = WP_Block_Type_Registry::get_instance()->get_registered( BLOCK_NAME );
-	$data  = [
-		'name'       => BLOCK_NAME,
+	$data = [
+		'name'       => $block->name,
 		'attributes' => $block->attributes,
 		'deprecated' => [
 			'selectedLines' => $block->attributes['highlightedLines'],
@@ -292,13 +311,13 @@ function enqueue_editor_assets() {
 		],
 	];
 	wp_add_inline_script(
-		$script_handle,
+		EDITOR_SCRIPT_HANDLE,
 		sprintf( 'const syntaxHighlightingCodeBlockType = %s;', wp_json_encode( $data ) ),
 		'before'
 	);
 
 	wp_add_inline_script(
-		$script_handle,
+		EDITOR_SCRIPT_HANDLE,
 		sprintf( 'const syntaxHighlightingCodeBlockLanguageNames = %s;', wp_json_encode( get_language_names() ) ),
 		'before'
 	);
@@ -393,6 +412,10 @@ function get_styles( $attributes ) {
 	// wp_enqueue_scripts action because this could result in the stylesheet being printed when it would never be used.
 	// When a stylesheet is printed in the body it has the additional benefit of not being render-blocking. When
 	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
+	// TODO: Nevertheless, really it would be more reliable define the styles via the `style_handles` prop on the registered block.
+	// The downside is it would prevent deferred async loading of the stylesheet. But by forcing the styles to be printed
+	// inline, we prevent WordPress from making other possible optimizations.
+	// See <https://github.com/westonruter/syntax-highlighting-code-block/issues/286>.
 	ob_start();
 	wp_print_styles( FRONTEND_STYLE_HANDLE );
 	$styles = trim( ob_get_clean() );
@@ -482,7 +505,7 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 		);
 	}
 
-	$end_tags = '</code></div>';
+	$end_tags = '</code></span>';
 
 	if ( ! empty( $attributes['language'] ) ) {
 		$language_names = get_language_names();
@@ -513,7 +536,33 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 	}
 	$end_tags .= '</pre>';
 
-	return $pre_start_tag . get_styles( $attributes ) . '<div>' . $code_start_tag . $content . $end_tags;
+	return $pre_start_tag . get_styles( $attributes ) . '<span>' . $code_start_tag . escape( $content ) . $end_tags;
+}
+
+/**
+ * Escape content.
+ *
+ * In order to prevent WordPress the_content filters from rendering embeds/shortcodes, it's important
+ * to re-escape the content in the same way as the editor is doing with the Code block's save function.
+ * Note this does not need to escape ampersands because they will already be escaped by highlight.php.
+ * Also, escaping of ampersands was removed in <https://github.com/WordPress/gutenberg/commit/f5c32f8>
+ * once HTML editing of Code blocks was implemented.
+ *
+ * @link <https://github.com/westonruter/syntax-highlighting-code-block/issues/668>
+ * @link <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js>
+ * @link <https://github.com/WordPress/gutenberg/pull/13996>
+ *
+ * @param string $content Highlighted content.
+ * @return string Escaped content.
+ */
+function escape( $content ) {
+	// See escapeOpeningSquareBrackets: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L19-L34>.
+	$content = str_replace( '[', '&#91;', $content );
+
+	// See escapeProtocolInIsolatedUrls: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L36-L55>.
+	$content = preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
+
+	return $content;
 }
 
 /**
@@ -572,7 +621,10 @@ function render_block( $attributes, $content ) {
 		}
 
 		$language = $attributes['language'];
-		$content  = html_entity_decode( $matches['content'], ENT_QUOTES );
+
+		// Note that the decoding here is reversed later in the escape() function.
+		// @todo Now that Code blocks may have markup (e.g. bolding, italics, and hyperlinks), these need to be removed and then restored after highlighting is completed.
+		$content = html_entity_decode( $matches['content'], ENT_QUOTES );
 
 		// Convert from Prism.js languages names.
 		if ( 'clike' === $language ) {

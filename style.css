@@ -1,9 +1,12 @@
 .wp-block-code {
 	border: 0;
 	padding: 0;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
-.wp-block-code > div {
+.wp-block-code > span {
+	display: block;
 	overflow: auto;
 }
 
