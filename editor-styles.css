@@ -2,27 +2,6 @@
 	overflow: auto !important;
 }
 
-/* Gutenberg 7.8 and below uses a `<textarea>` element */
-textarea.shcb-textedit {
-	white-space: pre !important;
-	overflow-x: auto !important;
-}
-
-textarea.shcb-textedit.shcb-textedit-wrap-lines {
-	white-space: pre-wrap !important;
-}
-
-/* Gutenberg 7.9+ uses a `<code>` element */
-code.shcb-textedit {
-	white-space: pre !important;
-	overflow-x: auto !important;
-}
-
-code.shcb-textedit.shcb-textedit-wrap-lines {
-	white-space: pre-wrap !important;
-}
-
-/* Gutenberg 9.2+ uses a contenteditable div */
 .shcb-textedit.rich-text {
 	white-space: pre !important;
 	overflow-x: auto !important;
@@ -33,9 +12,10 @@ code.shcb-textedit.shcb-textedit-wrap-lines {
 }
 
 .code-block-overlay {
+	box-sizing: border-box;
 	height: 100%;
 	left: 0;
-	padding: inherit;
+	padding: inherit; /* To match the padding in the parent since this is positioned absolutely */
 	pointer-events: none;
 	position: absolute;
 	top: 0;
