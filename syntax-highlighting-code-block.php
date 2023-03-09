@@ -3,7 +3,7 @@
  * Plugin Name:  Syntax-highlighting Code Block (with Server-side Rendering)
  * Plugin URI:   https://github.com/westonruter/syntax-highlighting-code-block
  * Description:  Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.
- * Version:      1.3.2-alpha
+ * Version:      1.4-alpha
  * Author:       Weston Ruter
  * Author URI:   https://weston.ruter.net/
  * License:      GPL2
@@ -31,7 +31,7 @@ use function HighlightUtilities\splitCodeIntoArray;
 use function HighlightUtilities\getAvailableStyleSheets;
 use function HighlightUtilities\getThemeBackgroundColor;
 
-const PLUGIN_VERSION = '1.3.2-alpha';
+const PLUGIN_VERSION = '1.4-alpha';
 
 const BLOCK_NAME = 'core/code';
 
