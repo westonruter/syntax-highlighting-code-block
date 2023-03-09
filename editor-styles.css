@@ -12,9 +12,10 @@
 }
 
 .code-block-overlay {
+	box-sizing: border-box;
 	height: 100%;
 	left: 0;
-	padding: inherit;
+	padding: inherit; /* To match the padding in the parent since this is positioned absolutely */
 	pointer-events: none;
 	position: absolute;
 	top: 0;
