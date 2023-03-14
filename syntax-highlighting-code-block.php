@@ -77,7 +77,7 @@ function add_tint_to_rgb( $rgb_array, $tint ) {
  *
  * @param float[] $rgb_array An array representing an RGB color.
  * @return float A value between 0 and 100 representing the luminance of a color.
- *     The closer to to 100, the higher the luminance is; i.e. the lighter it is.
+ *     The closer to 100, the higher the luminance is; i.e. the lighter it is.
  */
 function get_relative_luminance( $rgb_array ) {
 	return 0.2126 * ( $rgb_array['r'] / 255 ) +
@@ -86,7 +86,7 @@ function get_relative_luminance( $rgb_array ) {
 }
 
 /**
- * Check whether or not a given RGB array is considered a "dark theme."
+ * Check whether a given RGB array is considered a "dark theme."
  *
  * @param float[] $rgb_array The RGB array to test.
  * @return bool True if the theme's background has a "dark" luminance.
