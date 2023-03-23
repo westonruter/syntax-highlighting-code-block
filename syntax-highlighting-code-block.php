@@ -710,7 +710,7 @@ function parse_highlighted_lines( $highlighted_lines ) {
  *
  * @param WP_Error $validity Validator object.
  * @param string   $input    Incoming theme name.
- * @return mixed
+ * @return WP_Error Amended errors.
  */
 function validate_theme_name( $validity, $input ) {
 	require_highlight_php_functions();
