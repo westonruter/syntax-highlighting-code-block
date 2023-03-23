@@ -240,6 +240,7 @@ function init() {
 			// As of WP>=6.1.
 			$block->editor_script_handles[] = EDITOR_SCRIPT_HANDLE;
 		} else {
+			/* @noinspection PhpUndefinedFieldInspection */
 			$block->editor_script = EDITOR_SCRIPT_HANDLE;
 		}
 
@@ -247,6 +248,7 @@ function init() {
 			// As of WP>=6.1.
 			$block->editor_style_handles[] = EDITOR_STYLE_HANDLE;
 		} else {
+			/* @noinspection PhpUndefinedFieldInspection */
 			$block->editor_style = EDITOR_STYLE_HANDLE;
 		}
 	}
