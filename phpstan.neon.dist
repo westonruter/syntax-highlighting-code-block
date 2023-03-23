@@ -3,7 +3,7 @@ includes:
 	- phar://phpstan.phar/conf/bleedingEdge.neon
 	- phpstan-baseline.php
 parameters:
-	level: 3
+	level: 4
 	paths:
 		- %currentWorkingDirectory%/syntax-highlighting-code-block.php
 		- %currentWorkingDirectory%/language-names.php
@@ -13,3 +13,4 @@ parameters:
 		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
 	dynamicConstantNames:
 		- SCRIPT_DEBUG
+		- Syntax_Highlighting_Code_Block\DEVELOPMENT_MODE
