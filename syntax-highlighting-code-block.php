@@ -77,7 +77,7 @@ function add_tint_to_rgb( $rgb_array, $tint ) {
  *
  * @param float[] $rgb_array An array representing an RGB color.
  * @return float A value between 0 and 100 representing the luminance of a color.
- *     The closer to to 100, the higher the luminance is; i.e. the lighter it is.
+ *     The closer to 100, the higher the luminance is; i.e. the lighter it is.
  */
 function get_relative_luminance( $rgb_array ) {
 	return 0.2126 * ( $rgb_array['r'] / 255 ) +
@@ -86,7 +86,7 @@ function get_relative_luminance( $rgb_array ) {
 }
 
 /**
- * Check whether or not a given RGB array is considered a "dark theme."
+ * Check whether a given RGB array is considered a "dark theme."
  *
  * @param float[] $rgb_array The RGB array to test.
  * @return bool True if the theme's background has a "dark" luminance.
@@ -240,6 +240,7 @@ function init() {
 			// As of WP>=6.1.
 			$block->editor_script_handles[] = EDITOR_SCRIPT_HANDLE;
 		} else {
+			/* @noinspection PhpUndefinedFieldInspection */
 			$block->editor_script = EDITOR_SCRIPT_HANDLE;
 		}
 
@@ -247,6 +248,7 @@ function init() {
 			// As of WP>=6.1.
 			$block->editor_style_handles[] = EDITOR_STYLE_HANDLE;
 		} else {
+			/* @noinspection PhpUndefinedFieldInspection */
 			$block->editor_style = EDITOR_STYLE_HANDLE;
 		}
 	}
@@ -291,13 +293,12 @@ function register_editor_assets( WP_Block_Type $block ) {
 
 	$script_path  = '/build/index.js';
 	$script_asset = require __DIR__ . '/build/index.asset.php';
-	$in_footer    = true;
 	wp_register_script(
 		EDITOR_SCRIPT_HANDLE,
 		plugins_url( $script_path, __FILE__ ),
 		$script_asset['dependencies'],
 		$script_asset['version'],
-		$in_footer
+		true
 	);
 
 	wp_set_script_translations( EDITOR_SCRIPT_HANDLE, 'syntax-highlighting-code-block' );
@@ -560,9 +561,7 @@ function escape( $content ) {
 	$content = str_replace( '[', '&#91;', $content );
 
 	// See escapeProtocolInIsolatedUrls: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L36-L55>.
-	$content = preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
-
-	return $content;
+	return preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
 }
 
 /**
@@ -711,7 +710,7 @@ function parse_highlighted_lines( $highlighted_lines ) {
  *
  * @param WP_Error $validity Validator object.
  * @param string   $input    Incoming theme name.
- * @return mixed
+ * @return WP_Error Amended errors.
  */
 function validate_theme_name( $validity, $input ) {
 	require_highlight_php_functions();
@@ -810,14 +809,13 @@ function enqueue_customize_scripts() {
 	$script_handle = 'syntax-highlighting-code-block-customize-controls';
 	$script_path   = '/build/customize-controls.js';
 	$script_asset  = require __DIR__ . '/build/customize-controls.asset.php';
-	$in_footer     = true;
 
 	wp_enqueue_script(
 		$script_handle,
 		plugins_url( $script_path, __FILE__ ),
 		array_merge( [ 'customize-controls' ], $script_asset['dependencies'] ),
 		$script_asset['version'],
-		$in_footer
+		true
 	);
 }
 
