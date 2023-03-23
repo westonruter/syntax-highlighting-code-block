@@ -293,13 +293,12 @@ function register_editor_assets( WP_Block_Type $block ) {
 
 	$script_path  = '/build/index.js';
 	$script_asset = require __DIR__ . '/build/index.asset.php';
-	$in_footer    = true;
 	wp_register_script(
 		EDITOR_SCRIPT_HANDLE,
 		plugins_url( $script_path, __FILE__ ),
 		$script_asset['dependencies'],
 		$script_asset['version'],
-		$in_footer
+		true
 	);
 
 	wp_set_script_translations( EDITOR_SCRIPT_HANDLE, 'syntax-highlighting-code-block' );
@@ -562,9 +561,7 @@ function escape( $content ) {
 	$content = str_replace( '[', '&#91;', $content );
 
 	// See escapeProtocolInIsolatedUrls: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L36-L55>.
-	$content = preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
-
-	return $content;
+	return preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
 }
 
 /**
@@ -812,14 +809,13 @@ function enqueue_customize_scripts() {
 	$script_handle = 'syntax-highlighting-code-block-customize-controls';
 	$script_path   = '/build/customize-controls.js';
 	$script_asset  = require __DIR__ . '/build/customize-controls.asset.php';
-	$in_footer     = true;
 
 	wp_enqueue_script(
 		$script_handle,
 		plugins_url( $script_path, __FILE__ ),
 		array_merge( [ 'customize-controls' ], $script_asset['dependencies'] ),
 		$script_asset['version'],
-		$in_footer
+		true
 	);
 }
 
