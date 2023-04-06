@@ -143,7 +143,7 @@ function get_default_line_background_color( string $theme_name ): string {
 function get_plugin_options(): array {
 	$options = get_option( OPTION_NAME, [] );
 
-	$theme_name = isset( $options['theme_name'] ) ? $options['theme_name'] : DEFAULT_THEME;
+	$theme_name = $options['theme_name'] ?? DEFAULT_THEME;
 	return array_merge(
 		[
 			'theme_name'                        => DEFAULT_THEME,
@@ -520,7 +520,7 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 
 	if ( ! empty( $attributes['language'] ) ) {
 		$language_names = get_language_names();
-		$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
+		$language_name  = $language_names[ $attributes['language'] ] ?? $attributes['language'];
 
 		$element_id = wp_unique_id( 'shcb-language-' );
 
