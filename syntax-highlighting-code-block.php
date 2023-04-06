@@ -219,10 +219,10 @@ function init(): void {
 
 	$registry = WP_Block_Type_Registry::get_instance();
 
-	if ( $registry->is_registered( BLOCK_NAME ) ) {
-		$block                  = $registry->get_registered( BLOCK_NAME );
+	$block = $registry->get_registered( BLOCK_NAME );
+	if ( $block instanceof WP_Block_Type ) {
 		$block->render_callback = __NAMESPACE__ . '\render_block';
-		$block->attributes      = array_merge( $block->attributes, $attributes );
+		$block->attributes      = array_merge( $block->attributes ?? [], $attributes );
 	} else {
 		$block = register_block_type(
 			BLOCK_NAME,
@@ -309,8 +309,14 @@ function register_editor_assets( WP_Block_Type $block ): void {
 		'name'       => $block->name,
 		'attributes' => $block->attributes,
 		'deprecated' => [
-			'selectedLines' => $block->attributes['highlightedLines'],
-			'showLines'     => $block->attributes['showLineNumbers'],
+			'selectedLines' => [
+				'type'    => 'string',
+				'default' => '',
+			],
+			'showLines'     => [
+				'type'    => 'boolean',
+				'default' => false,
+			],
 		],
 	];
 	wp_add_inline_script(
@@ -505,7 +511,8 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 		$added_classes .= ' shcb-wrap-lines';
 	}
 
-	$code_start_tag = preg_replace(
+	// @todo Update this to use WP_HTML_Tag_Processor.
+	$code_start_tag = (string) preg_replace(
 		'/(<code[^>]*\sclass=")/',
 		'$1' . esc_attr( $added_classes ) . ' ',
 		$code_start_tag,
@@ -513,7 +520,7 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 		$count
 	);
 	if ( 0 === $count ) {
-		$code_start_tag = preg_replace(
+		$code_start_tag = (string) preg_replace(
 			'/(?<=<code\b)/',
 			sprintf( ' class="%s"', esc_attr( $added_classes ) ),
 			$code_start_tag,
@@ -576,7 +583,7 @@ function escape( string $content ): string {
 	$content = str_replace( '[', '&#91;', $content );
 
 	// See escapeProtocolInIsolatedUrls: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L36-L55>.
-	return preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
+	return (string) preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
 }
 
 /**
@@ -723,7 +730,7 @@ function parse_highlighted_lines( string $highlighted_lines ): array {
 		return $highlighted_line_numbers;
 	}
 
-	$ranges = explode( ',', preg_replace( '/\s/', '', $highlighted_lines ) );
+	$ranges = explode( ',', (string) preg_replace( '/\s/', '', $highlighted_lines ) );
 
 	foreach ( $ranges as $chunk ) {
 		if ( strpos( $chunk, '-' ) !== false ) {

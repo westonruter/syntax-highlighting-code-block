@@ -3,7 +3,7 @@ includes:
 	- phar://phpstan.phar/conf/bleedingEdge.neon
 	- phpstan-baseline.php
 parameters:
-	level: 7
+	level: 8
 	paths:
 		# TODO: Move the PHP into an inc/ folder and then use that path. This will allow use of result cache.
 		- %currentWorkingDirectory%/syntax-highlighting-code-block.php
