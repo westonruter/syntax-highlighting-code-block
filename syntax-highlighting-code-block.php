@@ -55,6 +55,25 @@ const EDITOR_SCRIPT_HANDLE = 'syntax-highlighting-code-block-scripts';
 
 const EDITOR_STYLE_HANDLE = 'syntax-highlighting-code-block-styles';
 
+const ATTRIBUTE_SCHEMA = [
+	'language'         => [
+		'type'    => 'string',
+		'default' => '',
+	],
+	'highlightedLines' => [
+		'type'    => 'string',
+		'default' => '',
+	],
+	'showLineNumbers'  => [
+		'type'    => 'boolean',
+		'default' => false,
+	],
+	'wrapLines'        => [
+		'type'    => 'boolean',
+		'default' => false,
+	],
+];
+
 /**
  * Add a tint to an RGB color and make it lighter.
  *
@@ -138,19 +157,30 @@ function get_default_line_background_color( string $theme_name ): string {
 /**
  * Get an array of all the options tied to this plugin.
  *
- * @return array<string, string>
+ * @return array{
+ *     theme_name: string,
+ *     highlighted_line_background_color: string
+ * }
  */
 function get_plugin_options(): array {
-	$options = get_option( OPTION_NAME, [] );
+	$options = get_option( OPTION_NAME );
+	if ( ! is_array( $options ) ) {
+		$options = [];
+	}
 
-	$theme_name = $options['theme_name'] ?? DEFAULT_THEME;
-	return array_merge(
-		[
-			'theme_name'                        => DEFAULT_THEME,
-			'highlighted_line_background_color' => get_default_line_background_color( $theme_name ),
-		],
-		$options
-	);
+	if ( isset( $options['theme_name'] ) && is_string( $options['theme_name'] ) ) {
+		$theme_name = $options['theme_name'];
+	} else {
+		$theme_name = DEFAULT_THEME;
+	}
+
+	if ( isset( $options['highlighted_line_background_color'] ) && is_string( $options['highlighted_line_background_color'] ) ) {
+		$highlighted_line_background_color = $options['highlighted_line_background_color'];
+	} else {
+		$highlighted_line_background_color = get_default_line_background_color( $theme_name );
+	}
+
+	return compact( 'theme_name', 'highlighted_line_background_color' );
 }
 
 /**
@@ -198,37 +228,18 @@ function init(): void {
 		return;
 	}
 
-	$attributes = [
-		'language'         => [
-			'type'    => 'string',
-			'default' => '',
-		],
-		'highlightedLines' => [
-			'type'    => 'string',
-			'default' => '',
-		],
-		'showLineNumbers'  => [
-			'type'    => 'boolean',
-			'default' => false,
-		],
-		'wrapLines'        => [
-			'type'    => 'boolean',
-			'default' => false,
-		],
-	];
-
 	$registry = WP_Block_Type_Registry::get_instance();
 
 	$block = $registry->get_registered( BLOCK_NAME );
 	if ( $block instanceof WP_Block_Type ) {
 		$block->render_callback = __NAMESPACE__ . '\render_block';
-		$block->attributes      = array_merge( $block->attributes ?? [], $attributes );
+		$block->attributes      = array_merge( $block->attributes ?? [], ATTRIBUTE_SCHEMA );
 	} else {
 		$block = register_block_type(
 			BLOCK_NAME,
 			[
 				'render_callback' => __NAMESPACE__ . '\render_block',
-				'attributes'      => $attributes,
+				'attributes'      => ATTRIBUTE_SCHEMA,
 			]
 		);
 	}
@@ -352,8 +363,11 @@ function get_theme_name(): string {
 		 * @param string $style Style.
 		 */
 		$style = apply_filters( BLOCK_STYLE_FILTER, DEFAULT_THEME );
+		if ( ! is_string( $style ) ) {
+			$style = DEFAULT_THEME;
+		}
 	} else {
-		$style = get_plugin_option( 'theme_name' );
+		$style = get_plugin_options()['theme_name'];
 	}
 	return $style;
 }
@@ -446,6 +460,7 @@ function get_styles( array $attributes ): string {
 
 	if ( ! $added_highlighted_color_style && ! empty( $attributes['highlightedLines'] ) ) {
 		if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+			$default_line_color = get_default_line_background_color( DEFAULT_THEME );
 			/**
 			 * Filters the background color of a highlighted line.
 			 *
@@ -456,9 +471,12 @@ function get_styles( array $attributes ): string {
 			 *
 			 * @since 1.1.5
 			 */
-			$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, get_default_line_background_color( DEFAULT_THEME ) );
+			$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, $default_line_color );
+			if ( ! is_string( $line_color ) ) {
+				$line_color = $default_line_color;
+			}
 		} else {
-			$line_color = get_plugin_option( 'highlighted_line_background_color' );
+			$line_color = get_plugin_options()['highlighted_line_background_color'];
 		}
 
 		$styles .= "<style>.hljs > mark.shcb-loc { background-color: $line_color; }</style>";
@@ -625,11 +643,31 @@ function render_block( array $attributes, string $content ): string {
 	 * @param string[] $auto_detect_language Auto-detect languages.
 	 */
 	$auto_detect_languages = apply_filters( 'syntax_highlighting_code_block_auto_detect_languages', [] );
+	if ( ! is_array( $auto_detect_languages ) ) {
+		$auto_detect_languages = [];
+	}
+	$auto_detect_languages = array_filter( $auto_detect_languages, 'is_string' );
 
 	$transient_key = 'syntax-highlighted-' . md5( wp_json_encode( $attributes ) . implode( '', $auto_detect_languages ) . $matches['content'] . PLUGIN_VERSION );
-	$highlighted   = get_transient( $transient_key );
 
-	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
+	$highlighted = get_transient( $transient_key );
+	if (
+		! DEVELOPMENT_MODE
+		&&
+		is_array( $highlighted )
+		&&
+		isset( $highlighted['content'] ) && is_string( $highlighted['content'] )
+		&&
+		is_array( $highlighted['attributes'] )
+		&&
+		isset( $highlighted['attributes']['language'] ) && is_string( $highlighted['attributes']['language'] )
+		&&
+		isset( $highlighted['attributes']['highlightedLines'] ) && is_string( $highlighted['attributes']['highlightedLines'] )
+		&&
+		isset( $highlighted['attributes']['showLineNumbers'] ) && is_bool( $highlighted['attributes']['showLineNumbers'] )
+		&&
+		isset( $highlighted['attributes']['wrapLines'] ) && is_bool( $highlighted['attributes']['wrapLines'] )
+	) {
 		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'], $highlighted['content'] );
 	}
 
@@ -801,6 +839,11 @@ function customize_register( WP_Customize_Manager $wp_customize ): void {
 		);
 
 		// Obtain the working theme name in the changeset.
+		/**
+		 * Theme name sanitized by Customizer setting callback & default
+		 *
+		 * @var string $theme_name
+		 */
 		$theme_name = $setting->post_value( $theme_name );
 
 		$wp_customize->add_control(
