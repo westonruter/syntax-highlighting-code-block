@@ -24,4 +24,11 @@ $ignoreErrors[] = [
 	'path'    => __DIR__ . '/syntax-highlighting-code-block.php',
 ];
 
+// TODO: Figure out why this is being raised. It can't seem to be due to <https://github.com/phpstan/phpstan/issues/3770> since it's not a closure.
+$ignoreErrors[] = [
+	'message' => '#^Parameter \\#1 \\$autoload_function of function spl_autoload_register expects callable\\(string\\)\\: void, \'Highlight…\' given\\.$#',
+	'count' => 1,
+	'path' => __DIR__ . '/syntax-highlighting-code-block.php',
+];
+
 return [ 'parameters' => [ 'ignoreErrors' => $ignoreErrors ] ];

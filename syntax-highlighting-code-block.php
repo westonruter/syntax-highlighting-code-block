@@ -787,7 +787,7 @@ function customize_register( $wp_customize ) {
 				'syntax_highlighting[highlighted_line_background_color]',
 				[
 					'section'     => 'colors',
-					'settings'    => 'syntax_highlighting[highlighted_line_background_color]',
+					'setting'     => 'syntax_highlighting[highlighted_line_background_color]',
 					'label'       => __( 'Highlighted Line Color', 'syntax-highlighting-code-block' ),
 					'description' => __( 'The background color of a highlighted line in a Code block.', 'syntax-highlighting-code-block' ),
 				]
