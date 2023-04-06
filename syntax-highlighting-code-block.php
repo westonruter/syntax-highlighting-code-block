@@ -548,7 +548,8 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 
 	$end_tags = '</code></span>';
 
-	if ( ! empty( $attributes['language'] ) ) {
+	// Add language label if one was detected and if we're not in a feed.
+	if ( ! is_feed() && ! empty( $attributes['language'] ) ) {
 		$language_names = get_language_names();
 		$language_name  = $language_names[ $attributes['language'] ] ?? $attributes['language'];
 
@@ -605,6 +606,38 @@ function escape( string $content ): string {
 }
 
 /**
+ * Get transient key.
+ *
+ * Returns null if key cannot be computed.
+ *
+ * @param string   $content               Content.
+ * @param array{
+ *     language: string,
+ *     highlightedLines: string,
+ *     showLineNumbers: bool,
+ *     wrapLines: bool
+ * }               $attributes            Attributes.
+ * @param bool     $is_feed               Is feed.
+ * @param string[] $auto_detect_languages Auto-detect languages.
+ *
+ * @return string|null Transient key.
+ */
+function get_transient_key( string $content, array $attributes, bool $is_feed, array $auto_detect_languages ): ?string {
+	$hash_input = wp_json_encode(
+		array_merge(
+			compact( 'content', 'attributes', 'is_feed', 'auto_detect_languages' ),
+			[
+				'version' => PLUGIN_VERSION,
+			]
+		)
+	);
+	if ( ! is_string( $hash_input ) ) {
+		return null;
+	}
+	return 'shcb-' . md5( $hash_input );
+}
+
+/**
  * Render code block.
  *
  * @param array{
@@ -648,12 +681,10 @@ function render_block( array $attributes, string $content ): string {
 	}
 	$auto_detect_languages = array_filter( $auto_detect_languages, 'is_string' );
 
-	$transient_key = 'syntax-highlighted-' . md5( wp_json_encode( $attributes ) . implode( '', $auto_detect_languages ) . $matches['content'] . PLUGIN_VERSION );
-
-	$highlighted = get_transient( $transient_key );
+	// Use the previously-highlighted content if cached.
+	$transient_key = ! DEVELOPMENT_MODE ? get_transient_key( $matches['content'], $attributes, is_feed(), $auto_detect_languages ) : null;
+	$highlighted   = $transient_key ? get_transient( $transient_key ) : null;
 	if (
-		! DEVELOPMENT_MODE
-		&&
 		is_array( $highlighted )
 		&&
 		isset( $highlighted['content'] ) && is_string( $highlighted['content'] )
@@ -724,7 +755,7 @@ function render_block( array $attributes, string $content ): string {
 			}
 		}
 
-		if ( ! DEVELOPMENT_MODE ) {
+		if ( ! DEVELOPMENT_MODE && $transient_key ) {
 			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
 		}
 
