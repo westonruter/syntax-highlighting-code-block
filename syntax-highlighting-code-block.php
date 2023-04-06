@@ -288,7 +288,9 @@ function register_editor_assets( WP_Block_Type $block ): void {
 		EDITOR_STYLE_HANDLE,
 		plugins_url( $style_path, __FILE__ ),
 		[],
-		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $style_path ) : PLUGIN_VERSION
+		SCRIPT_DEBUG
+			? (string) filemtime( plugin_dir_path( __FILE__ ) . $style_path )
+			: PLUGIN_VERSION
 	);
 
 	$script_path  = '/build/index.js';
@@ -369,7 +371,9 @@ function register_styles( WP_Styles $styles ): void {
 		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
 		[],
-		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
+		SCRIPT_DEBUG
+			? (string) filemtime( plugin_dir_path( __FILE__ ) . $default_style_path )
+			: PLUGIN_VERSION
 	);
 }
 
@@ -424,7 +428,8 @@ function get_styles( array $attributes ): string {
 	// See <https://github.com/westonruter/syntax-highlighting-code-block/issues/286>.
 	ob_start();
 	wp_print_styles( FRONTEND_STYLE_HANDLE );
-	$styles = trim( ob_get_clean() );
+	$output = ob_get_clean();
+	$styles = is_string( $output ) ? trim( $output ) : '';
 
 	// Include line-number styles if requesting to show lines.
 	if ( ! $added_inline_style ) {
@@ -663,7 +668,7 @@ function render_block( array $attributes, string $content ): string {
 			require_highlight_php_functions();
 
 			$highlighted_lines = parse_highlighted_lines( $attributes['highlightedLines'] );
-			$lines             = splitCodeIntoArray( $content );
+			$lines             = split_code_into_array( $content );
 			$content           = '';
 
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
@@ -688,6 +693,21 @@ function render_block( array $attributes, string $content ): string {
 			$content
 		);
 	}
+}
+
+/**
+ * Split code into an array.
+ *
+ * @param string $code Code to split.
+ * @return string[] Lines.
+ * @throws Exception If an error occurred in splitting up by lines.
+ */
+function split_code_into_array( string $code ): array {
+	$lines = splitCodeIntoArray( $code );
+	if ( ! is_array( $lines ) ) {
+		throw new Exception( 'Unable to split code into array.' );
+	}
+	return $lines;
 }
 
 /**
