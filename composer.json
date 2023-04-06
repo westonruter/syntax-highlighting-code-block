@@ -19,7 +19,7 @@
       "civicrm/composer-downloads-plugin": true
     },
     "platform": {
-      "php": "5.6"
+      "php": "7.4"
     },
     "sort-packages": true
   },
