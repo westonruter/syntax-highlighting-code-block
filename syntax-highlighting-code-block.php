@@ -390,7 +390,12 @@ function is_styling_enabled(): bool {
 /**
  * Get styles.
  *
- * @param array{ language: string, highlightedLines: string, showLineNumbers: bool, wrapLines: bool } $attributes Attributes.
+ * @param array{
+ *     language: string,
+ *     highlightedLines: string,
+ *     showLineNumbers: bool,
+ *     wrapLines: bool
+ * } $attributes Attributes.
  * @return string Attributes.
  */
 function get_styles( array $attributes ): string {
@@ -465,10 +470,15 @@ function get_language_names(): array {
 /**
  * Inject class names and styles into the
  *
- * @param string                                                                                      $pre_start_tag  The `<pre>` start tag.
- * @param string                                                                                      $code_start_tag The `<code>` start tag.
- * @param array{ language: string, highlightedLines: string, showLineNumbers: bool, wrapLines: bool } $attributes Attributes.
- * @param string                                                                                      $content        Content.
+ * @param string $pre_start_tag  The `<pre>` start tag.
+ * @param string $code_start_tag The `<code>` start tag.
+ * @param array{
+ *     language: string,
+ *     highlightedLines: string,
+ *     showLineNumbers: bool,
+ *     wrapLines: bool
+ * }             $attributes     Attributes.
+ * @param string $content        Content.
  * @return string Injected markup.
  */
 function inject_markup( string $pre_start_tag, string $code_start_tag, array $attributes, string $content ): string {
@@ -567,8 +577,15 @@ function escape( string $content ): string {
 /**
  * Render code block.
  *
- * @param array{ language: string, highlightedLines: string, showLineNumbers: bool, wrapLines: bool, selectedLines?: string, showLines?: bool } $attributes Attributes.
- * @param string                                                                                                                                $content    Content.
+ * @param array{
+ *     language: string,
+ *     highlightedLines: string,
+ *     showLineNumbers: bool,
+ *     wrapLines: bool,
+ *     selectedLines?: string,
+ *     showLines?: bool
+ * }             $attributes Attributes.
+ * @param string $content    Content.
  * @return string Highlighted content.
  */
 function render_block( array $attributes, string $content ): string {

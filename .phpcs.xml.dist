@@ -4,7 +4,14 @@
 	<rule ref="WordPress-Core">
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
 	</rule>
-	<rule ref="WordPress-Docs" />
+	<rule ref="WordPress-Docs">
+		<!--
+		Excluded since don't yet support multi-line PhpDoc: https://github.com/squizlabs/PHP_CodeSniffer/issues/2591
+		Nevertheless, they are redundant with PHPStan anyway.
+		-->
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamName" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
+	</rule>
 	<rule ref="WordPress-Extra" />
 
 	<rule ref="WordPress.WP.I18n">
