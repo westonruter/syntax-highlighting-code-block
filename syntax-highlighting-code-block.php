@@ -55,6 +55,25 @@ const EDITOR_SCRIPT_HANDLE = 'syntax-highlighting-code-block-scripts';
 
 const EDITOR_STYLE_HANDLE = 'syntax-highlighting-code-block-styles';
 
+const ATTRIBUTE_SCHEMA = [
+	'language'         => [
+		'type'    => 'string',
+		'default' => '',
+	],
+	'highlightedLines' => [
+		'type'    => 'string',
+		'default' => '',
+	],
+	'showLineNumbers'  => [
+		'type'    => 'boolean',
+		'default' => false,
+	],
+	'wrapLines'        => [
+		'type'    => 'boolean',
+		'default' => false,
+	],
+];
+
 /**
  * Add a tint to an RGB color and make it lighter.
  *
@@ -62,7 +81,7 @@ const EDITOR_STYLE_HANDLE = 'syntax-highlighting-code-block-styles';
  * @param float   $tint      How much of a tint to apply; a number between 0 and 1.
  * @return float[] The new color as an RGB array.
  */
-function add_tint_to_rgb( $rgb_array, $tint ) {
+function add_tint_to_rgb( array $rgb_array, float $tint ): array {
 	return [
 		'r' => $rgb_array['r'] + ( 255 - $rgb_array['r'] ) * $tint,
 		'g' => $rgb_array['g'] + ( 255 - $rgb_array['g'] ) * $tint,
@@ -79,7 +98,7 @@ function add_tint_to_rgb( $rgb_array, $tint ) {
  * @return float A value between 0 and 100 representing the luminance of a color.
  *     The closer to 100, the higher the luminance is; i.e. the lighter it is.
  */
-function get_relative_luminance( $rgb_array ) {
+function get_relative_luminance( array $rgb_array ): float {
 	return 0.2126 * ( $rgb_array['r'] / 255 ) +
 		0.7152 * ( $rgb_array['g'] / 255 ) +
 		0.0722 * ( $rgb_array['b'] / 255 );
@@ -91,7 +110,7 @@ function get_relative_luminance( $rgb_array ) {
  * @param float[] $rgb_array The RGB array to test.
  * @return bool True if the theme's background has a "dark" luminance.
  */
-function is_dark_theme( $rgb_array ) {
+function is_dark_theme( array $rgb_array ): bool {
 	return get_relative_luminance( $rgb_array ) <= 0.6;
 }
 
@@ -101,7 +120,7 @@ function is_dark_theme( $rgb_array ) {
  * @param float[] $rgb_array The RGB array to convert.
  * @return string A hexadecimal representation.
  */
-function get_hex_from_rgb( $rgb_array ) {
+function get_hex_from_rgb( array $rgb_array ): string {
 	return sprintf(
 		'#%02X%02X%02X',
 		$rgb_array['r'],
@@ -121,7 +140,7 @@ function get_hex_from_rgb( $rgb_array ) {
  * @param string $theme_name The theme name to get a color for.
  * @return string A hexadecimal value.
  */
-function get_default_line_background_color( $theme_name ) {
+function get_default_line_background_color( string $theme_name ): string {
 	require_highlight_php_functions();
 
 	$theme_rgb = getThemeBackgroundColor( $theme_name );
@@ -138,19 +157,30 @@ function get_default_line_background_color( $theme_name ) {
 /**
  * Get an array of all the options tied to this plugin.
  *
- * @return array
+ * @return array{
+ *     theme_name: string,
+ *     highlighted_line_background_color: string
+ * }
  */
-function get_plugin_options() {
-	$options = get_option( OPTION_NAME, [] );
+function get_plugin_options(): array {
+	$options = get_option( OPTION_NAME );
+	if ( ! is_array( $options ) ) {
+		$options = [];
+	}
 
-	$theme_name = isset( $options['theme_name'] ) ? $options['theme_name'] : DEFAULT_THEME;
-	return array_merge(
-		[
-			'theme_name'                        => DEFAULT_THEME,
-			'highlighted_line_background_color' => get_default_line_background_color( $theme_name ),
-		],
-		$options
-	);
+	if ( isset( $options['theme_name'] ) && is_string( $options['theme_name'] ) ) {
+		$theme_name = $options['theme_name'];
+	} else {
+		$theme_name = DEFAULT_THEME;
+	}
+
+	if ( isset( $options['highlighted_line_background_color'] ) && is_string( $options['highlighted_line_background_color'] ) ) {
+		$highlighted_line_background_color = $options['highlighted_line_background_color'];
+	} else {
+		$highlighted_line_background_color = get_default_line_background_color( $theme_name );
+	}
+
+	return compact( 'theme_name', 'highlighted_line_background_color' );
 }
 
 /**
@@ -159,7 +189,7 @@ function get_plugin_options() {
  * @param string $option_name The plugin option name.
  * @return string|null
  */
-function get_plugin_option( $option_name ) {
+function get_plugin_option( string $option_name ): ?string {
 	$options = get_plugin_options();
 	if ( array_key_exists( $option_name, $options ) ) {
 		return $options[ $option_name ];
@@ -170,7 +200,7 @@ function get_plugin_option( $option_name ) {
 /**
  * Require the highlight.php functions file.
  */
-function require_highlight_php_functions() {
+function require_highlight_php_functions(): void {
 	if ( DEVELOPMENT_MODE ) {
 		require_once __DIR__ . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
 	} else {
@@ -188,7 +218,7 @@ function require_highlight_php_functions() {
  * @see https://github.com/WordPress/gutenberg/issues/2751
  * @see https://github.com/WordPress/gutenberg/pull/22491
  */
-function init() {
+function init(): void {
 	if ( ! function_exists( 'register_block_type' ) ) {
 		return;
 	}
@@ -198,37 +228,18 @@ function init() {
 		return;
 	}
 
-	$attributes = [
-		'language'         => [
-			'type'    => 'string',
-			'default' => '',
-		],
-		'highlightedLines' => [
-			'type'    => 'string',
-			'default' => '',
-		],
-		'showLineNumbers'  => [
-			'type'    => 'boolean',
-			'default' => false,
-		],
-		'wrapLines'        => [
-			'type'    => 'boolean',
-			'default' => false,
-		],
-	];
-
 	$registry = WP_Block_Type_Registry::get_instance();
 
-	if ( $registry->is_registered( BLOCK_NAME ) ) {
-		$block                  = $registry->get_registered( BLOCK_NAME );
+	$block = $registry->get_registered( BLOCK_NAME );
+	if ( $block instanceof WP_Block_Type ) {
 		$block->render_callback = __NAMESPACE__ . '\render_block';
-		$block->attributes      = array_merge( $block->attributes, $attributes );
+		$block->attributes      = array_merge( $block->attributes ?? [], ATTRIBUTE_SCHEMA );
 	} else {
 		$block = register_block_type(
 			BLOCK_NAME,
 			[
 				'render_callback' => __NAMESPACE__ . '\render_block',
-				'attributes'      => $attributes,
+				'attributes'      => ATTRIBUTE_SCHEMA,
 			]
 		);
 	}
@@ -258,7 +269,7 @@ add_action( 'init', __NAMESPACE__ . '\init', 100 );
 /**
  * Print admin notice when plugin installed from source but no build being performed.
  */
-function print_build_required_admin_notice() {
+function print_build_required_admin_notice(): void {
 	?>
 	<div class="notice notice-error">
 		<p>
@@ -282,13 +293,15 @@ function print_build_required_admin_notice() {
  *
  * @param WP_Block_Type $block Block.
  */
-function register_editor_assets( WP_Block_Type $block ) {
+function register_editor_assets( WP_Block_Type $block ): void {
 	$style_path = '/editor-styles.css';
 	wp_register_style(
 		EDITOR_STYLE_HANDLE,
 		plugins_url( $style_path, __FILE__ ),
 		[],
-		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $style_path ) : PLUGIN_VERSION
+		SCRIPT_DEBUG
+			? (string) filemtime( plugin_dir_path( __FILE__ ) . $style_path )
+			: PLUGIN_VERSION
 	);
 
 	$script_path  = '/build/index.js';
@@ -307,8 +320,14 @@ function register_editor_assets( WP_Block_Type $block ) {
 		'name'       => $block->name,
 		'attributes' => $block->attributes,
 		'deprecated' => [
-			'selectedLines' => $block->attributes['highlightedLines'],
-			'showLines'     => $block->attributes['showLineNumbers'],
+			'selectedLines' => [
+				'type'    => 'string',
+				'default' => '',
+			],
+			'showLines'     => [
+				'type'    => 'boolean',
+				'default' => false,
+			],
 		],
 	];
 	wp_add_inline_script(
@@ -329,7 +348,7 @@ function register_editor_assets( WP_Block_Type $block ) {
  *
  * @return string Theme name.
  */
-function get_theme_name() {
+function get_theme_name(): string {
 	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
 		/**
 		 * Filters the style used for the code syntax block.
@@ -344,8 +363,11 @@ function get_theme_name() {
 		 * @param string $style Style.
 		 */
 		$style = apply_filters( BLOCK_STYLE_FILTER, DEFAULT_THEME );
+		if ( ! is_string( $style ) ) {
+			$style = DEFAULT_THEME;
+		}
 	} else {
-		$style = get_plugin_option( 'theme_name' );
+		$style = get_plugin_options()['theme_name'];
 	}
 	return $style;
 }
@@ -357,7 +379,7 @@ function get_theme_name() {
  *
  * @param WP_Styles $styles Styles.
  */
-function register_styles( WP_Styles $styles ) {
+function register_styles( WP_Styles $styles ): void {
 	$style = get_theme_name();
 
 	$default_style_path = sprintf(
@@ -369,7 +391,9 @@ function register_styles( WP_Styles $styles ) {
 		FRONTEND_STYLE_HANDLE,
 		plugins_url( $default_style_path, __FILE__ ),
 		[],
-		SCRIPT_DEBUG ? filemtime( plugin_dir_path( __FILE__ ) . $default_style_path ) : PLUGIN_VERSION
+		SCRIPT_DEBUG
+			? (string) filemtime( plugin_dir_path( __FILE__ ) . $default_style_path )
+			: PLUGIN_VERSION
 	);
 }
 
@@ -378,7 +402,7 @@ function register_styles( WP_Styles $styles ) {
  *
  * @return bool Styling.
  */
-function is_styling_enabled() {
+function is_styling_enabled(): bool {
 	/**
 	 * Filters whether the Syntax-highlighting Code Block's default styling is enabled.
 	 *
@@ -390,10 +414,15 @@ function is_styling_enabled() {
 /**
  * Get styles.
  *
- * @param array $attributes Attributes.
+ * @param array{
+ *     language: string,
+ *     highlightedLines: string,
+ *     showLineNumbers: bool,
+ *     wrapLines: bool
+ * } $attributes Attributes.
  * @return string Attributes.
  */
-function get_styles( $attributes ) {
+function get_styles( array $attributes ): string {
 	if ( is_feed() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 		return '';
 	}
@@ -419,7 +448,8 @@ function get_styles( $attributes ) {
 	// See <https://github.com/westonruter/syntax-highlighting-code-block/issues/286>.
 	ob_start();
 	wp_print_styles( FRONTEND_STYLE_HANDLE );
-	$styles = trim( ob_get_clean() );
+	$output = ob_get_clean();
+	$styles = is_string( $output ) ? trim( $output ) : '';
 
 	// Include line-number styles if requesting to show lines.
 	if ( ! $added_inline_style ) {
@@ -430,6 +460,7 @@ function get_styles( $attributes ) {
 
 	if ( ! $added_highlighted_color_style && ! empty( $attributes['highlightedLines'] ) ) {
 		if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+			$default_line_color = get_default_line_background_color( DEFAULT_THEME );
 			/**
 			 * Filters the background color of a highlighted line.
 			 *
@@ -440,9 +471,12 @@ function get_styles( $attributes ) {
 			 *
 			 * @since 1.1.5
 			 */
-			$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, get_default_line_background_color( DEFAULT_THEME ) );
+			$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, $default_line_color );
+			if ( ! is_string( $line_color ) ) {
+				$line_color = $default_line_color;
+			}
 		} else {
-			$line_color = get_plugin_option( 'highlighted_line_background_color' );
+			$line_color = get_plugin_options()['highlighted_line_background_color'];
 		}
 
 		$styles .= "<style>.hljs > mark.shcb-loc { background-color: $line_color; }</style>";
@@ -456,9 +490,9 @@ function get_styles( $attributes ) {
 /**
  * Language names.
  *
- * @return array Mapping slug to name.
+ * @return array<string, string> Mapping slug to name.
  */
-function get_language_names() {
+function get_language_names(): array {
 	return require __DIR__ . '/language-names.php';
 }
 
@@ -467,11 +501,16 @@ function get_language_names() {
  *
  * @param string $pre_start_tag  The `<pre>` start tag.
  * @param string $code_start_tag The `<code>` start tag.
- * @param array  $attributes     Attributes.
+ * @param array{
+ *     language: string,
+ *     highlightedLines: string,
+ *     showLineNumbers: bool,
+ *     wrapLines: bool
+ * }             $attributes     Attributes.
  * @param string $content        Content.
  * @return string Injected markup.
  */
-function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content ) {
+function inject_markup( string $pre_start_tag, string $code_start_tag, array $attributes, string $content ): string {
 	$added_classes = 'hljs';
 
 	if ( $attributes['language'] ) {
@@ -490,7 +529,8 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 		$added_classes .= ' shcb-wrap-lines';
 	}
 
-	$code_start_tag = preg_replace(
+	// @todo Update this to use WP_HTML_Tag_Processor.
+	$code_start_tag = (string) preg_replace(
 		'/(<code[^>]*\sclass=")/',
 		'$1' . esc_attr( $added_classes ) . ' ',
 		$code_start_tag,
@@ -498,7 +538,7 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 		$count
 	);
 	if ( 0 === $count ) {
-		$code_start_tag = preg_replace(
+		$code_start_tag = (string) preg_replace(
 			'/(?<=<code\b)/',
 			sprintf( ' class="%s"', esc_attr( $added_classes ) ),
 			$code_start_tag,
@@ -510,7 +550,7 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
 
 	if ( ! empty( $attributes['language'] ) ) {
 		$language_names = get_language_names();
-		$language_name  = isset( $language_names[ $attributes['language'] ] ) ? $language_names[ $attributes['language'] ] : $attributes['language'];
+		$language_name  = $language_names[ $attributes['language'] ] ?? $attributes['language'];
 
 		$element_id = wp_unique_id( 'shcb-language-' );
 
@@ -556,22 +596,29 @@ function inject_markup( $pre_start_tag, $code_start_tag, $attributes, $content )
  * @param string $content Highlighted content.
  * @return string Escaped content.
  */
-function escape( $content ) {
+function escape( string $content ): string {
 	// See escapeOpeningSquareBrackets: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L19-L34>.
 	$content = str_replace( '[', '&#91;', $content );
 
 	// See escapeProtocolInIsolatedUrls: <https://github.com/WordPress/gutenberg/blob/32b4481/packages/block-library/src/code/utils.js#L36-L55>.
-	return preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
+	return (string) preg_replace( '/^(\s*https?:)\/\/([^\s<>"]+\s*)$/m', '$1&#47;&#47;$2', $content );
 }
 
 /**
  * Render code block.
  *
- * @param array  $attributes Attributes.
+ * @param array{
+ *     language: string,
+ *     highlightedLines: string,
+ *     showLineNumbers: bool,
+ *     wrapLines: bool,
+ *     selectedLines?: string,
+ *     showLines?: bool
+ * }             $attributes Attributes.
  * @param string $content    Content.
  * @return string Highlighted content.
  */
-function render_block( $attributes, $content ) {
+function render_block( array $attributes, string $content ): string {
 	$pattern  = '(?P<pre_start_tag><pre\b[^>]*?>)(?P<code_start_tag><code\b[^>]*?>)';
 	$pattern .= '(?P<content>.*)';
 	$pattern .= '</code></pre>';
@@ -596,11 +643,31 @@ function render_block( $attributes, $content ) {
 	 * @param string[] $auto_detect_language Auto-detect languages.
 	 */
 	$auto_detect_languages = apply_filters( 'syntax_highlighting_code_block_auto_detect_languages', [] );
+	if ( ! is_array( $auto_detect_languages ) ) {
+		$auto_detect_languages = [];
+	}
+	$auto_detect_languages = array_filter( $auto_detect_languages, 'is_string' );
 
 	$transient_key = 'syntax-highlighted-' . md5( wp_json_encode( $attributes ) . implode( '', $auto_detect_languages ) . $matches['content'] . PLUGIN_VERSION );
-	$highlighted   = get_transient( $transient_key );
 
-	if ( ! DEVELOPMENT_MODE && $highlighted && isset( $highlighted['content'] ) ) {
+	$highlighted = get_transient( $transient_key );
+	if (
+		! DEVELOPMENT_MODE
+		&&
+		is_array( $highlighted )
+		&&
+		isset( $highlighted['content'] ) && is_string( $highlighted['content'] )
+		&&
+		is_array( $highlighted['attributes'] )
+		&&
+		isset( $highlighted['attributes']['language'] ) && is_string( $highlighted['attributes']['language'] )
+		&&
+		isset( $highlighted['attributes']['highlightedLines'] ) && is_string( $highlighted['attributes']['highlightedLines'] )
+		&&
+		isset( $highlighted['attributes']['showLineNumbers'] ) && is_bool( $highlighted['attributes']['showLineNumbers'] )
+		&&
+		isset( $highlighted['attributes']['wrapLines'] ) && is_bool( $highlighted['attributes']['wrapLines'] )
+	) {
 		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'], $highlighted['content'] );
 	}
 
@@ -646,7 +713,7 @@ function render_block( $attributes, $content ) {
 			require_highlight_php_functions();
 
 			$highlighted_lines = parse_highlighted_lines( $attributes['highlightedLines'] );
-			$lines             = splitCodeIntoArray( $content );
+			$lines             = split_code_into_array( $content );
 			$content           = '';
 
 			// We need to wrap the line of code twice in order to let out `white-space: pre` CSS setting to be respected
@@ -674,19 +741,34 @@ function render_block( $attributes, $content ) {
 }
 
 /**
+ * Split code into an array.
+ *
+ * @param string $code Code to split.
+ * @return string[] Lines.
+ * @throws Exception If an error occurred in splitting up by lines.
+ */
+function split_code_into_array( string $code ): array {
+	$lines = splitCodeIntoArray( $code );
+	if ( ! is_array( $lines ) ) {
+		throw new Exception( 'Unable to split code into array.' );
+	}
+	return $lines;
+}
+
+/**
  * Parse the highlighted line syntax from the front-end and return an array of highlighted line numbers.
  *
  * @param string $highlighted_lines The highlighted line syntax.
  * @return int[]
  */
-function parse_highlighted_lines( $highlighted_lines ) {
+function parse_highlighted_lines( string $highlighted_lines ): array {
 	$highlighted_line_numbers = [];
 
 	if ( ! $highlighted_lines || empty( trim( $highlighted_lines ) ) ) {
 		return $highlighted_line_numbers;
 	}
 
-	$ranges = explode( ',', preg_replace( '/\s/', '', $highlighted_lines ) );
+	$ranges = explode( ',', (string) preg_replace( '/\s/', '', $highlighted_lines ) );
 
 	foreach ( $ranges as $chunk ) {
 		if ( strpos( $chunk, '-' ) !== false ) {
@@ -712,7 +794,7 @@ function parse_highlighted_lines( $highlighted_lines ) {
  * @param string   $input    Incoming theme name.
  * @return WP_Error Amended errors.
  */
-function validate_theme_name( $validity, $input ) {
+function validate_theme_name( WP_Error $validity, string $input ): WP_Error {
 	require_highlight_php_functions();
 
 	$themes = getAvailableStyleSheets();
@@ -729,7 +811,7 @@ function validate_theme_name( $validity, $input ) {
  *
  * @param WP_Customize_Manager $wp_customize The Customizer object.
  */
-function customize_register( $wp_customize ) {
+function customize_register( WP_Customize_Manager $wp_customize ): void {
 	if ( has_filter( BLOCK_STYLE_FILTER ) && has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
 		return;
 	}
@@ -757,6 +839,11 @@ function customize_register( $wp_customize ) {
 		);
 
 		// Obtain the working theme name in the changeset.
+		/**
+		 * Theme name sanitized by Customizer setting callback & default
+		 *
+		 * @var string $theme_name
+		 */
 		$theme_name = $setting->post_value( $theme_name );
 
 		$wp_customize->add_control(
@@ -805,7 +892,7 @@ add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 /**
  * Enqueue scripts for Customizer.
  */
-function enqueue_customize_scripts() {
+function enqueue_customize_scripts(): void {
 	$script_handle = 'syntax-highlighting-code-block-customize-controls';
 	$script_path   = '/build/customize-controls.js';
 	$script_asset  = require __DIR__ . '/build/customize-controls.asset.php';
@@ -822,7 +909,7 @@ function enqueue_customize_scripts() {
 /**
  * Register REST endpoint.
  */
-function register_rest_endpoint() {
+function register_rest_endpoint(): void {
 	register_rest_route(
 		REST_API_NAMESPACE,
 		'/highlighted-line-background-color/(?P<theme_name>[^/]+)',
