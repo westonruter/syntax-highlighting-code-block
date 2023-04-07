@@ -269,7 +269,7 @@ add_action( 'init', __NAMESPACE__ . '\init', 100 );
 /**
  * Print admin notice when plugin installed from source but no build being performed.
  *
- * @noinspection PhpUnused
+ * @noinspection PhpUnused -- See https://youtrack.jetbrains.com/issue/WI-22217/Extend-possible-linking-between-function-and-callback-using-different-constants-NAMESPACE-CLASS-and-class
  */
 function print_build_required_admin_notice(): void {
 	?>
@@ -925,7 +925,7 @@ add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 /**
  * Enqueue scripts for Customizer.
  *
- * @noinspection PhpUnused
+ * @noinspection PhpUnused -- See https://youtrack.jetbrains.com/issue/WI-22217/Extend-possible-linking-between-function-and-callback-using-different-constants-NAMESPACE-CLASS-and-class
  */
 function enqueue_customize_scripts(): void {
 	$script_handle = 'syntax-highlighting-code-block-customize-controls';
@@ -944,7 +944,7 @@ function enqueue_customize_scripts(): void {
 /**
  * Register REST endpoint.
  *
- * @noinspection PhpUnused
+ * @noinspection PhpUnused -- See https://youtrack.jetbrains.com/issue/WI-22217/Extend-possible-linking-between-function-and-callback-using-different-constants-NAMESPACE-CLASS-and-class
  */
 function register_rest_endpoint(): void {
 	register_rest_route(
