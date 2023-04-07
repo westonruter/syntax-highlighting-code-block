@@ -268,6 +268,8 @@ add_action( 'init', __NAMESPACE__ . '\init', 100 );
 
 /**
  * Print admin notice when plugin installed from source but no build being performed.
+ *
+ * @noinspection PhpUnused
  */
 function print_build_required_admin_notice(): void {
 	?>
@@ -922,6 +924,8 @@ add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 
 /**
  * Enqueue scripts for Customizer.
+ *
+ * @noinspection PhpUnused
  */
 function enqueue_customize_scripts(): void {
 	$script_handle = 'syntax-highlighting-code-block-customize-controls';
@@ -939,6 +943,8 @@ function enqueue_customize_scripts(): void {
 
 /**
  * Register REST endpoint.
+ *
+ * @noinspection PhpUnused
  */
 function register_rest_endpoint(): void {
 	register_rest_route(
