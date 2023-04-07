@@ -757,7 +757,7 @@ function render_block( array $attributes, string $content ): string {
 			}
 		}
 
-		if ( ! DEVELOPMENT_MODE && $transient_key ) {
+		if ( $transient_key ) {
 			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
 		}
 
