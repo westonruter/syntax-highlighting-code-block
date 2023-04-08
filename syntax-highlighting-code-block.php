@@ -9,7 +9,7 @@
  * License:      GPL2
  * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:  syntax-highlighting-code-block
- * Requires PHP: 5.6
+ * Requires PHP: 7.4
  *
  * @package Syntax_Highlighting_Code_Block
  */
