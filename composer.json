@@ -10,9 +10,15 @@
     "civicrm/composer-downloads-plugin": "^3.0",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
     "phpcompatibility/php-compatibility": "^9.1",
-    "szepeviktor/phpstan-wordpress": "^1.1",
+    "szepeviktor/phpstan-wordpress": "dev-add/script-debug-constant",
     "wp-coding-standards/wpcs": "^2"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/westonruter/phpstan-wordpress"
+    }
+  ],
   "config": {
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true,

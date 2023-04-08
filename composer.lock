@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "601a27d7caea6a4b4e632dcad0d30bfb",
+    "content-hash": "c230c26124b320ec66f0bc74236d3bd6",
     "packages": [
         {
             "name": "scrivo/highlight.php",
@@ -524,22 +524,22 @@
         },
         {
             "name": "szepeviktor/phpstan-wordpress",
-            "version": "v1.1.7",
+            "version": "dev-add/script-debug-constant",
             "source": {
                 "type": "git",
-                "url": "https://github.com/szepeviktor/phpstan-wordpress.git",
-                "reference": "979dcb81a01942b576b9fbf72dcb9515c57a4aa8"
+                "url": "https://github.com/westonruter/phpstan-wordpress.git",
+                "reference": "7d49db02ac531e4a4a174c003d85935c0bf34d9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/979dcb81a01942b576b9fbf72dcb9515c57a4aa8",
-                "reference": "979dcb81a01942b576b9fbf72dcb9515c57a4aa8",
+                "url": "https://api.github.com/repos/westonruter/phpstan-wordpress/zipball/7d49db02ac531e4a4a174c003d85935c0bf34d9f",
+                "reference": "7d49db02ac531e4a4a174c003d85935c0bf34d9f",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2 || ^8.0",
                 "php-stubs/wordpress-stubs": "^4.7 || ^5.0 || ^6.0",
-                "phpstan/phpstan": "^1.8.7",
+                "phpstan/phpstan": "^1.10.0",
                 "symfony/polyfill-php73": "^1.12.0"
             },
             "require-dev": {
@@ -563,33 +563,59 @@
                     "SzepeViktor\\PHPStan\\WordPress\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/"
+                ]
+            },
+            "scripts": {
+                "test": [
+                    "@test:syntax",
+                    "@test:phpunit",
+                    "@test:cs",
+                    "@test:phpstan"
+                ],
+                "test:cs": [
+                    "phpcs"
+                ],
+                "test:cs:fix": [
+                    "phpcbf"
+                ],
+                "test:phpstan": [
+                    "phpstan analyze"
+                ],
+                "test:phpunit": [
+                    "phpunit"
+                ],
+                "test:syntax": [
+                    "parallel-lint bootstrap.php src/ tests/"
+                ]
+            },
             "license": [
                 "MIT"
             ],
             "description": "WordPress extensions for PHPStan",
             "keywords": [
-                "PHPStan",
                 "code analyse",
                 "code analysis",
+                "phpstan",
                 "static analysis",
                 "wordpress"
             ],
             "support": {
-                "issues": "https://github.com/szepeviktor/phpstan-wordpress/issues",
-                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v1.1.7"
+                "source": "https://github.com/westonruter/phpstan-wordpress/tree/add/script-debug-constant"
             },
             "funding": [
                 {
-                    "url": "https://www.paypal.me/szepeviktor",
-                    "type": "custom"
+                    "type": "github",
+                    "url": "https://github.com/szepeviktor"
                 },
                 {
-                    "url": "https://github.com/szepeviktor",
-                    "type": "github"
+                    "type": "custom",
+                    "url": "https://www.paypal.me/szepeviktor"
                 }
             ],
-            "time": "2023-02-04T13:10:27+00:00"
+            "time": "2023-04-08T00:23:56+00:00"
         },
         {
             "name": "togos/gitignore",
@@ -682,7 +708,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "szepeviktor/phpstan-wordpress": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
