@@ -12,3 +12,4 @@ parameters:
 		- %currentWorkingDirectory%/uninstall.php
 	dynamicConstantNames:
 		- Syntax_Highlighting_Code_Block\DEVELOPMENT_MODE
+	treatPhpDocTypesAsCertain: false

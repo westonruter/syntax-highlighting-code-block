@@ -365,6 +365,9 @@ function get_theme_name(): string {
 		 * @param string $style Style.
 		 */
 		$style = apply_filters( BLOCK_STYLE_FILTER, DEFAULT_THEME );
+		if ( ! is_string( $style ) ) {
+			$style = DEFAULT_THEME;
+		}
 	} else {
 		$style = get_plugin_options()['theme_name'];
 	}
@@ -471,6 +474,9 @@ function get_styles( array $attributes ): string {
 			 * @since 1.1.5
 			 */
 			$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, $default_line_color );
+			if ( ! is_string( $line_color ) ) {
+				$line_color = $default_line_color;
+			}
 		} else {
 			$line_color = get_plugin_options()['highlighted_line_background_color'];
 		}
@@ -672,6 +678,9 @@ function render_block( array $attributes, string $content ): string {
 	 * @param string[] $auto_detect_language Auto-detect languages.
 	 */
 	$auto_detect_languages = apply_filters( 'syntax_highlighting_code_block_auto_detect_languages', [] );
+	if ( ! is_array( $auto_detect_languages ) ) {
+		$auto_detect_languages = [];
+	}
 	$auto_detect_languages = array_filter( $auto_detect_languages, 'is_string' );
 
 	// Use the previously-highlighted content if cached.
