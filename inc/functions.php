@@ -1,4 +1,11 @@
 <?php
+/**
+ * Functions file.
+ *
+ * TODO: Refactor into classes.
+ *
+ * @package Syntax_Highlighting_Code_Block
+ */
 
 namespace Syntax_Highlighting_Code_Block;
 
