@@ -6,10 +6,13 @@ includes:
 parameters:
 	level: 9
 	paths:
-		- %currentWorkingDirectory%/syntax-highlighting-code-block.php
-		- %currentWorkingDirectory%/language-names.php
-		- %currentWorkingDirectory%/uninstall.php
-		- %currentWorkingDirectory%/inc/
+		- syntax-highlighting-code-block.php
+		- language-names.php
+		- uninstall.php
+		- inc/
+	stubFiles:
+		# https://github.com/scrivo/highlight.php/pull/107
+		- tests/phpstan/HighlightAutoloader.stub
 	dynamicConstantNames:
 		- Syntax_Highlighting_Code_Block\DEVELOPMENT_MODE
 	treatPhpDocTypesAsCertain: false
