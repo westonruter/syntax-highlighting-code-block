@@ -29,6 +29,8 @@
 	<arg value="s"/>
 	<arg name="extensions" value="php"/>
 	<file>syntax-highlighting-code-block.php</file>
+	<file>uninstall.php</file>
+	<file>inc/</file>
 
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
