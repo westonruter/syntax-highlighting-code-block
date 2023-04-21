@@ -721,9 +721,47 @@ function render_block( array $attributes, string $content ): string {
 
 		$language = $attributes['language'];
 
+		$content = $matches['content'];
+		// @todo We need to remove all tags but remember the byte positions, and also we need to do the same for entities.
+
+		$token_offets = [];
+
+		$token_regexps = [
+			'(?P<start_tag><\w[^<]*?>)',
+			'(?P<end_tag><\\/\w[^<]*?>)',
+			'(?P<entity>&(?:\w+|#(?:\d+|x[0-9a-fA-F]+));)',
+			//'(?P<named_entity>&\w+;)',
+			//'(?P<decimal_entity>&#\d+;)',
+			//'(?P<hex_entity>&#x[0-9a-fA-F]+;)',
+		];
+
+		$offset_diff = 0;
+
+		$pattern = '/' . implode( '|', $token_regexps ) . '/s';
+
+		$content = preg_replace_callback(
+			$pattern,
+			static function ( $matches ) use ( $token_offets, $offset_diff ) {
+				$original = $matches[0][0];
+
+				if ( $matches['start_tag'][1] !== -1 ) {
+					$replacement = '';
+				} elseif ( $matches['end_tag'][1] !== -1 ) {
+					$replacement = '';
+				} elseif ( $matches['entity'][1] !== -1 ) {
+					$replacement = html_entity_decode( $matches['entity'][0], ENT_QUOTES | ENT_HTML5, 'utf-8' );
+				}
+
+				return $replacement;
+			},
+			$content,
+			-1,
+			$count,
+			PREG_OFFSET_CAPTURE
+		);
+
 		// Note that the decoding here is reversed later in the escape() function.
 		// @todo Now that Code blocks may have markup (e.g. bolding, italics, and hyperlinks), these need to be removed and then restored after highlighting is completed.
-		$content = html_entity_decode( $matches['content'], ENT_QUOTES );
 
 		// Convert from Prism.js languages names.
 		if ( 'clike' === $language ) {
@@ -760,6 +798,8 @@ function render_block( array $attributes, string $content ): string {
 		if ( $transient_key ) {
 			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
 		}
+
+		// @todo The tags and entities extracted from $content need to be restored now.
 
 		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes, $content );
 	} catch ( Exception $e ) {
