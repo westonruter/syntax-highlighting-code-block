@@ -19,6 +19,8 @@ use function HighlightUtilities\getThemeBackgroundColor;
 
 /**
  * Boot the plugin.
+ *
+ * @noinspection PhpUnused -- See https://youtrack.jetbrains.com/issue/WI-22217/Extend-possible-linking-between-function-and-callback-using-different-constants-NAMESPACE-CLASS-and-class
  */
 function boot(): void {
 	add_action( 'init', __NAMESPACE__ . '\init', 100 );
