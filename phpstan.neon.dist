@@ -6,10 +6,10 @@ includes:
 parameters:
 	level: 9
 	paths:
-		# TODO: Move the PHP into an inc/ folder and then use that path. This will allow use of result cache.
 		- syntax-highlighting-code-block.php
 		- language-names.php
 		- uninstall.php
+		- inc/
 	stubFiles:
 		# https://github.com/scrivo/highlight.php/pull/107
 		- tests/phpstan/HighlightAutoloader.stub
