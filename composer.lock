@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c230c26124b320ec66f0bc74236d3bd6",
+    "content-hash": "2c65db080abdb9ff9198a522e92cc8e1",
     "packages": [
         {
             "name": "scrivo/highlight.php",
@@ -326,16 +326,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.11",
+            "version": "1.10.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "8aa62e6ea8b58ffb650e02940e55a788cbc3fe21"
+                "reference": "d232901b09e67538e5c86a724be841bea5768a7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8aa62e6ea8b58ffb650e02940e55a788cbc3fe21",
-                "reference": "8aa62e6ea8b58ffb650e02940e55a788cbc3fe21",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d232901b09e67538e5c86a724be841bea5768a7c",
+                "reference": "d232901b09e67538e5c86a724be841bea5768a7c",
                 "shasum": ""
             },
             "require": {
@@ -384,7 +384,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-04-04T19:17:42+00:00"
+            "time": "2023-04-19T13:47:27+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -524,16 +524,16 @@
         },
         {
             "name": "szepeviktor/phpstan-wordpress",
-            "version": "dev-add/script-debug-constant",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/westonruter/phpstan-wordpress.git",
-                "reference": "7d49db02ac531e4a4a174c003d85935c0bf34d9f"
+                "url": "https://github.com/szepeviktor/phpstan-wordpress.git",
+                "reference": "534f2666a169ee7389722460178764db976ea1c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/westonruter/phpstan-wordpress/zipball/7d49db02ac531e4a4a174c003d85935c0bf34d9f",
-                "reference": "7d49db02ac531e4a4a174c003d85935c0bf34d9f",
+                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/534f2666a169ee7389722460178764db976ea1c3",
+                "reference": "534f2666a169ee7389722460178764db976ea1c3",
                 "shasum": ""
             },
             "require": {
@@ -563,59 +563,33 @@
                     "SzepeViktor\\PHPStan\\WordPress\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/"
-                ]
-            },
-            "scripts": {
-                "test": [
-                    "@test:syntax",
-                    "@test:phpunit",
-                    "@test:cs",
-                    "@test:phpstan"
-                ],
-                "test:cs": [
-                    "phpcs"
-                ],
-                "test:cs:fix": [
-                    "phpcbf"
-                ],
-                "test:phpstan": [
-                    "phpstan analyze"
-                ],
-                "test:phpunit": [
-                    "phpunit"
-                ],
-                "test:syntax": [
-                    "parallel-lint bootstrap.php src/ tests/"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "WordPress extensions for PHPStan",
             "keywords": [
+                "PHPStan",
                 "code analyse",
                 "code analysis",
-                "phpstan",
                 "static analysis",
                 "wordpress"
             ],
             "support": {
-                "source": "https://github.com/westonruter/phpstan-wordpress/tree/add/script-debug-constant"
+                "issues": "https://github.com/szepeviktor/phpstan-wordpress/issues",
+                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v1.2.0"
             },
             "funding": [
                 {
-                    "type": "github",
-                    "url": "https://github.com/szepeviktor"
+                    "url": "https://www.paypal.me/szepeviktor",
+                    "type": "custom"
                 },
                 {
-                    "type": "custom",
-                    "url": "https://www.paypal.me/szepeviktor"
+                    "url": "https://github.com/szepeviktor",
+                    "type": "github"
                 }
             ],
-            "time": "2023-04-08T00:23:56+00:00"
+            "time": "2023-04-08T07:07:36+00:00"
         },
         {
             "name": "togos/gitignore",
@@ -708,9 +682,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "szepeviktor/phpstan-wordpress": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
