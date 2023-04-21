@@ -1,0 +1,12 @@
+<?php
+
+namespace Highlight;
+
+class Autoloader
+{
+	/**
+	 * @param string $class
+	 * @return void
+	 */
+	public static function load($class) {}
+}
