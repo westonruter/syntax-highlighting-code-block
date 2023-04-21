@@ -7,11 +7,11 @@
     "scrivo/highlight.php": "v9.18.1.10"
   },
   "require-dev": {
-    "civicrm/composer-downloads-plugin": "^3.0",
-    "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
-    "phpcompatibility/php-compatibility": "^9.1",
+    "civicrm/composer-downloads-plugin": "3.0.1",
+    "dealerdirect/phpcodesniffer-composer-installer": "1.0.0",
+    "phpcompatibility/php-compatibility": "9.3.5",
     "szepeviktor/phpstan-wordpress": "1.2.0",
-    "wp-coding-standards/wpcs": "^2"
+    "wp-coding-standards/wpcs": "2.3.0"
   },
   "config": {
     "allow-plugins": {
