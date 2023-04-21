@@ -16,21 +16,6 @@
 
 namespace Syntax_Highlighting_Code_Block;
 
-use Exception;
-use WP_Block_Type;
-use WP_Block_Type_Registry;
-use WP_Error;
-use WP_Customize_Manager;
-use WP_Styles;
-use WP_REST_Server;
-use WP_REST_Request;
-use WP_REST_Response;
-use WP_Customize_Color_Control;
-use Highlight\Highlighter;
-use function HighlightUtilities\splitCodeIntoArray;
-use function HighlightUtilities\getAvailableStyleSheets;
-use function HighlightUtilities\getThemeBackgroundColor;
-
 const PLUGIN_VERSION = '1.4.0';
 
 const PLUGIN_MAIN_FILE = __FILE__;
