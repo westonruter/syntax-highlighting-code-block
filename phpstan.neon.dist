@@ -6,10 +6,10 @@ includes:
 parameters:
 	level: 9
 	paths:
-		# TODO: Move the PHP into an inc/ folder and then use that path. This will allow use of result cache.
 		- %currentWorkingDirectory%/syntax-highlighting-code-block.php
 		- %currentWorkingDirectory%/language-names.php
 		- %currentWorkingDirectory%/uninstall.php
+		- %currentWorkingDirectory%/inc/
 	dynamicConstantNames:
 		- Syntax_Highlighting_Code_Block\DEVELOPMENT_MODE
 	treatPhpDocTypesAsCertain: false
