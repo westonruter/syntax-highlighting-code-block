@@ -25,14 +25,13 @@ This extended Code block uses language auto-detection to add syntax highlighting
 
 For advanced usage, please see the [plugin wiki](https://github.com/westonruter/syntax-highlighting-code-block/wiki).
 
-This plugin is [developed on GitHub](https://github.com/westonruter/syntax-highlighting-code-block). See [list of current issues](https://github.com/westonruter/syntax-highlighting-code-block/issues) with the plugin. Please feel free to file any additional issues or requests that you may come across. [Pull requests](https://github.com/westonruter/syntax-highlighting-code-block/pulls) are welcome.
+This plugin is [developed on GitHub](https://github.com/westonruter/syntax-highlighting-code-block). See [list of current issues](https://github.com/westonruter/syntax-highlighting-code-block/issues) with the plugin. Please feel free to file any additional issues or requests that you may come across. [Pull requests](https://github.com/westonruter/syntax-highlighting-code-block/pulls) are welcome. See [contributing information](https://github.com/westonruter/syntax-highlighting-code-block/wiki/Contributing).
 
 ### Credits
 
 This is a fork of [Code Syntax Block](https://github.com/mkaz/code-syntax-block) by [Marcus Kazmierczak](https://mkaz.blog/) (mkaz), which is also [available on WordPress.org](https://wordpress.org/plugins/code-syntax-block/). Copyright (c) 2018 Marcus Kazmierczak. Licensed under GPL 2.0 or later.
 
 [highlight.php](https://github.com/scrivo/highlight.php) is released under the BSD 3-Clause License. Copyright © 2006-2013, Ivan Sagalaev (maniac@softwaremaniacs.org), highlight.js (original author). Copyright © 2013, Geert Bergman (geert@scrivo.nl), highlight.php
-
 
 ## Screenshots
 
