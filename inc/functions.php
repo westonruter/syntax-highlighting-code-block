@@ -851,7 +851,7 @@ function customize_register( WP_Customize_Manager $wp_customize ): void {
 		);
 	}
 
-	if ( ! has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+	if ( ! has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) && $theme_name ) {
 		$default_color = strtolower( get_default_line_background_color( $theme_name ) );
 		$wp_customize->add_setting(
 			'syntax_highlighting[highlighted_line_background_color]',
