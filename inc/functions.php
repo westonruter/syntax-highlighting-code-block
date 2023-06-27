@@ -308,7 +308,7 @@ function register_editor_assets( WP_Block_Type $block ): void {
 /**
  * Get highlight theme name.
  *
- * @return string Theme name.
+ * @return string Theme name or empty string if disabled.
  */
 function get_theme_name(): string {
 	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
@@ -331,7 +331,7 @@ function get_theme_name(): string {
 	} else {
 		$style = get_plugin_options()['theme_name'];
 	}
-	return $style;
+	return is_string( $style ) ? $style : '';
 }
 
 /**
@@ -851,7 +851,7 @@ function customize_register( WP_Customize_Manager $wp_customize ): void {
 		);
 	}
 
-	if ( ! has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+	if ( ! has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) && $theme_name ) {
 		$default_color = strtolower( get_default_line_background_color( $theme_name ) );
 		$wp_customize->add_setting(
 			'syntax_highlighting[highlighted_line_background_color]',
