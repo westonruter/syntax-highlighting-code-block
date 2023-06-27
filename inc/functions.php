@@ -308,7 +308,7 @@ function register_editor_assets( WP_Block_Type $block ): void {
 /**
  * Get highlight theme name.
  *
- * @return string|null Theme name or null if disabled.
+ * @return string Theme name or empty string if disabled.
  */
 function get_theme_name(): string {
 	if ( has_filter( BLOCK_STYLE_FILTER ) ) {
@@ -331,7 +331,7 @@ function get_theme_name(): string {
 	} else {
 		$style = get_plugin_options()['theme_name'];
 	}
-	return is_string( $style ) ? $style : null;
+	return is_string( $style ) ? $style : '';
 }
 
 /**
