@@ -7,9 +7,10 @@ updates:
     time: "12:00"
     timezone: America/Los_Angeles
   open-pull-requests-limit: 10
-  ignore:
-    # Currently run via `npm run update-wordpress-packages`
-    - dependency-name: "@wordpress/*"
+  groups:
+    wordpress-packages:
+      patterns:
+        - "@wordpress/*"
 
 - package-ecosystem: composer
   directory: "/"

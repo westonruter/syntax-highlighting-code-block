@@ -66,7 +66,6 @@
     "prepare": "husky install",
     "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
     "symlink-wp-env-install-paths": "bin/symlink-wp-env-install-paths.sh",
-    "update-wordpress-packages": "npm install --save-dev --save-exact $(npm outdated --parseable | cut -d':' -f 4 | grep @wordpress)",
     "wp-env": "wp-env"
   },
   "npmpackagejsonlint": {
