@@ -54,6 +54,7 @@ module.exports = function (grunt) {
 				'readme.txt',
 				'LICENSE',
 				'build/*',
+				'inc/*',
 			];
 
 			grunt.config.set('copy', {
