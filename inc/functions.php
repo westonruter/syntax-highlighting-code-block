@@ -556,14 +556,40 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 			esc_html( $attributes['language'] )
 		);
 
-		// Also include the language in data attributes on the root <pre> element for maximum styling flexibility.
+		/**
+		 * Add the language info to markup with ARIA attributes. Filterable.
+		 */
+		$tag_attributes = array(
+			'aria-describedby'        => $element_id,
+			'data-shcb-language-name' => $language_name,
+			'data-shcb-language-slug' => $attributes['language'],
+		);
+
+		/**
+		 * Filter the attributes added to the `<pre>` element.
+		 *
+		 * @param array $tag_attributes Associative array of attributes.
+		 * @param array $attributes     Block attributes.
+		 *
+		 * @since 1.4.1
+		 */
+		$tag_attributes = apply_filters( 'syntax_highlighting_code_block_start_tag_attributes', $tag_attributes, $attributes );
+
+		// Format the attributes for the start tag and build start tag.
 		$pre_start_tag = str_replace(
 			'>',
 			sprintf(
-				' aria-describedby="%s" data-shcb-language-name="%s" data-shcb-language-slug="%s">',
-				esc_attr( $element_id ),
-				esc_attr( $language_name ),
-				esc_attr( $attributes['language'] )
+				' %s>',
+				implode(
+					' ',
+					array_map(
+						function ( $key, $value ) {
+							return sprintf( '%s="%s"', sanitize_title( $key ), esc_attr( $value ) );
+						},
+						array_keys( $tag_attributes ),
+						$tag_attributes
+					)
+				)
 			),
 			$pre_start_tag
 		);
@@ -575,10 +601,11 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 		 * @param string $element_id    The ID of the element containing the language info.
 		 * @param string $language_name The name of the language.
 		 * @param string $language_slug The slug of the language.
+		 * @param array  $attributes    Block attributes.
 		 *
 		 * @since 1.4.1
 		 */
-		$pre_start_tag = apply_filters( 'syntax_highlighting_code_block_pre_start_tag', $pre_start_tag, $element_id, $language_name, $attributes['language'] );
+		$pre_start_tag = apply_filters( 'syntax_highlighting_code_block_pre_start_tag', $pre_start_tag, $element_id, $language_name, $attributes['language'], $attributes );
 	}
 	$end_tags .= '</pre>';
 
