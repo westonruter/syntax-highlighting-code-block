@@ -731,6 +731,8 @@ function render_block( array $attributes, string $content ): string {
 		 * @param \Highlight\Highlighter   $highlighter Highlighter.
 		 * @param array                    $attributes  Block attributes. See constant ATTRIBUTE_SCHEMA.
 		 * @param string                   $content     Block's original content.
+		 *
+		 * @since 1.4.1
 		 */
 		do_action( 'syntax_highlighting_code_block_highlighter_init', $highlighter, $attributes, $content );
 
@@ -776,7 +778,17 @@ function render_block( array $attributes, string $content ): string {
 			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
 		}
 
-		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes, $content );
+		// Retrieve injected markup.
+		$injected_markup = inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes, $content );
+
+		/**
+		 * Filter the injected markup before it's returned.
+		 *
+		 * @see filter definition above.
+		 *
+		 * @since 1.4.1
+		 */
+		return apply_filters( 'syntax_highlighting_code_block_injected_markup', $injected_markup, $attributes, $content );
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
