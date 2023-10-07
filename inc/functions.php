@@ -716,6 +716,15 @@ function render_block( array $attributes, string $content ): string {
 			$highlighter->setAutodetectLanguages( $auto_detect_languages );
 		}
 
+		/**
+		 * Fires after the highlighter is initialized.
+		 *
+		 * @param \Highlight\Highlighter   $highlighter Highlighter.
+		 * @param array                    $attributes  Block attributes. See constant ATTRIBUTE_SCHEMA.
+		 * @param string                   $content     Block's original content.
+		 */
+		do_action( 'syntax_highlighting_code_block_highlighter_init', $highlighter, $attributes, $content );
+
 		$language = $attributes['language'];
 
 		// Note that the decoding here is reversed later in the escape() function.
