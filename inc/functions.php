@@ -466,7 +466,16 @@ function get_styles( array $attributes ): string {
  * @return array<string, string> Mapping slug to name.
  */
 function get_language_names(): array {
-	return require PLUGIN_DIR . '/language-names.php';
+	$language_names = require PLUGIN_DIR . '/language-names.php';
+
+	/**
+	 * Filters the list of language names.
+	 *
+	 * @param array<string, string> $language_names Mapping slug to name.
+	 *
+	 * @since 1.4.1
+	 */
+	return apply_filters( 'syntax_highlighting_code_block_language_names', $language_names );
 }
 
 /**
