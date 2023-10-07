@@ -593,19 +593,6 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 			),
 			$pre_start_tag
 		);
-
-		/**
-		 * Filter the start tag. Allow others to insert markup.
-		 *
-		 * @param string $pre_start_tag  The `<pre>` start tag.
-		 * @param string $element_id    The ID of the element containing the language info.
-		 * @param string $language_name The name of the language.
-		 * @param string $language_slug The slug of the language.
-		 * @param array  $attributes    Block attributes.
-		 *
-		 * @since 1.4.1
-		 */
-		$pre_start_tag = apply_filters( 'syntax_highlighting_code_block_pre_start_tag', $pre_start_tag, $element_id, $language_name, $attributes['language'], $attributes );
 	}
 	$end_tags .= '</pre>';
 
