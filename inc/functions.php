@@ -676,8 +676,22 @@ function render_block( array $attributes, string $content ): string {
 	 */
 	$transient_key = apply_filters( 'syntax_highlighting_code_block_transient_key', $transient_key, $attributes );
 
-		
 	$highlighted   = $transient_key ? get_transient( $transient_key ) : null;
+
+	/**
+	 * Action for when the block is being rendered.
+	 *
+	 * @param null|array $highlighted {
+	 *    Previously highlighted content.
+	 *
+	 *    @type string $content The block's highlighted/parsed content.
+	 *    @type array  $attributes Block attributes. See constant ATTRIBUTE_SCHEMA.
+	 * }
+	 */
+	do_action( 'syntax_highlighting_code_block_render', $highlighted, $attributes, $content, $highlighted );
+
+		
+	
 	if (
 		is_array( $highlighted )
 		&&
@@ -702,10 +716,16 @@ function render_block( array $attributes, string $content ): string {
 		 * @param string $injected_markup Injected markup.
 		 * @param array  $attributes      Block attributes. See constant ATTRIBUTE_SCHEMA.
 		 * @param string $content         Block's original content.
+		 * @param null|array $highlighted {
+		 *    Previously highlighted content.
+		 *
+		 *    @type string $content The block's highlighted/parsed content.
+		 *    @type array  $attributes Block attributes. See constant ATTRIBUTE_SCHEMA.
+		 * }
 		 *
 		 * @since 1.4.1
 		 */
-		$injected_markup = apply_filters( 'syntax_highlighting_code_block_injected_markup', $injected_markup, $attributes, $content );
+		$injected_markup = apply_filters( 'syntax_highlighting_code_block_injected_markup', $injected_markup, $attributes, $content, $highlighted );
 
 		return $injected_markup;
 	}
@@ -774,8 +794,11 @@ function render_block( array $attributes, string $content ): string {
 			}
 		}
 
+		// Get highlighted for storage and filters.
+		$highlighted = compact( 'content', 'attributes' );
+
 		if ( $transient_key ) {
-			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
+			set_transient( $transient_key, $highlighted, MONTH_IN_SECONDS );
 		}
 
 		// Retrieve injected markup.
@@ -784,11 +807,11 @@ function render_block( array $attributes, string $content ): string {
 		/**
 		 * Filter the injected markup before it's returned.
 		 *
-		 * @see filter definition above.
+		 * @see `syntax_highlighting_code_block_injected_markup` filter definition.
 		 *
 		 * @since 1.4.1
 		 */
-		return apply_filters( 'syntax_highlighting_code_block_injected_markup', $injected_markup, $attributes, $content );
+		return apply_filters( 'syntax_highlighting_code_block_injected_markup', $injected_markup, $attributes, $content, $highlighted );
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
