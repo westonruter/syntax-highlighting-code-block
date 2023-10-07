@@ -493,28 +493,38 @@ function get_language_names(): array {
  * @return string Injected markup.
  */
 function inject_markup( string $pre_start_tag, string $code_start_tag, array $attributes, string $content ): string {
-	$added_classes = 'hljs';
+	$added_classes = array( 'hljs' );
 
 	if ( $attributes['language'] ) {
-		$added_classes .= " language-{$attributes['language']}";
+		$added_classes[] = " language-{$attributes['language']}";
 	}
 
 	if ( $attributes['showLineNumbers'] || $attributes['highlightedLines'] ) {
-		$added_classes .= ' shcb-code-table';
+		$added_classes[] = 'shcb-code-table';
 	}
 
 	if ( $attributes['showLineNumbers'] ) {
-		$added_classes .= ' shcb-line-numbers';
+		$added_classes[] = 'shcb-line-numbers';
 	}
 
 	if ( $attributes['wrapLines'] ) {
-		$added_classes .= ' shcb-wrap-lines';
+		$added_classes[] = 'shcb-wrap-lines';
 	}
+
+	/**
+	 * Filters the classes added to the `<code>` element.
+	 *
+	 * @param array $added_classes Index array of CSS classes to add.
+	 * @param array $attributes    Block attributes.
+	 *
+	 * @since 1.4.1
+	 */
+	$added_classes = apply_filters( 'syntax_highlighting_code_block_code_classes', $added_classes, $attributes );
 
 	// @todo Update this to use WP_HTML_Tag_Processor.
 	$code_start_tag = (string) preg_replace(
 		'/(<code[^>]*\sclass=")/',
-		'$1' . esc_attr( $added_classes ) . ' ',
+		'$1' . esc_attr( implode( ' ', $added_classes ) ) . ' ',
 		$code_start_tag,
 		1,
 		$count
@@ -522,7 +532,7 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 	if ( 0 === $count ) {
 		$code_start_tag = (string) preg_replace(
 			'/(?<=<code\b)/',
-			sprintf( ' class="%s"', esc_attr( $added_classes ) ),
+			sprintf( ' class="%s"', esc_attr( implode( ' ', $added_classes ) ) ),
 			$code_start_tag,
 			1
 		);
@@ -559,7 +569,7 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 		);
 
 		/**
-		 * Filter the start tag.
+		 * Filter the start tag. Allow others to insert markup.
 		 *
 		 * @param string $pre_start_tag  The `<pre>` start tag.
 		 * @param string $element_id    The ID of the element containing the language info.
