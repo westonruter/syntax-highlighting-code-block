@@ -33,6 +33,13 @@ function boot(): void {
 	add_action( 'init', __NAMESPACE__ . '\init', 100 );
 	add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 	add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_endpoint' );
+
+	/**
+	 * Action fired after the plugin has been bootstrapped.
+	 *
+	 * @since 1.4.1
+	 */
+	do_action( 'syntax_highlighting_code_block_boot' );
 }
 
 /**
