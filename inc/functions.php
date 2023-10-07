@@ -656,6 +656,18 @@ function render_block( array $attributes, string $content ): string {
 
 	// Use the previously-highlighted content if cached.
 	$transient_key = ! DEVELOPMENT_MODE ? get_transient_key( $matches['content'], $attributes, is_feed(), $auto_detect_languages ) : null;
+
+	/**
+	 * Filters the transient key used to cache the highlighted content.
+	 *
+	 * @param string|null $transient_key Transient key.
+	 * @param array       $attributes    Block attributes. See constant ATTRIBUTE_SCHEMA.
+	 *
+	 * @since 1.4.1
+	 */
+	$transient_key = apply_filters( 'syntax_highlighting_code_block_transient_key', $transient_key, $attributes );
+
+		
 	$highlighted   = $transient_key ? get_transient( $transient_key ) : null;
 	if (
 		is_array( $highlighted )
@@ -672,7 +684,21 @@ function render_block( array $attributes, string $content ): string {
 		&&
 		isset( $highlighted['attributes']['wrapLines'] ) && is_bool( $highlighted['attributes']['wrapLines'] )
 	) {
-		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'], $highlighted['content'] );
+		// Get injected markup, set up for filter.
+		$injected_markup = inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'], $highlighted['content'] );
+
+		/**
+		 * Filter the injected markup before it's returned.
+		 *
+		 * @param string $injected_markup Injected markup.
+		 * @param array  $attributes      Block attributes. See constant ATTRIBUTE_SCHEMA.
+		 * @param string $content         Block's original content.
+		 *
+		 * @since 1.4.1
+		 */
+		$injected_markup = apply_filters( 'syntax_highlighting_code_block_injected_markup', $injected_markup, $attributes, $content );
+
+		return $injected_markup;
 	}
 
 	try {
