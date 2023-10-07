@@ -675,7 +675,6 @@ function render_block( array $attributes, string $content ): string {
 	 * @since 1.4.1
 	 */
 	$transient_key = apply_filters( 'syntax_highlighting_code_block_transient_key', $transient_key, $attributes );
-
 	$highlighted   = $transient_key ? get_transient( $transient_key ) : null;
 
 	/**
@@ -690,8 +689,6 @@ function render_block( array $attributes, string $content ): string {
 	 */
 	do_action( 'syntax_highlighting_code_block_render', $highlighted, $attributes, $content, $highlighted );
 
-		
-	
 	if (
 		is_array( $highlighted )
 		&&
