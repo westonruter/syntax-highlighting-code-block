@@ -716,14 +716,11 @@ function render_block( array $attributes, string $content ): string {
 	/**
 	 * Action for when the block is being rendered.
 	 *
-	 * @param null|array $highlighted {
-	 *    Previously highlighted content.
-	 *
-	 *    @type string $content The block's highlighted/parsed content.
-	 *    @type array  $attributes Block attributes. See constant ATTRIBUTE_SCHEMA.
-	 * }
+	 * @param null|array $highlighted
+	 * @param array      $attributes Block attributes. See constant ATTRIBUTE_SCHEMA.
+	 * @param string     $content    Block's original content.
 	 */
-	do_action( 'syntax_highlighting_code_block_render', $highlighted, $attributes, $content, $highlighted );
+	do_action( 'syntax_highlighting_code_block_render', $highlighted, $attributes, $content );
 
 	if (
 		is_array( $highlighted )
