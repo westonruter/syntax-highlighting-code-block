@@ -37,6 +37,10 @@ function boot(): void {
 	/**
 	 * Action fired after the plugin has been bootstrapped.
 	 *
+	 * This action is fired immediately after the `plugins_loaded` action is completed.
+	 * Use this action to hook in early knowing the plugin's actions and filters have
+	 * been registered.
+	 *
 	 * @since 1.4.1
 	 */
 	do_action( 'syntax_highlighting_code_block_boot' );
