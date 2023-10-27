@@ -586,12 +586,13 @@ function escape( string $content ): string {
  */
 function get_transient_key( string $content, array $attributes, bool $is_feed, array $auto_detect_languages ): ?string {
 	$hash_input = wp_json_encode(
-		array_merge(
-			compact( 'content', 'attributes', 'is_feed', 'auto_detect_languages' ),
-			[
-				'version' => PLUGIN_VERSION,
-			]
-		)
+		[
+			'content'               => $content,
+			'attributes'            => $attributes,
+			'is_feed'               => $is_feed,
+			'auto_detect_languages' => $auto_detect_languages,
+			'version'               => PLUGIN_VERSION,
+		]
 	);
 	if ( ! is_string( $hash_input ) ) {
 		return null;
