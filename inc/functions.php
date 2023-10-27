@@ -33,6 +33,17 @@ function boot(): void {
 	add_action( 'init', __NAMESPACE__ . '\init', 100 );
 	add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 	add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_endpoint' );
+
+	/**
+	 * Action fired after the plugin has been bootstrapped.
+	 *
+	 * This action is fired immediately after the `plugins_loaded` action is completed.
+	 * Use this action to hook in early knowing the plugin's actions and filters have
+	 * been registered.
+	 *
+	 * @since 1.4.1
+	 */
+	do_action( 'syntax_highlighting_code_block_boot' );
 }
 
 /**
@@ -455,7 +466,16 @@ function get_styles( array $attributes ): string {
  * @return array<string, string> Mapping slug to name.
  */
 function get_language_names(): array {
-	return require PLUGIN_DIR . '/language-names.php';
+	$language_names = require PLUGIN_DIR . '/language-names.php';
+
+	/**
+	 * Filters the list of language names.
+	 *
+	 * @param array<string, string> $language_names Mapping slug to name.
+	 *
+	 * @since 1.4.1
+	 */
+	return apply_filters( 'syntax_highlighting_code_block_language_names', $language_names );
 }
 
 /**
@@ -473,28 +493,38 @@ function get_language_names(): array {
  * @return string Injected markup.
  */
 function inject_markup( string $pre_start_tag, string $code_start_tag, array $attributes, string $content ): string {
-	$added_classes = 'hljs';
+	$added_classes = array( 'hljs' );
 
 	if ( $attributes['language'] ) {
-		$added_classes .= " language-{$attributes['language']}";
+		$added_classes[] = " language-{$attributes['language']}";
 	}
 
 	if ( $attributes['showLineNumbers'] || $attributes['highlightedLines'] ) {
-		$added_classes .= ' shcb-code-table';
+		$added_classes[] = 'shcb-code-table';
 	}
 
 	if ( $attributes['showLineNumbers'] ) {
-		$added_classes .= ' shcb-line-numbers';
+		$added_classes[] = 'shcb-line-numbers';
 	}
 
 	if ( $attributes['wrapLines'] ) {
-		$added_classes .= ' shcb-wrap-lines';
+		$added_classes[] = 'shcb-wrap-lines';
 	}
+
+	/**
+	 * Filters the classes added to the `<code>` element.
+	 *
+	 * @param array $added_classes Index array of CSS classes to add.
+	 * @param array $attributes    Block attributes.
+	 *
+	 * @since 1.4.1
+	 */
+	$added_classes = apply_filters( 'syntax_highlighting_code_block_code_classes', $added_classes, $attributes );
 
 	// @todo Update this to use WP_HTML_Tag_Processor.
 	$code_start_tag = (string) preg_replace(
 		'/(<code[^>]*\sclass=")/',
-		'$1' . esc_attr( $added_classes ) . ' ',
+		'$1' . esc_attr( implode( ' ', $added_classes ) ) . ' ',
 		$code_start_tag,
 		1,
 		$count
@@ -502,7 +532,7 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 	if ( 0 === $count ) {
 		$code_start_tag = (string) preg_replace(
 			'/(?<=<code\b)/',
-			sprintf( ' class="%s"', esc_attr( $added_classes ) ),
+			sprintf( ' class="%s"', esc_attr( implode( ' ', $added_classes ) ) ),
 			$code_start_tag,
 			1
 		);
@@ -526,14 +556,40 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 			esc_html( $attributes['language'] )
 		);
 
-		// Also include the language in data attributes on the root <pre> element for maximum styling flexibility.
+		/**
+		 * Add the language info to markup with ARIA attributes. Filterable.
+		 */
+		$tag_attributes = array(
+			'aria-describedby'        => $element_id,
+			'data-shcb-language-name' => $language_name,
+			'data-shcb-language-slug' => $attributes['language'],
+		);
+
+		/**
+		 * Filter the attributes added to the `<pre>` element.
+		 *
+		 * @param array $tag_attributes Associative array of attributes.
+		 * @param array $attributes     Block attributes.
+		 *
+		 * @since 1.4.1
+		 */
+		$tag_attributes = apply_filters( 'syntax_highlighting_code_block_start_tag_attributes', $tag_attributes, $attributes );
+
+		// Format the attributes for the start tag and build start tag.
 		$pre_start_tag = str_replace(
 			'>',
 			sprintf(
-				' aria-describedby="%s" data-shcb-language-name="%s" data-shcb-language-slug="%s">',
-				esc_attr( $element_id ),
-				esc_attr( $language_name ),
-				esc_attr( $attributes['language'] )
+				' %s>',
+				implode(
+					' ',
+					array_map(
+						function ( $key, $value ) {
+							return sprintf( '%s="%s"', sanitize_title( $key ), esc_attr( $value ) );
+						},
+						array_keys( $tag_attributes ),
+						$tag_attributes
+					)
+				)
 			),
 			$pre_start_tag
 		);
@@ -645,7 +701,27 @@ function render_block( array $attributes, string $content ): string {
 
 	// Use the previously-highlighted content if cached.
 	$transient_key = ! DEVELOPMENT_MODE ? get_transient_key( $matches['content'], $attributes, is_feed(), $auto_detect_languages ) : null;
+
+	/**
+	 * Filters the transient key used to cache the highlighted content.
+	 *
+	 * @param string|null $transient_key Transient key.
+	 * @param array       $attributes    Block attributes. See constant ATTRIBUTE_SCHEMA.
+	 *
+	 * @since 1.4.1
+	 */
+	$transient_key = apply_filters( 'syntax_highlighting_code_block_transient_key', $transient_key, $attributes );
 	$highlighted   = $transient_key ? get_transient( $transient_key ) : null;
+
+	/**
+	 * Action for when the block is being rendered.
+	 *
+	 * @param null|array $highlighted
+	 * @param array      $attributes Block attributes. See constant ATTRIBUTE_SCHEMA.
+	 * @param string     $content    Block's original content.
+	 */
+	do_action( 'syntax_highlighting_code_block_render', $highlighted, $attributes, $content );
+
 	if (
 		is_array( $highlighted )
 		&&
@@ -661,7 +737,27 @@ function render_block( array $attributes, string $content ): string {
 		&&
 		isset( $highlighted['attributes']['wrapLines'] ) && is_bool( $highlighted['attributes']['wrapLines'] )
 	) {
-		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'], $highlighted['content'] );
+		// Get injected markup, set up for filter.
+		$injected_markup = inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'], $highlighted['content'] );
+
+		/**
+		 * Filter the injected markup before it's returned.
+		 *
+		 * @param string $injected_markup Injected markup.
+		 * @param array  $attributes      Block attributes. See constant ATTRIBUTE_SCHEMA.
+		 * @param string $content         Block's original content.
+		 * @param null|array $highlighted {
+		 *    Previously highlighted content.
+		 *
+		 *    @type string $content The block's highlighted/parsed content.
+		 *    @type array  $attributes Block attributes. See constant ATTRIBUTE_SCHEMA.
+		 * }
+		 *
+		 * @since 1.4.1
+		 */
+		$injected_markup = apply_filters( 'syntax_highlighting_code_block_injected_markup', $injected_markup, $attributes, $content, $highlighted );
+
+		return $injected_markup;
 	}
 
 	try {
@@ -678,6 +774,17 @@ function render_block( array $attributes, string $content ): string {
 		if ( ! empty( $auto_detect_languages ) ) {
 			$highlighter->setAutodetectLanguages( $auto_detect_languages );
 		}
+
+		/**
+		 * Fires after the highlighter is initialized.
+		 *
+		 * @param \Highlight\Highlighter   $highlighter Highlighter.
+		 * @param array                    $attributes  Block attributes. See constant ATTRIBUTE_SCHEMA.
+		 * @param string                   $content     Block's original content.
+		 *
+		 * @since 1.4.1
+		 */
+		do_action( 'syntax_highlighting_code_block_highlighter_init', $highlighter, $attributes, $content );
 
 		$language = $attributes['language'];
 
@@ -717,11 +824,24 @@ function render_block( array $attributes, string $content ): string {
 			}
 		}
 
+		// Get highlighted for storage and filters.
+		$highlighted = compact( 'content', 'attributes' );
+
 		if ( $transient_key ) {
-			set_transient( $transient_key, compact( 'content', 'attributes' ), MONTH_IN_SECONDS );
+			set_transient( $transient_key, $highlighted, MONTH_IN_SECONDS );
 		}
 
-		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes, $content );
+		// Retrieve injected markup.
+		$injected_markup = inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $attributes, $content );
+
+		/**
+		 * Filter the injected markup before it's returned.
+		 *
+		 * @see `syntax_highlighting_code_block_injected_markup` filter definition.
+		 *
+		 * @since 1.4.1
+		 */
+		return apply_filters( 'syntax_highlighting_code_block_injected_markup', $injected_markup, $attributes, $content, $highlighted );
 	} catch ( Exception $e ) {
 		return sprintf(
 			'<!-- %s(%s): %s -->%s',
