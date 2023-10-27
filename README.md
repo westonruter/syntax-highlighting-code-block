@@ -10,7 +10,7 @@ Extending the Code block with syntax highlighting rendered on the server, thus b
 **Tested up to:** 6.3  
 **Stable tag:** 1.4.0  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
-**Requires PHP:** 5.6
+**Requires PHP:** 7.4
 
 [![Continuous Integration](https://github.com/westonruter/syntax-highlighting-code-block/actions/workflows/ci.yaml/badge.svg)](https://github.com/westonruter/syntax-highlighting-code-block/actions/workflows/ci.yaml)
 [![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com)
