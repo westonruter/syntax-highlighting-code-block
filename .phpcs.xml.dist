@@ -2,7 +2,10 @@
 <ruleset name="WordPress Coding Standards for Syntax-highlighting Code Block">
 
 	<rule ref="WordPress-Core">
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
+
+		<!-- Remove once https://github.com/squizlabs/PHP_CodeSniffer/issues/3745 is fixed. -->
+		<exclude name="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed" />
 	</rule>
 	<rule ref="WordPress-Docs">
 		<!--
