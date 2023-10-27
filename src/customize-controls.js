@@ -30,9 +30,8 @@ function init({ themeNameControl, lineColorControl }) {
 			lineColorControl.setting().toLowerCase() !==
 			lineColorControl.params.defaultValue.toLowerCase();
 
-		lineColorControl.params.defaultValue = await getDefaultThemeLineColor(
-			newThemeName
-		);
+		lineColorControl.params.defaultValue =
+			await getDefaultThemeLineColor(newThemeName);
 
 		// Make sure the default value gets propagated into the wpColorPicker.
 		colorPickerElement.wpColorPicker(
