@@ -3,9 +3,6 @@
 
 	<rule ref="WordPress-Core">
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
-
-		<!-- Remove once https://github.com/squizlabs/PHP_CodeSniffer/issues/3745 is fixed. -->
-		<exclude name="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed" />
 	</rule>
 	<rule ref="WordPress-Docs">
 		<!--
@@ -17,6 +14,7 @@
 	</rule>
 	<rule ref="WordPress-Extra" />
 
+	<config name="minimum_wp_version" value="6.3"/>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" value="syntax-highlighting-code-block" />

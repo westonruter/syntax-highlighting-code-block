@@ -8,7 +8,6 @@
   },
   "require-dev": {
     "civicrm/composer-downloads-plugin": "3.0.1",
-    "dealerdirect/phpcodesniffer-composer-installer": "1.0.0",
     "phpcompatibility/php-compatibility": "9.3.5",
     "szepeviktor/phpstan-wordpress": "1.3.2",
     "wp-coding-standards/wpcs": "3.0.1"

@@ -6,11 +6,11 @@ Extending the Code block with syntax highlighting rendered on the server, thus b
 
 **Contributors:** [westonruter](https://profiles.wordpress.org/westonruter), [allejo](https://profiles.wordpress.org/allejo)  
 **Tags:** [block](https://wordpress.org/plugins/tags/block), [code](https://wordpress.org/plugins/tags/code), [code syntax](https://wordpress.org/plugins/tags/code-syntax), [syntax highlight](https://wordpress.org/plugins/tags/syntax-highlight), [code highlighting](https://wordpress.org/plugins/tags/code-highlighting)  
-**Requires at least:** 5.6  
-**Tested up to:** 6.3  
+**Requires at least:** 6.3  
+**Tested up to:** 6.4  
 **Stable tag:** 1.4.0  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
-**Requires PHP:** 5.6
+**Requires PHP:** 7.4
 
 [![Continuous Integration](https://github.com/westonruter/syntax-highlighting-code-block/actions/workflows/ci.yaml/badge.svg)](https://github.com/westonruter/syntax-highlighting-code-block/actions/workflows/ci.yaml)
 [![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com)
