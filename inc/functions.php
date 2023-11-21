@@ -33,6 +33,7 @@ function boot(): void {
 	add_action( 'init', __NAMESPACE__ . '\init', 100 );
 	add_action( 'customize_register', __NAMESPACE__ . '\customize_register', 100 );
 	add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_endpoint' );
+	add_action( 'enqueue_block_assets', __NAMESPACE__ . '\register_styles' );
 }
 
 /**
@@ -195,12 +196,14 @@ function init(): void {
 	if ( $block instanceof WP_Block_Type ) {
 		$block->render_callback = __NAMESPACE__ . '\render_block';
 		$block->attributes      = array_merge( $block->attributes ?? [], ATTRIBUTE_SCHEMA );
+		$block->style_handles   = array_merge( $block->style_handles, STYLE_HANDLES );
 	} else {
 		$block = register_block_type(
 			BLOCK_NAME,
 			[
 				'render_callback' => __NAMESPACE__ . '\render_block',
 				'attributes'      => ATTRIBUTE_SCHEMA,
+				'style_handles'   => STYLE_HANDLES,
 			]
 		);
 	}
@@ -335,27 +338,67 @@ function get_theme_name(): string {
 }
 
 /**
- * Register assets for the frontend.
+ * Register styles for the frontend.
  *
- * Asset(s) will only be enqueued if needed.
- *
- * @param WP_Styles $styles Styles.
+ *  @noinspection PhpUnused -- See https://youtrack.jetbrains.com/issue/WI-22217/Extend-possible-linking-between-function-and-callback-using-different-constants-NAMESPACE-CLASS-and-class
  */
-function register_styles( WP_Styles $styles ): void {
-	$style = get_theme_name();
+function register_styles(): void {
+	if ( ! is_styling_enabled() || is_admin() ) { // TODO: The same styling should be used in the admin.
+		return;
+	}
+	$styles = wp_styles();
+	$theme  = get_theme_name();
 
-	$default_style_path = sprintf(
+	$theme_style_path = sprintf(
 		'vendor/scrivo/%s/styles/%s.css',
 		DEVELOPMENT_MODE ? 'highlight.php' : 'highlight-php',
-		0 === validate_file( $style ) ? $style : DEFAULT_THEME
+		0 === validate_file( $theme ) ? $theme : DEFAULT_THEME
 	);
 	$styles->add(
-		FRONTEND_STYLE_HANDLE,
-		plugins_url( $default_style_path, PLUGIN_MAIN_FILE ),
+		THEME_STYLE_HANDLE,
+		plugins_url( $theme_style_path, PLUGIN_MAIN_FILE ),
 		[],
 		SCRIPT_DEBUG
-			? (string) filemtime( plugin_dir_path( PLUGIN_MAIN_FILE ) . $default_style_path )
+			? (string) filemtime( plugin_dir_path( PLUGIN_MAIN_FILE ) . $theme_style_path )
 			: PLUGIN_VERSION
+	);
+
+	// TODO: Ideally this would be minified.
+	$block_style_name = 'style.css';
+	$block_style_path = plugin_dir_path( PLUGIN_MAIN_FILE ) . $block_style_name;
+	$styles->add(
+		BLOCK_STYLE_HANDLE,
+		plugins_url( $block_style_name, PLUGIN_MAIN_FILE ),
+		[],
+		SCRIPT_DEBUG
+			? (string) filemtime( $block_style_path )
+			: PLUGIN_VERSION
+	);
+	wp_style_add_data( BLOCK_STYLE_HANDLE, 'path', $block_style_path );
+
+	if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+		$default_line_color = get_default_line_background_color( DEFAULT_THEME );
+		/**
+		 * Filters the background color of a highlighted line.
+		 *
+		 * This filter takes precedence over any settings set in the database as an option. Additionally, if this filter
+		 * is provided, then a color selector will not be provided in Customizer.
+		 *
+		 * @param string $rgb_color An RGB hexadecimal (with the #) to be used as the background color of a highlighted line.
+		 *
+		 * @since 1.1.5
+		 */
+		$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, $default_line_color );
+		if ( ! is_string( $line_color ) ) {
+			$line_color = $default_line_color;
+		}
+	} else {
+		$line_color = get_plugin_options()['highlighted_line_background_color'];
+	}
+	wp_add_inline_style(
+		BLOCK_STYLE_HANDLE,
+		/* language=CSS */
+		".hljs > mark.shcb-loc { background-color: $line_color; }"
 	);
 }
 
@@ -371,82 +414,6 @@ function is_styling_enabled(): bool {
 	 * @param bool $enabled Default styling enabled.
 	 */
 	return (bool) apply_filters( 'syntax_highlighting_code_block_styling', true );
-}
-
-/**
- * Get styles.
- *
- * @param array{
- *     language: string,
- *     highlightedLines: string,
- *     showLineNumbers: bool,
- *     wrapLines: bool
- * } $attributes Attributes.
- * @return string Attributes.
- */
-function get_styles( array $attributes ): string {
-	if ( is_feed() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
-		return '';
-	}
-
-	if ( ! is_styling_enabled() ) {
-		return '';
-	}
-
-	static $added_inline_style            = false;
-	static $added_highlighted_color_style = false;
-
-	if ( ! wp_style_is( FRONTEND_STYLE_HANDLE, 'registered' ) ) {
-		register_styles( wp_styles() );
-	}
-
-	// Print stylesheet now that we know it will be needed. Note that the stylesheet is not being enqueued at the
-	// wp_enqueue_scripts action because this could result in the stylesheet being printed when it would never be used.
-	// When a stylesheet is printed in the body it has the additional benefit of not being render-blocking. When
-	// a stylesheet is printed the first time, subsequent calls to wp_print_styles() will no-op.
-	// TODO: Nevertheless, really it would be more reliable define the styles via the `style_handles` prop on the registered block.
-	// The downside is it would prevent deferred async loading of the stylesheet. But by forcing the styles to be printed
-	// inline, we prevent WordPress from making other possible optimizations.
-	// See <https://github.com/westonruter/syntax-highlighting-code-block/issues/286>.
-	ob_start();
-	wp_print_styles( FRONTEND_STYLE_HANDLE );
-	$output = ob_get_clean();
-	$styles = is_string( $output ) ? trim( $output ) : '';
-
-	// Include line-number styles if requesting to show lines.
-	if ( ! $added_inline_style ) {
-		$styles .= sprintf( '<style>%s</style>', file_get_contents( PLUGIN_DIR . '/style.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-
-		$added_inline_style = true;
-	}
-
-	if ( ! $added_highlighted_color_style && ! empty( $attributes['highlightedLines'] ) ) {
-		if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
-			$default_line_color = get_default_line_background_color( DEFAULT_THEME );
-			/**
-			 * Filters the background color of a highlighted line.
-			 *
-			 * This filter takes precedence over any settings set in the database as an option. Additionally, if this filter
-			 * is provided, then a color selector will not be provided in Customizer.
-			 *
-			 * @param string $rgb_color An RGB hexadecimal (with the #) to be used as the background color of a highlighted line.
-			 *
-			 * @since 1.1.5
-			 */
-			$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, $default_line_color );
-			if ( ! is_string( $line_color ) ) {
-				$line_color = $default_line_color;
-			}
-		} else {
-			$line_color = get_plugin_options()['highlighted_line_background_color'];
-		}
-
-		$styles .= "<style>.hljs > mark.shcb-loc { background-color: $line_color; }</style>";
-
-		$added_highlighted_color_style = true;
-	}
-
-	return $styles;
 }
 
 /**
@@ -540,7 +507,7 @@ function inject_markup( string $pre_start_tag, string $code_start_tag, array $at
 	}
 	$end_tags .= '</pre>';
 
-	return $pre_start_tag . get_styles( $attributes ) . '<span>' . $code_start_tag . escape( $content ) . $end_tags;
+	return $pre_start_tag . '<span>' . $code_start_tag . escape( $content ) . $end_tags;
 }
 
 /**
