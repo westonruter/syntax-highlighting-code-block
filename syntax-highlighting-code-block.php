@@ -36,7 +36,11 @@ const BLOCK_STYLE_FILTER = 'syntax_highlighting_code_block_style';
 
 const HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER = 'syntax_highlighted_line_background_color';
 
-const FRONTEND_STYLE_HANDLE = 'syntax-highlighting-code-block';
+const THEME_STYLE_HANDLE = 'syntax-highlighting-code-block-theme';
+
+const BLOCK_STYLE_HANDLE = 'syntax-highlighting-code-block';
+
+const STYLE_HANDLES = [ THEME_STYLE_HANDLE, BLOCK_STYLE_HANDLE ];
 
 const REST_API_NAMESPACE = 'syntax-highlighting-code-block/v1';
 
