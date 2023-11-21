@@ -210,22 +210,8 @@ function init(): void {
 
 	if ( $block instanceof WP_Block_Type ) {
 		register_editor_assets( $block );
-
-		if ( property_exists( $block, 'editor_script_handles' ) ) {
-			// As of WP>=6.1.
-			$block->editor_script_handles[] = EDITOR_SCRIPT_HANDLE;
-		} else {
-			/* @noinspection PhpUndefinedFieldInspection */
-			$block->editor_script = EDITOR_SCRIPT_HANDLE;
-		}
-
-		if ( property_exists( $block, 'editor_style_handles' ) ) {
-			// As of WP>=6.1.
-			$block->editor_style_handles[] = EDITOR_STYLE_HANDLE;
-		} else {
-			/* @noinspection PhpUndefinedFieldInspection */
-			$block->editor_style = EDITOR_STYLE_HANDLE;
-		}
+		$block->editor_script_handles[] = EDITOR_SCRIPT_HANDLE;
+		$block->editor_style_handles[]  = EDITOR_STYLE_HANDLE;
 	}
 }
 

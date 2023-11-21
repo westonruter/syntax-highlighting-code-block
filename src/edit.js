@@ -18,6 +18,7 @@ import {
 	PanelBody,
 	PanelRow,
 } from '@wordpress/components';
+import { createBlock, getDefaultBlockName } from '@wordpress/blocks';
 
 /**
  * External dependencies
@@ -110,7 +111,13 @@ const parseHighlightedLines = (highlightedLines) => {
 	return highlightedLinesSet;
 };
 
-export default function CodeEdit({ attributes, setAttributes, onRemove }) {
+export default function CodeEdit({
+	attributes,
+	setAttributes,
+	onRemove,
+	insertBlocksAfter,
+	mergeBlocks,
+}) {
 	const blockProps = useBlockProps();
 
 	const updateLanguage = (language) => {
@@ -138,16 +145,21 @@ export default function CodeEdit({ attributes, setAttributes, onRemove }) {
 	);
 
 	const richTextProps = {
-		// These RichText props must mirror core <https://github.com/WordPress/gutenberg/blob/a42fd75/packages/block-library/src/code/edit.js#L12-L19>.
+		// These RichText props must mirror core <https://github.com/WordPress/gutenberg/blob/e95bb8c9530bbdef1db623eca11b80bd73493197/packages/block-library/src/code/edit.js#L19-L31>.
 		...{
 			tagName: 'code',
+			identifier: 'content',
 			value: attributes.content,
 			onChange: (content) => setAttributes({ content }),
 			onRemove,
+			onMerge: mergeBlocks,
 			placeholder: __('Write code…'),
 			'aria-label': __('Code'),
 			preserveWhiteSpace: true,
 			__unstablePastePlainText: true, // See <https://github.com/WordPress/gutenberg/pull/27236>.
+			__unstableOnSplitAtDoubleLineEnd: () => {
+				insertBlocksAfter(createBlock(getDefaultBlockName()));
+			},
 		},
 
 		// Additional props unique to HighlightableTextArea.
@@ -231,7 +243,7 @@ export default function CodeEdit({ attributes, setAttributes, onRemove }) {
 					</PanelRow>
 				</PanelBody>
 			</InspectorControls>
-			{/* Keep in sync with https://github.com/WordPress/gutenberg/blob/a42fd75/packages/block-library/src/code/edit.js#L10-L21 */}
+			{/* Keep in sync with https://github.com/WordPress/gutenberg/blob/e95bb8c9530bbdef1db623eca11b80bd73493197/packages/block-library/src/code/edit.js#L17 */}
 			<pre {...blockProps}>
 				<HighlightableTextArea {...richTextProps} />
 			</pre>
