@@ -36,6 +36,9 @@ jobs:
       - name: Validate package.json
         run: npm run lint:pkg-json
 
+      - name: Check @wordpress/block-library checksum
+        run: npm run md5sum:check
+
       - name: Detect coding standard violations (stylelint)
         run: npm run lint:css
 
