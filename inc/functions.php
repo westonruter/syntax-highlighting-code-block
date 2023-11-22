@@ -542,7 +542,7 @@ function get_transient_key( string $content, array $attributes, bool $is_feed, a
 		[
 			'content'               => $content,
 			'attributes'            => $attributes,
-			'is_feed'               => $is_feed,
+			'is_feed'               => $is_feed, // TODO: This is obsolete.
 			'auto_detect_languages' => $auto_detect_languages,
 			'version'               => PLUGIN_VERSION,
 		]
