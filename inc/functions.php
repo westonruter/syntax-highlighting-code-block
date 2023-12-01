@@ -635,9 +635,12 @@ function render_block( array $attributes, string $content ): string {
 
 		$language = $attributes['language'];
 
+		// As of Gutenberg 17.1, line breaks in Code blocks are serialized as <br> tags whereas previously they were newlines.
+		$content = str_replace( '<br>', "\n", $matches['content'] );
+
 		// Note that the decoding here is reversed later in the escape() function.
 		// @todo Now that Code blocks may have markup (e.g. bolding, italics, and hyperlinks), these need to be removed and then restored after highlighting is completed.
-		$content = html_entity_decode( $matches['content'], ENT_QUOTES );
+		$content = html_entity_decode( $content, ENT_QUOTES );
 
 		// Convert from Prism.js languages names.
 		if ( 'clike' === $language ) {
