@@ -28,7 +28,7 @@
     "@wordpress/eslint-plugin": "17.3.0",
     "@wordpress/hooks": "3.46.0",
     "@wordpress/i18n": "4.46.0",
-    "@wordpress/scripts": "26.17.0",
+    "@wordpress/scripts": "26.18.0",
     "eslint": "8.55.0",
     "grunt": "1.6.1",
     "grunt-contrib-copy": "1.0.0",
