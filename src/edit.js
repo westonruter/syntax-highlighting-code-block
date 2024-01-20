@@ -55,7 +55,7 @@ const HighlightableTextArea = (props_) => {
 				className="code-block-overlay"
 				style={styles}
 			>
-				{(props.value || '').split(/\n/).map((v, i) => {
+				{(props.value || '').split(/\n|<br>/i).map((v, i) => {
 					let cName = 'loc';
 
 					if (highlightedLines.has(i)) {
