@@ -45,7 +45,8 @@ if [[ $VERSION == *-* ]]; then
 	echo "Creating build for version: $NEW_VERSION"
 fi
 
-../vendor/bin/wp dist-archive . ../syntax-highlighting-code-block.zip
-
 cd ..
+
+vendor/bin/wp dist-archive dist/ syntax-highlighting-code-block.zip
+
 echo "ZIP of build: $(pwd)/syntax-highlighting-code-block.zip"
