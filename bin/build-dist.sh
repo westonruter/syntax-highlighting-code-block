@@ -45,37 +45,7 @@ if [[ $VERSION == *-* ]]; then
 	echo "Creating build for version: $NEW_VERSION"
 fi
 
-# Remove files that we don't need anymore.
-rm -r \
-	.editorconfig \
-	.eslintignore \
-	.eslintrc.js \
-	.github \
-	.gitignore \
-	.husky \
-	.lintstagedrc.js \
-	.nvmrc \
-	.phpcs.xml.dist \
-	.prettierrc \
-	.wordpress-org \
-	.wp-env.json \
-	Gruntfile.js \
-	README.md \
-	bin \
-	block-library.md5 \
-	composer.json \
-	composer.lock \
-	node_modules \
-	package-lock.json \
-	package.json \
-	phpstan.neon.dist \
-	src \
-	tests
+../vendor/bin/wp dist-archive . ../syntax-highlighting-code-block.zip
 
-# Creating ZIP of build.
-if [ -e ../syntax-highlighting-code-block.zip ]; then
-	rm ../syntax-highlighting-code-block.zip
-fi
-zip -r ../syntax-highlighting-code-block.zip .
 cd ..
 echo "ZIP of build: $(pwd)/syntax-highlighting-code-block.zip"
