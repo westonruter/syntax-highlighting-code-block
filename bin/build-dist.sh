@@ -35,11 +35,15 @@ npm run build:js
 # Convert markdown README.
 npm run build:transform-readme
 
-# TODO: commitHash=$(git --no-pager log -1 --format=%h --date=short)
-# TODO: const versionAppend = new Date().toISOString().replace(/\.\d+/, '').replace(/-|:/g, '') + '-' + commitHash;
-# Append version inside of syntax-highlighting-code-block.php
-# TODO: Should the version just be n.e.x.t?
-
+# Grab amend the version with the commit hash.
+VERSION=$(grep 'PLUGIN_VERSION' syntax-highlighting-code-block.php | cut -d\' -f2)
+if [[ $VERSION == *-* ]]; then
+	NEW_VERSION="$VERSION-$(date -u +%Y%m%dT%H%M%SZ)-$(git --no-pager log -1 --format=%h --date=short)"
+	VERSION_ESCAPED="${VERSION//./\\.}"
+	sed -i "s/$VERSION_ESCAPED/$NEW_VERSION/g" syntax-highlighting-code-block.php
+	echo "Detected non-stable version: $VERSION"
+	echo "Creating build for version: $NEW_VERSION"
+fi
 
 # Remove files that we don't need anymore.
 rm -r \
