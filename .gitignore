@@ -9,9 +9,9 @@
 # Generated via bin/transform-readme.php
 /readme.txt
 
-# Ignore symlinked directories for wp-env
-/wp-core
-/wp-tests-phpunit
-
 # In case the GitHub Wiki repo is cloned.
 /wiki
+
+# IDE files
+.idea
+.vscode

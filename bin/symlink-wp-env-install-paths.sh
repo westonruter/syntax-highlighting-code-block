@@ -6,14 +6,16 @@ if [[ -z "$install_path" ]]; then
 	exit 1
 fi
 
-core_dir="wp-core"
+mkdir -p vendor/wp-env
+
+core_dir="vendor/wp-env/wp-core"
 if [[ -e "$core_dir" ]]; then
 	rm "$core_dir"
 fi
 ln -s "$install_path/WordPress" "$core_dir"
 echo "Created $core_dir symlink"
 
-tests_dir="wp-tests-phpunit"
+tests_dir="vendor/wp-env/wp-tests-phpunit"
 if [[ -e "$tests_dir" ]]; then
 	rm "$tests_dir"
 fi
