@@ -22,7 +22,7 @@ else
 fi
 
 # Install composer dependencies with optimized autoloader and excluding dev-dependencies.
-composer install --no-dev -ao
+composer install --no-dev --classmap-authoritative --optimize-autoloader
 
 # Since the "highlight.php" directory name can trip up some systems, rename to "highlight-php".
 mv vendor/scrivo/highlight{.php,-php}
