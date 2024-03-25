@@ -9,7 +9,7 @@
   "require-dev": {
     "civicrm/composer-downloads-plugin": "3.0.1",
     "phpcompatibility/php-compatibility": "9.3.5",
-    "szepeviktor/phpstan-wordpress": "1.3.3",
+    "szepeviktor/phpstan-wordpress": "1.3.4",
     "wp-coding-standards/wpcs": "3.0.1"
   },
   "config": {
