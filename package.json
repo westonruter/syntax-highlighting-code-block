@@ -46,7 +46,7 @@
     "build:clean": "if [ -e dist ]; then rm -r dist; fi; if [ -e build ]; then rm -r build; fi",
     "build:js": "wp-scripts build src/index.js src/customize-controls.js --output-path=build",
     "build:dist": "bash ./bin/build-dist.sh",
-    "build:zip": "vendor/bin/wp dist-archive dist/ syntax-highlighting-code-block.zip && echo \"ZIP of build: $(pwd)/syntax-highlighting-code-block.zip\"",
+    "build:zip": "if [ -e syntax-highlighting-code-block.zip ]; then rm syntax-highlighting-code-block.zip; fi; vendor/bin/wp dist-archive --plugin-dirname=syntax-highlighting-code-block dist syntax-highlighting-code-block.zip && echo \"ZIP of build: $(pwd)/syntax-highlighting-code-block.zip\"",
     "verify-matching-versions": "php ./bin/verify-version-consistency.php",
     "deploy": "npm-run-all verify-matching-versions build && grunt wp_deploy",
     "generate-language-names": "php ./bin/generate-language-names.php",
