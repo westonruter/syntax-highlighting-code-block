@@ -3,11 +3,9 @@
 set -e
 cd $(dirname $0)/..
 
-if [ -e dist ]; then
-	echo "Cleaning dist directory"
-	rm -r dist
+if [ ! -e dist ]; then
+	mkdir dist
 fi
-mkdir dist
 
 echo "Exporting repo to dist directory"
 git archive --format=tar HEAD | (cd dist/ && tar xf -)
@@ -47,6 +45,4 @@ fi
 
 cd ..
 
-vendor/bin/wp dist-archive dist/ syntax-highlighting-code-block.zip
 
-echo "ZIP of build: $(pwd)/syntax-highlighting-code-block.zip"
