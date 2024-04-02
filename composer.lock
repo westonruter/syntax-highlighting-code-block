@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e481cf1d1cfb2a6905116c573acecb33",
+    "content-hash": "b5172d29665e62d36a9638f271c1b5f1",
     "packages": [
         {
             "name": "scrivo/highlight.php",
@@ -217,6 +217,55 @@
                 "source": "https://github.com/PHPCSStandards/composer-installer"
             },
             "time": "2023-01-05T11:28:13+00:00"
+        },
+        {
+            "name": "inmarelibero/gitignore-checker",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/inmarelibero/gitignore-checker.git",
+                "reference": "a489e819486216a7f4d55c708a4dd7e797166215"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/inmarelibero/gitignore-checker/zipball/a489e819486216a7f4d55c708a4dd7e797166215",
+                "reference": "a489e819486216a7f4d55c708a4dd7e797166215",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Inmarelibero\\GitIgnoreChecker\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emanuele Gaspari",
+                    "email": "inmarelibero@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP library to check if a path is ignored by GIT",
+            "keywords": [
+                "git",
+                "gitignore",
+                "vcs"
+            ],
+            "support": {
+                "issues": "https://github.com/inmarelibero/gitignore-checker/issues",
+                "source": "https://github.com/inmarelibero/gitignore-checker/tree/1.0.3"
+            },
+            "time": "2023-09-26T09:20:54+00:00"
         },
         {
             "name": "mustache/mustache",
@@ -1072,28 +1121,29 @@
         },
         {
             "name": "wp-cli/dist-archive-command",
-            "version": "v2.0.1",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-cli/dist-archive-command.git",
-                "reference": "ede13cd4b8084f7861290ac4fcdda7f9866efe09"
+                "reference": "e226f7d4bcd4d7db0462a3644228b77d2ad5a85c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-cli/dist-archive-command/zipball/ede13cd4b8084f7861290ac4fcdda7f9866efe09",
-                "reference": "ede13cd4b8084f7861290ac4fcdda7f9866efe09",
+                "url": "https://api.github.com/repos/wp-cli/dist-archive-command/zipball/e226f7d4bcd4d7db0462a3644228b77d2ad5a85c",
+                "reference": "e226f7d4bcd4d7db0462a3644228b77d2ad5a85c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4",
+                "inmarelibero/gitignore-checker": "^1.0.2",
+                "php": ">=7.4",
                 "wp-cli/wp-cli": "^2"
             },
             "require-dev": {
-                "behat/behat": "~2.5",
                 "wp-cli/extension-command": "^2",
                 "wp-cli/scaffold-command": "^2",
-                "wp-cli/wp-cli-tests": "^2.1"
+                "wp-cli/wp-cli-tests": "^4"
             },
+            "default-branch": true,
             "type": "wp-cli-package",
             "extra": {
                 "commands": [
@@ -1101,7 +1151,7 @@
                 ],
                 "readme": {
                     "shields": [
-                        "[![CircleCI](https://circleci.com/gh/wp-cli/dist-archive-command/tree/master.svg?style=svg)](https://circleci.com/gh/wp-cli/dist-archive-command/tree/master)"
+                        "[![Testing](https://github.com/wp-cli/dist-archive-command/actions/workflows/testing.yml/badge.svg)](https://github.com/wp-cli/dist-archive-command/actions/workflows/testing.yml)"
                     ]
                 }
             },
@@ -1109,9 +1159,9 @@
                 "files": [
                     "dist-archive-command.php"
                 ],
-                "psr-4": {
-                    "": "src/"
-                }
+                "classmap": [
+                    "src/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1125,12 +1175,12 @@
                 }
             ],
             "description": "Create a distribution .zip or .tar.gz based on a plugin or theme's .distignore file.",
-            "homepage": "https://runcommand.io/wp/dist-archive/",
+            "homepage": "https://github.com/wp-cli/dist-archive-command/",
             "support": {
                 "issues": "https://github.com/wp-cli/dist-archive-command/issues",
-                "source": "https://github.com/wp-cli/dist-archive-command/tree/v2.0.1"
+                "source": "https://github.com/wp-cli/dist-archive-command/tree/main"
             },
-            "time": "2020-06-02T00:16:00+00:00"
+            "time": "2023-12-18T14:28:49+00:00"
         },
         {
             "name": "wp-cli/mustangostang-spyc",
@@ -1385,7 +1435,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "wp-cli/dist-archive-command": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
