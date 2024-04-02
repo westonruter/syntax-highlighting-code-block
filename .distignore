@@ -24,3 +24,4 @@ phpstan.neon.dist
 src
 tests
 *.zip
+vendor/scrivo/highlight-php/.php-cs-fixer.dist.php
