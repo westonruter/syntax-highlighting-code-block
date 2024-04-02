@@ -24,8 +24,7 @@ composer install --no-dev --classmap-authoritative --optimize-autoloader
 
 # Since the "highlight.php" directory name can trip up some systems, rename to "highlight-php".
 mv vendor/scrivo/highlight{.php,-php}
-find vendor/autoload.php vendor/composer -type f -print0 | xargs -0 sed -i.bak "s:/highlight\.php/:/highlight-php/:g"
-rm vendor/autoload.php.bak $(find vendor/composer -type f -name '*.bak')
+find vendor/autoload.php vendor/composer -type f -print0 | xargs -0 sed -i "s:/highlight\.php/:/highlight-php/:g"
 
 # Build the JS.
 npm run build:js
@@ -41,8 +40,7 @@ if [[ $VERSION == *-* ]]; then
 	sed -i "s/$VERSION_ESCAPED/$NEW_VERSION/g" syntax-highlighting-code-block.php
 	echo "Detected non-stable version: $VERSION"
 	echo "Creating build for version: $NEW_VERSION"
+
+	sed -i "s/const DEVELOPMENT_MODE = true;.*/const DEVELOPMENT_MODE = false;/g" syntax-highlighting-code-block.php
 fi
-
-cd ..
-
 
