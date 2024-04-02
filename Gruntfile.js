@@ -12,7 +12,7 @@ module.exports = function (grunt) {
 			deploy: {
 				options: {
 					plugin_slug: 'syntax-highlighting-code-block',
-					build_dir: 'dist',
+					build_dir: 'syntax-highlighting-code-block',
 					assets_dir: '.wordpress-org',
 				},
 			},

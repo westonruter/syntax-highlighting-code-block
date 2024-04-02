@@ -48,7 +48,7 @@
     "build:dist": "bash ./bin/build-dist.sh",
     "build:zip": "if [ -e syntax-highlighting-code-block.zip ]; then rm syntax-highlighting-code-block.zip; fi; vendor/bin/wp dist-archive --plugin-dirname=syntax-highlighting-code-block dist syntax-highlighting-code-block.zip && echo \"ZIP of build: $(pwd)/syntax-highlighting-code-block.zip\"",
     "verify-matching-versions": "php ./bin/verify-version-consistency.php",
-    "deploy": "npm-run-all verify-matching-versions build && grunt wp_deploy",
+    "deploy": "npm-run-all verify-matching-versions build && unzip syntax-highlighting-code-block.zip && echo grunt wp_deploy && rm -r syntax-highlighting-code-block",
     "generate-language-names": "php ./bin/generate-language-names.php",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
