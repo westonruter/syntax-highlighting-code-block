@@ -4,7 +4,10 @@
 /build
 /vendor
 /node_modules
+
+# Directories used in the dist/deploy process.
 /dist
+/syntax-highlighting-code-block
 
 # Generated via bin/transform-readme.php
 /readme.txt
