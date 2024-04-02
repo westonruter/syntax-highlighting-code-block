@@ -20,7 +20,6 @@ module.exports = function (grunt) {
 	});
 
 	// Load tasks.
-	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-wp-deploy');
 
 	// Register tasks.
