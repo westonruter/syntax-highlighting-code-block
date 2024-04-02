@@ -163,11 +163,7 @@ function get_plugin_option( string $option_name ): ?string {
  * Require the highlight.php functions file.
  */
 function require_highlight_php_functions(): void {
-	if ( DEVELOPMENT_MODE ) {
-		require_once PLUGIN_DIR . '/vendor/scrivo/highlight.php/HighlightUtilities/functions.php';
-	} else {
-		require_once PLUGIN_DIR . '/vendor/scrivo/highlight-php/HighlightUtilities/functions.php';
-	}
+	require_once PLUGIN_DIR . '/' . get_highlight_php_vendor_path() . '/HighlightUtilities/functions.php';
 }
 
 /**
@@ -336,8 +332,8 @@ function register_styles(): void {
 	$theme  = get_theme_name();
 
 	$theme_style_path = sprintf(
-		'vendor/scrivo/%s/styles/%s.css',
-		DEVELOPMENT_MODE ? 'highlight.php' : 'highlight-php',
+		'%s/styles/%s.css',
+		get_highlight_php_vendor_path(),
 		0 === validate_file( $theme ) ? $theme : DEFAULT_THEME
 	);
 	$styles->add(
@@ -542,7 +538,7 @@ function get_transient_key( string $content, array $attributes, bool $is_feed, a
 		[
 			'content'               => $content,
 			'attributes'            => $attributes,
-			'is_feed'               => $is_feed,
+			'is_feed'               => $is_feed, // TODO: This is obsolete.
 			'auto_detect_languages' => $auto_detect_languages,
 			'version'               => PLUGIN_VERSION,
 		]
@@ -620,11 +616,7 @@ function render_block( array $attributes, string $content ): string {
 
 	try {
 		if ( ! class_exists( '\Highlight\Autoloader' ) ) {
-			if ( DEVELOPMENT_MODE ) {
-				require_once PLUGIN_DIR . '/vendor/scrivo/highlight.php/Highlight/Autoloader.php';
-			} else {
-				require_once PLUGIN_DIR . '/vendor/scrivo/highlight-php/Highlight/Autoloader.php';
-			}
+			require_once PLUGIN_DIR . '/' . get_highlight_php_vendor_path() . '/Highlight/Autoloader.php';
 			spl_autoload_register( 'Highlight\Autoloader::load' );
 		}
 
@@ -881,4 +873,17 @@ function register_rest_endpoint(): void {
 			},
 		]
 	);
+}
+
+/**
+ * Gets relative path to highlight.php library in vendor directory.
+ *
+ * @return string Relative path.
+ */
+function get_highlight_php_vendor_path(): string {
+	if ( DEVELOPMENT_MODE && file_exists( PLUGIN_DIR . '/vendor/scrivo/highlight.php' ) ) {
+		return 'vendor/scrivo/highlight.php';
+	} else {
+		return 'vendor/scrivo/highlight-php';
+	}
 }
