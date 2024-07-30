@@ -66,7 +66,7 @@
     "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
     "md5sum:check": "md5sum -c block-library.md5",
     "md5sum:update": "md5sum node_modules/@wordpress/block-library/src/code/edit.js > block-library.md5",
-    "prepare": "husky install",
+    "prepare": "husky",
     "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
     "symlink-wp-env-install-paths": "bin/symlink-wp-env-install-paths.sh",
     "wp-env": "wp-env"
