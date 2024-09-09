@@ -20,5 +20,6 @@ module.exports = {
 				],
 			},
 		],
+		'@wordpress/i18n-hyphenated-range': ['off'],
 	},
 };
