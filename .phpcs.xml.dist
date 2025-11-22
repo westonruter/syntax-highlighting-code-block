@@ -37,5 +37,6 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/dist/*</exclude-pattern>
 	<exclude-pattern>*/bin/*</exclude-pattern>
+	<exclude-pattern>*/tools/*</exclude-pattern>
 	<exclude-pattern>phpstan-baseline.php</exclude-pattern>
 </ruleset>

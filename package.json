@@ -42,7 +42,7 @@
 	"scripts": {
 		"update": "bin/update-highlight-libs.sh",
 		"build": "npm-run-all build:*",
-		"build:transform-readme": "php ./bin/transform-readme.php",
+		"build:transform-readme": "npm run transform-readme",
 		"build:clean": "if [ -e dist ]; then rm -r dist; fi; if [ -e build ]; then rm -r build; fi; if [ -e syntax-highlighting-code-block ]; then rm -r syntax-highlighting-code-block; fi",
 		"build:js": "wp-scripts build src/index.js src/customize-controls.js --output-path=build",
 		"build:dist": "bash ./bin/build-dist.sh",
@@ -71,6 +71,7 @@
 		"prepare": "husky",
 		"start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
 		"symlink-wp-env-install-paths": "bin/symlink-wp-env-install-paths.sh",
+		"transform-readme": "php tools/transform-readme.php",
 		"wp-env": "wp-env"
 	},
 	"npmpackagejsonlint": {

@@ -42,4 +42,3 @@ This is a fork of [Code Syntax Block](https://github.com/mkaz/code-syntax-block)
 ## Changelog
 
 For the plugin’s changelog, please see [the Releases page on GitHub](https://github.com/westonruter/syntax-highlighting-code-block/releases).
-
