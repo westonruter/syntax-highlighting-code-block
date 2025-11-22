@@ -60,18 +60,11 @@ npm run start
 
 ### 4. Building for Production
 
-To create a production build of the JavaScript and other assets, run:
+To create a production build of all assets and a distributable `.zip` file of the plugin, run:
 
 ```bash
 npm run build
 ```
-
-To create a full distributable version of the plugin, including a `.zip` file ready for installation, run:
-
-```bash
-npm run build:dist
-```
-This will create a `syntax-highlighting-code-block.zip` file.
 
 ## Development Conventions
 
