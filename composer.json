@@ -25,8 +25,8 @@
 		"sort-packages": true
 	},
 	"scripts": {
-		"analyze": "if [ -z $TEST_SKIP_PHPSTAN ]; then phpstan --version; phpstan analyze --ansi; fi",
 		"phpcbf": "bin/phpcbf.sh",
-		"phpcs": "phpcs"
+		"phpcs": "phpcs",
+		"phpstan": "phpstan analyse --memory-limit=2048M"
 	}
 }

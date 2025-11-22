@@ -64,7 +64,7 @@
 		"lint:md": "wp-scripts lint-md-docs --ignore-path=.gitignore",
 		"lint:php": "composer phpcs",
 		"lint:php:fix": "composer phpcbf",
-		"lint:phpstan": "composer analyze",
+		"lint:phpstan": "composer phpstan",
 		"lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
 		"md5sum:check": "md5sum -c block-library.md5",
 		"md5sum:update": "md5sum node_modules/@wordpress/block-library/src/code/edit.js > block-library.md5",
