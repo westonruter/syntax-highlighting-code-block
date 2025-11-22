@@ -92,7 +92,7 @@ The project adheres to the official WordPress coding standards for both PHP and 
 - **Standard:** `@wordpress/eslint-plugin/recommended`.
 - **Linter:** ESLint
 - **Commands:**
-	- **Check for issues:** `npm run lint:js`
-	- **Automatically fix issues:** `npm run lint:js:fix`
+  - **Check for issues:** `npm run lint:js`
+  - **Automatically fix issues:** `npm run lint:js:fix`
 
 All linting tasks can be run at once with `npm run lint`.
