@@ -13,11 +13,20 @@ on:
     push:
         branches:
             - main
+            - develop
+            - '*.*'
     pull_request:
         types:
             - opened
             - reopened
             - synchronize
+
+# Cancel previous workflow run groups that have not completed.
+concurrency:
+    # Group workflow runs by workflow name, along with the head branch ref of the pull request
+    # or otherwise the branch or tag ref.
+    group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+    cancel-in-progress: true
 
 jobs:
     lint:
@@ -46,7 +55,7 @@ jobs:
                   php-version: ${{ steps.php-version.outputs.version }}
                   extensions: mbstring, dom, fileinfo, xml, curl # Common extensions for WP development
                   coverage: none # No code coverage needed for linting
-                  tools: composer:v2
+                  tools: composer:v2, cs2pr
 
             # 4. Cache Composer dependencies.
             # This step speeds up the build by caching the vendor directory.
@@ -84,18 +93,45 @@ jobs:
             # --- Run Linters ---
             # Each linter runs in a separate step for clearer error reporting.
 
+            - name: Validate package.json
+              run: npm run lint:pkg-json
+
+            - name: Check @wordpress/block-library checksum
+              run: npm run md5sum:check
+
             - name: Run PHPStan static analysis
               run: composer phpstan
 
             - name: Run PHP_CodeSniffer for coding standards
-              run: composer phpcs
+              run: composer phpcs -- -q --report=checkstyle --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 | cs2pr --graceful-warnings
 
             # TODO: Re-enable this.
             #- name: Run TypeScript compiler check
             #  run: npx tsc
 
-            - name: Run JavaScript linter
+            - name: Detect ESLint coding standard violations
+              if: >
+                  github.event.pull_request.head.repo.fork == true ||
+                  github.event.pull_request.user.login == 'dependabot[bot]'
               run: npm run lint:js
+
+            - name: Generate ESLint coding standard violations report
+                # Prevent generating the ESLint report if PR is from a fork or authored by Dependabot.
+              if: >
+                  ! ( github.event.pull_request.head.repo.fork == true ||
+                  github.event.pull_request.user.login == 'dependabot[bot]' )
+              run: npm run lint:js:report
+              continue-on-error: true
+
+            - name: Annotate code linting results
+                # The action cannot annotate the PR when run from a PR fork or was authored by Dependabot.
+              if: >
+                  ! ( github.event.pull_request.head.repo.fork == true ||
+                  github.event.pull_request.user.login == 'dependabot[bot]' )
+              uses: ataylorme/eslint-annotate-action@3.0.0
+              with:
+                  repo-token: '${{ secrets.GITHUB_TOKEN }}'
+                  report-json: 'lint-js-report.json'
 
             - name: Run CSS linter
               run: npm run lint:css
