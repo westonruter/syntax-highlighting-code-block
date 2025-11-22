@@ -83,9 +83,9 @@ The project adheres to the official WordPress coding standards for both PHP and 
 - **Linter:** `phpcs` (PHP_CodeSniffer)
 - **Static Analysis:** `phpstan`
 - **Commands:**
-	- **Check for issues:** `npm run lint:php` or `composer phpcs`
-	- **Automatically fix issues:** `npm run lint:php:fix` or `composer phpcbf`
-	- **Run static analysis:** `npm run lint:phpstan` or `composer analyze`
+  - **Check for issues:** `npm run lint:php` or `composer phpcs`
+  - **Automatically fix issues:** `npm run lint:php:fix` or `composer phpcbf`
+  - **Run static analysis:** `npm run lint:phpstan` or `composer analyze`
 
 ### JavaScript
 
