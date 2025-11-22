@@ -1,3 +1,4 @@
+*.zip
 .distignore
 .editorconfig
 .eslintignore
@@ -6,7 +7,6 @@
 .github
 .gitignore
 .husky
-.lintstagedrc.js
 .markdownlint.json
 .nvmrc
 .phpcs.xml.dist
@@ -20,11 +20,12 @@ bin
 block-library.md5
 composer.json
 composer.lock
+lint-staged.config.js
 node_modules
 package-lock.json
 package.json
 phpstan.neon.dist
 src
 tests
-*.zip
+tools
 vendor/scrivo/highlight-php/.php-cs-fixer.dist.php
