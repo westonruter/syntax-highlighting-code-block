@@ -58,6 +58,7 @@
     "lint:css": "wp-scripts lint-style",
     "lint:css:fix": "npm run lint:css -- --fix",
     "lint:js": "wp-scripts lint-js",
+    "lint:md": "wp-scripts lint-md-docs --ignore-path=.gitignore",
     "lint:js:fix": "wp-scripts lint-js --fix",
     "lint:js:report": "npm run lint:js -- --output-file lint-js-report.json --format json .",
     "lint:php": "composer phpcs",

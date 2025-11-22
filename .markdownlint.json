@@ -1,0 +1,4 @@
+{
+	"extends": "node_modules/@wordpress/scripts/config/.markdownlint.json",
+	"MD026": false
+}
