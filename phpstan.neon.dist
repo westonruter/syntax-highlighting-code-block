@@ -11,7 +11,7 @@ parameters:
 		- inc/
 	stubFiles:
 		# https://github.com/scrivo/highlight.php/pull/107
-		- tests/phpstan/HighlightAutoloader.stub
+		- tools/phpstan/HighlightAutoloader.stub
 	dynamicConstantNames:
 		- Syntax_Highlighting_Code_Block\DEVELOPMENT_MODE
 	treatPhpDocTypesAsCertain: false
