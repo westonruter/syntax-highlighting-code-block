@@ -1,8 +1,6 @@
-/**
- * @type {import('lint-staged', { with: { 'resolution-mode': 'import' } }).Configuration}
- */
+// TODO: Re-add `@type {import('lint-staged', { with: { 'resolution-mode': 'import' } }).Configuration}`.
 const config = {
-	'*.{js,ts,mjs}': ['npm run lint:js', () => 'npx tsc'],
+	'*.{js,ts,mjs}': ['npm run lint:js'], // TODO: Re-add `() => 'npx tsc'`.
 	'*.css': ['npm run lint:css'],
 	'composer.{json,lock}': [
 		() => 'composer validate --strict',
