@@ -2,6 +2,7 @@
 .editorconfig
 .eslintignore
 .eslintrc.js
+.gemini
 .github
 .gitignore
 .husky
@@ -11,6 +12,7 @@
 .prettierrc
 .wordpress-org
 .wp-env.json
+AGENTS.md
 Gruntfile.js
 README.md
 bin
