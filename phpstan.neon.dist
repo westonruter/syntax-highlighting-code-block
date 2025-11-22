@@ -4,14 +4,19 @@ includes:
 	- vendor/szepeviktor/phpstan-wordpress/extension.neon
 parameters:
 	level: 9
+	treatPhpDocTypesAsCertain: false
 	paths:
 		- syntax-highlighting-code-block.php
 		- language-names.php
 		- uninstall.php
 		- inc/
+	excludePaths:
+		- vendor
+		- node_modules
+	bootstrapFiles:
+		- tools/phpstan/constants.php
 	stubFiles:
 		# https://github.com/scrivo/highlight.php/pull/107
 		- tools/phpstan/HighlightAutoloader.stub
 	dynamicConstantNames:
 		- Syntax_Highlighting_Code_Block\DEVELOPMENT_MODE
-	treatPhpDocTypesAsCertain: false
