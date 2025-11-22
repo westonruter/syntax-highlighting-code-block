@@ -2,6 +2,11 @@ module.exports = {
 	root: true,
 	extends: ['plugin:@wordpress/eslint-plugin/recommended'],
 	settings: {
+		'import/resolver': {
+			node: {
+				extensions: ['.js'],
+			},
+		},
 		react: {
 			pragma: 'wp',
 			version: 'detect',
