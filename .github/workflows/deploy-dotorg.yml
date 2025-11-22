@@ -14,9 +14,11 @@ jobs:
     release:
         name: Publish release
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Read PHP version
               id: php-version
@@ -42,7 +44,7 @@ jobs:
               run: composer install --prefer-dist --no-progress
 
             - name: Setup Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'
