@@ -28,18 +28,25 @@ if ( ! preg_match( '/\*\*Stable tag:\*\*\s+(?P<version>\S+)/i', $readme_md, $mat
 }
 $versions['stable_tag'] = $matches['version'];
 
-if ( ! preg_match( '/^## Changelog\s+### (?P<latest>\d.+)$/m', $readme_md, $matches ) ) {
+if ( ! preg_match( '/^## Changelog\s+(.+)$/m', $readme_md, $matches ) ) {
 	echo "Could not find changelog in readme.\n";
 	exit( 1 );
 }
-$versions['latest_changelog_version'] = $matches['latest'];
+$first_changelog_line = $matches[1];
+if ( preg_match( '/^### (?P<latest>\d.+)/', $first_changelog_line, $matches ) ) {
+	$versions['latest_changelog_version'] = $matches['latest'];
+} elseif ( preg_match( '/\[.+?\]\(.+?\)/', $first_changelog_line, $matches ) ) {
+	echo "Notice: The full changelog appears to not be part of the readme. It may be external: {$matches[0]}\n";
+} else {
+	echo "Could not identify first item of changelog in readme.\n";
+}
 
 $bootstrap_file = null;
 foreach ( (array) glob( __DIR__ . '/../*.php' ) as $php_file ) {
-	echo "$php_file\n";
 	$php_file_contents = (string) file_get_contents( (string) $php_file );
 	if ( preg_match( '/^ \* Plugin Name\s*:/im', $php_file_contents ) ) {
 		$bootstrap_file = (string) $php_file;
+		echo "Located bootstrap file: $bootstrap_file\n";
 		break;
 	}
 }
@@ -55,8 +62,8 @@ if ( ! preg_match( '/\*\s*Version:\s*(?P<version>\d+\.\d+(?:.\d+)?(-\w+)?)/', $p
 }
 $versions['plugin_metadata'] = $matches['version'];
 
-if ( ! preg_match( '/const VERSION = \'(?P<version>[^\']+)\'/', $plugin_file, $matches ) ) {
-	echo "Could not find version in VERSION constant.\n";
+if ( ! preg_match( '/const (?:PLUGIN_)?VERSION = \'(?P<version>[^\']+)\'/', $plugin_file, $matches ) ) {
+	echo "Could not find version in PLUGIN_VERSION/VERSION constant.\n";
 	exit( 1 );
 }
 $versions['version_constant'] = $matches['version'];
