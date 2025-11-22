@@ -19,8 +19,6 @@ The plugin's administrative interface is built with JavaScript (React) as a stan
 - **Composer:** For managing PHP dependencies.
 - **NPM:** For managing JavaScript dependencies and running scripts.
 
-Please also see the [style guide](./.gemini/styleguide.md).
-
 ## Building and Running
 
 ### 1. Installation
@@ -68,7 +66,7 @@ npm run build
 
 ## Development Conventions
 
-The project adheres to the official WordPress coding standards for both PHP and JavaScript.
+The project adheres to the official WordPress coding standards for both PHP and JavaScript. Please also see the [style guide](./.gemini/styleguide.md).
 
 ### PHP
 
