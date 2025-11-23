@@ -69,12 +69,24 @@ if ( ! preg_match( '/const (?:PLUGIN_)?VERSION = \'(?P<version>[^\']+)\'/', $plu
 $versions['version_constant'] = $matches['version'];
 
 echo "Version references:\n";
-
 echo json_encode( $versions, JSON_PRETTY_PRINT ) . "\n";
 
-if ( 1 !== count( array_unique( $versions ) ) ) {
+$versions_without_stable_tag = $versions;
+unset( $versions_without_stable_tag['stable_tag'] );
+if ( 1 !== count( array_unique( $versions_without_stable_tag ) ) ) {
 	echo "Error: Not all version references have been updated.\n";
 	exit( 1 );
+}
+
+if ( $versions['stable_tag'] !== $versions['plugin_metadata'] ) {
+	if ( false === strpos( $versions['plugin_metadata'], '-' ) ) {
+		echo "Expected plugin version ({$versions['plugin_metadata']}) to match stable tag {$versions['stable_tag']} when the plugin version lacks a prerelease tag.\n";
+		exit( 1 );
+	}
+	if ( ! version_compare( $versions['stable_tag'], $versions['plugin_metadata'], '<' ) ) {
+		echo "Expected plugin version ({$versions['plugin_metadata']}) to be greater than the stable tag {$versions['stable_tag']} due to the prerelease tag.\n";
+		exit( 1 );
+	}
 }
 
 if ( ! str_contains( $versions['plugin_metadata'], '-' ) && ! preg_match( '/^\d+\.\d+\.\d+$/', $versions['plugin_metadata'] ) ) {
