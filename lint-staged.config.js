@@ -11,8 +11,8 @@ const config = {
 		() => 'composer phpstan',
 		() => 'npm run verify-version-consistency',
 	],
-	'*.md': ['npm run lint:md', 'npm run verify-version-consistency'],
-	'README.md': [
+	'*.md': ['npm run lint:md'],
+	'/README.md': [
 		() => 'npm run verify-version-consistency',
 		() => 'npm run transform-readme',
 	],
