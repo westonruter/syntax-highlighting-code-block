@@ -1,29 +1,19 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: weekly
-    time: "12:00"
-    timezone: America/Los_Angeles
-  open-pull-requests-limit: 10
-  groups:
-    wordpress-packages:
-      patterns:
-        - "@wordpress/*"
+    - package-ecosystem: github-actions
+      directory: '/'
+      schedule:
+          interval: weekly
+      open-pull-requests-limit: 10
 
-- package-ecosystem: composer
-  directory: "/"
-  schedule:
-    interval: weekly
-    time: "12:00"
-    timezone: America/Los_Angeles
-  open-pull-requests-limit: 10
+    - package-ecosystem: npm
+      directory: '/'
+      schedule:
+          interval: weekly
+      open-pull-requests-limit: 10
 
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: weekly
-    time: "12:00"
-    timezone: America/Los_Angeles
-  open-pull-requests-limit: 10
+    - package-ecosystem: composer
+      directory: '/'
+      schedule:
+          interval: weekly
+      open-pull-requests-limit: 10

@@ -1,81 +1,84 @@
 {
-  "name": "syntax-highlighting-code-block",
-  "private": true,
-  "description": "Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.",
-  "author": "Weston Ruter",
-  "license": "GPL-2.0-or-later",
-  "keywords": [
-    "wordpress",
-    "wordpress-plugin"
-  ],
-  "homepage": "https://github.com/westonruter/syntax-highlighting-code-block",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/westonruter/syntax-highlighting-code-block.git"
-  },
-  "bugs": {
-    "url": "https://github.com/westonruter/syntax-highlighting-code-block/issues"
-  },
-  "devDependencies": {
-    "@wordpress/api-fetch": "7.35.0",
-    "@wordpress/block-editor": "15.8.0",
-    "@wordpress/block-library": "9.35.0",
-    "@wordpress/blocks": "15.8.0",
-    "@wordpress/components": "30.8.0",
-    "@wordpress/editor": "14.35.0",
-    "@wordpress/element": "6.35.0",
-    "@wordpress/env": "10.35.0",
-    "@wordpress/eslint-plugin": "22.21.0",
-    "@wordpress/hooks": "4.35.0",
-    "@wordpress/i18n": "6.8.0",
-    "@wordpress/scripts": "31.0.0",
-    "eslint": "8.57.1",
-    "grunt": "1.6.1",
-    "grunt-wp-deploy": "2.1.2",
-    "highlight.js": "git+https://github.com/highlightjs/highlight.js.git#9.18.1",
-    "husky": "9.1.7",
-    "lint-staged": "16.2.6",
-    "lodash": "4.17.21",
-    "npm-run-all": "4.1.5",
-    "prettier": "3.6.2"
-  },
-  "scripts": {
-    "update": "bin/update-highlight-libs.sh",
-    "build": "npm-run-all build:*",
-    "build:transform-readme": "php ./bin/transform-readme.php",
-    "build:clean": "if [ -e dist ]; then rm -r dist; fi; if [ -e build ]; then rm -r build; fi; if [ -e syntax-highlighting-code-block ]; then rm -r syntax-highlighting-code-block; fi",
-    "build:js": "wp-scripts build src/index.js src/customize-controls.js --output-path=build",
-    "build:dist": "bash ./bin/build-dist.sh",
-    "build:zip": "if [ -e syntax-highlighting-code-block.zip ]; then rm syntax-highlighting-code-block.zip; fi; vendor/bin/wp dist-archive --plugin-dirname=syntax-highlighting-code-block dist syntax-highlighting-code-block.zip && echo \"ZIP of build: $(pwd)/syntax-highlighting-code-block.zip\"",
-    "verify-matching-versions": "php ./bin/verify-version-consistency.php",
-    "deploy": "npm-run-all verify-matching-versions build && unzip syntax-highlighting-code-block.zip && grunt wp_deploy && rm -r syntax-highlighting-code-block",
-    "generate-language-names": "php ./bin/generate-language-names.php",
-    "check-engines": "wp-scripts check-engines",
-    "check-licenses": "wp-scripts check-licenses",
-    "lint": "npm-run-all --parallel lint:*",
-    "lint:composer": "composer normalize --dry-run",
-    "lint:composer:fix": "composer normalize",
-    "lint:css": "wp-scripts lint-style",
-    "lint:css:fix": "npm run lint:css -- --fix",
-    "lint:js": "wp-scripts lint-js",
-    "lint:js:fix": "wp-scripts lint-js --fix",
-    "lint:js:report": "npm run lint:js -- --output-file lint-js-report.json --format json .",
-    "lint:php": "composer phpcs",
-    "lint:php:fix": "composer phpcbf",
-    "lint:phpstan": "composer analyze",
-    "lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
-    "md5sum:check": "md5sum -c block-library.md5",
-    "md5sum:update": "md5sum node_modules/@wordpress/block-library/src/code/edit.js > block-library.md5",
-    "prepare": "husky",
-    "start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
-    "symlink-wp-env-install-paths": "bin/symlink-wp-env-install-paths.sh",
-    "wp-env": "wp-env"
-  },
-  "npmpackagejsonlint": {
-    "extends": "@wordpress/npm-package-json-lint-config",
-    "rules": {
-      "require-version": "off"
-    }
-  },
-  "title": "Syntax-highlighting Code Block (with Server-side Rendering)"
+	"name": "syntax-highlighting-code-block",
+	"private": true,
+	"description": "Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.",
+	"author": "Weston Ruter",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"wordpress-plugin"
+	],
+	"prettier": "@wordpress/prettier-config",
+	"homepage": "https://github.com/westonruter/syntax-highlighting-code-block",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/westonruter/syntax-highlighting-code-block.git"
+	},
+	"bugs": {
+		"url": "https://github.com/westonruter/syntax-highlighting-code-block/issues"
+	},
+	"devDependencies": {
+		"@wordpress/api-fetch": "7.35.0",
+		"@wordpress/block-editor": "15.8.0",
+		"@wordpress/block-library": "9.35.0",
+		"@wordpress/blocks": "15.8.0",
+		"@wordpress/components": "30.8.0",
+		"@wordpress/editor": "14.35.0",
+		"@wordpress/element": "6.35.0",
+		"@wordpress/env": "10.35.0",
+		"@wordpress/eslint-plugin": "22.21.0",
+		"@wordpress/hooks": "4.35.0",
+		"@wordpress/i18n": "6.8.0",
+		"@wordpress/scripts": "31.0.0",
+		"eslint": "8.57.1",
+		"grunt": "1.6.1",
+		"grunt-wp-deploy": "2.1.2",
+		"highlight.js": "git+https://github.com/highlightjs/highlight.js.git#9.18.1",
+		"husky": "9.1.7",
+		"lint-staged": "16.2.6",
+		"lodash": "4.17.21",
+		"npm-run-all": "4.1.5"
+	},
+	"scripts": {
+		"update": "bin/update-highlight-libs.sh",
+		"build": "npm-run-all build:*",
+		"build:transform-readme": "npm run transform-readme",
+		"build:clean": "if [ -e dist ]; then rm -r dist; fi; if [ -e build ]; then rm -r build; fi; if [ -e syntax-highlighting-code-block ]; then rm -r syntax-highlighting-code-block; fi",
+		"build:js": "wp-scripts build src/index.js src/customize-controls.js --output-path=build",
+		"build:dist": "bash ./bin/build-dist.sh",
+		"build:zip": "if [ -e syntax-highlighting-code-block.zip ]; then rm syntax-highlighting-code-block.zip; fi; vendor/bin/wp dist-archive --plugin-dirname=syntax-highlighting-code-block dist syntax-highlighting-code-block.zip && echo \"ZIP of build: $(pwd)/syntax-highlighting-code-block.zip\"",
+		"deploy": "npm-run-all verify-version-consistency build && unzip syntax-highlighting-code-block.zip && grunt wp_deploy && rm -r syntax-highlighting-code-block",
+		"format": "wp-scripts format --ignore-path=.gitignore && npm run lint:js:fix && npm run lint:css:fix && composer phpcbf && composer normalize",
+		"generate-language-names": "php ./bin/generate-language-names.php",
+		"check-engines": "wp-scripts check-engines",
+		"check-licenses": "wp-scripts check-licenses",
+		"lint": "npm-run-all --parallel lint:*",
+		"lint:composer": "composer normalize --dry-run",
+		"lint:composer:fix": "composer normalize",
+		"lint:css": "wp-scripts lint-style --allow-empty-input --ignore-path=.gitignore",
+		"lint:css:fix": "npm run lint:css -- --fix",
+		"lint:js": "wp-scripts lint-js --ignore-path=.gitignore",
+		"lint:js:fix": "npm run lint:js -- --fix",
+		"lint:js:report": "npm run lint:js -- --output-file lint-js-report.json --format json .",
+		"lint:md": "wp-scripts lint-md-docs --ignore-path=.gitignore",
+		"lint:php": "composer phpcs",
+		"lint:php:fix": "composer phpcbf",
+		"lint:phpstan": "composer phpstan",
+		"lint:pkg-json": "wp-scripts lint-pkg-json . --ignorePath .gitignore",
+		"md5sum:check": "md5sum -c block-library.md5",
+		"md5sum:update": "md5sum node_modules/@wordpress/block-library/src/code/edit.js > block-library.md5",
+		"prepare": "husky",
+		"start": "wp-scripts start src/index.js src/customize-controls.js --output-path=build",
+		"symlink-wp-env-install-paths": "bin/symlink-wp-env-install-paths.sh",
+		"transform-readme": "php tools/transform-readme.php",
+		"verify-version-consistency": "php tools/verify-version-consistency.php",
+		"wp-env": "wp-env"
+	},
+	"npmpackagejsonlint": {
+		"extends": "@wordpress/npm-package-json-lint-config",
+		"rules": {
+			"require-version": "off"
+		}
+	},
+	"title": "Syntax-highlighting Code Block (with Server-side Rendering)"
 }

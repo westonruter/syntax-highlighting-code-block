@@ -1,5 +1,4 @@
 changelog:
-  exclude:
-    authors:
-      - dependabot
-      - dependabot-preview
+    exclude:
+        authors:
+            - dependabot[bot]
