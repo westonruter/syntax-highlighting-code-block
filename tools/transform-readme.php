@@ -102,7 +102,7 @@ $readme_txt = (string) preg_replace_callback(
 			if ( 'License' === $matches['key'] ) {
 				$license_uri = (string) preg_replace( '/\[.+?]\((.+?)\)/', '$1', $matches['value'] );
 
-				if ( ! str_starts_with( $license_uri, 'http' ) ) {
+				if ( 0 !== strpos( $license_uri, 'http' ) ) {
 					error( "Unable to extract License URI from: $meta.", __LINE__ );
 				}
 

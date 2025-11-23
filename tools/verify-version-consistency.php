@@ -89,7 +89,7 @@ if ( $versions['stable_tag'] !== $versions['plugin_metadata'] ) {
 	}
 }
 
-if ( ! str_contains( $versions['plugin_metadata'], '-' ) && ! preg_match( '/^\d+\.\d+\.\d+$/', $versions['plugin_metadata'] ) ) {
+if ( false === strpos( $versions['plugin_metadata'], '-' ) && ! preg_match( '/^\d+\.\d+\.\d+$/', $versions['plugin_metadata'] ) ) {
 	printf( "Error: Release version (%s) lacks patch number. For new point releases, supply patch number of 0, such as 0.9.0 instead of 0.9.\n", $versions['plugin_metadata'] );
 	exit( 1 );
 }
