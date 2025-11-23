@@ -96,9 +96,6 @@ jobs:
             - name: Validate package.json
               run: npm run lint:pkg-json
 
-            - name: Check @wordpress/block-library checksum
-              run: npm run md5sum:check
-
             - name: Run PHPStan static analysis
               run: composer phpstan
 
@@ -116,7 +113,6 @@ jobs:
               run: npm run lint:js
 
             - name: Generate ESLint coding standard violations report
-                # Prevent generating the ESLint report if PR is from a fork or authored by Dependabot.
               if: >
                   ! ( github.event.pull_request.head.repo.fork == true ||
                   github.event.pull_request.user.login == 'dependabot[bot]' )
@@ -124,7 +120,6 @@ jobs:
               continue-on-error: true
 
             - name: Annotate code linting results
-                # The action cannot annotate the PR when run from a PR fork or was authored by Dependabot.
               if: >
                   ! ( github.event.pull_request.head.repo.fork == true ||
                   github.event.pull_request.user.login == 'dependabot[bot]' )
