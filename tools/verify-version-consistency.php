@@ -35,7 +35,7 @@ if ( ! preg_match( '/^## Changelog\s+(.+)$/m', $readme_md, $matches ) ) {
 $first_changelog_line = $matches[1];
 if ( preg_match( '/^### (?P<latest>\d.+)/', $first_changelog_line, $matches ) ) {
 	$versions['latest_changelog_version'] = $matches['latest'];
-} elseif ( preg_match( '/\[.+?\]\(.+?\)/', $first_changelog_line, $matches ) ) {
+} elseif ( preg_match( '/\[.+?]\(.+?\)/', $first_changelog_line, $matches ) ) {
 	echo "Notice: The full changelog appears to not be part of the readme. It may be external: {$matches[0]}\n";
 } else {
 	echo "Could not identify first item of changelog in readme.\n";

@@ -72,7 +72,7 @@ $readme_txt = (string) preg_replace_callback(
 	'/^.+?(?=## Description)/s',
 	static function ( $matches ) {
 		// Delete lines with images, linked images (badges), or comments.
-		$input = trim( (string) preg_replace( '/^(\[?!\[[^\]]+?\]\([^\)]+?\)(](.+?))?|<img[^>]+?>|<!--.+?-->)$/m', '', $matches[0] ) );
+		$input = trim( (string) preg_replace( '/^(\[?!\[[^]]+?]\([^)]+?\)(](.+?))?|<img[^>]+?>|<!--.+?-->)$/m', '', $matches[0] ) );
 
 		$parts = preg_split( '/\n\n+/', $input );
 
