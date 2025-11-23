@@ -8,7 +8,7 @@ The workflow depends on a `WORKFLOW_TOKEN` dependabot secret. Create a [fine-gra
 * Contents: read and write
 * Pull requests: read and write
 
-Then add this as the `WORKFLOW_SECRET` to the repository's settings under **Security > Secrets and variables > Dependabot** (`./settings/secrets/dependabot`).
+Then add this as the `WORKFLOW_TOKEN` to the repository's settings under **Security > Secrets and variables > Dependabot** (`./settings/secrets/dependabot`).
 
 ## [`deploy-dotorg.yml`](deploy-dotorg.yml)
 
