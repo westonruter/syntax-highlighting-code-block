@@ -38,7 +38,7 @@ jobs:
         steps:
             # 1. Check out the repository code.
             - name: Checkout repository
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
 
             # 2. Read PHP version from composer.json.
             # This avoids duplicating the version number in the workflow file.

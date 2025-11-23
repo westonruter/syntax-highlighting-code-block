@@ -18,7 +18,7 @@ jobs:
             contents: write
         steps:
             - name: Checkout code
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
 
             - name: Read PHP version
               id: php-version
