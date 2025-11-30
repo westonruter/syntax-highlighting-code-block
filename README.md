@@ -10,7 +10,7 @@ Extending the Code block with syntax highlighting rendered on the server, thus b
 **Stable tag:** 1.5.1  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
 
-[![Continuous Integration](https://github.com/westonruter/syntax-highlighting-code-block/actions/workflows/ci.yaml/badge.svg)](https://github.com/westonruter/syntax-highlighting-code-block/actions/workflows/ci.yaml)
+[![Continuous Integration](https://github.com/westonruter/syntax-highlighting-code-block/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/westonruter/syntax-highlighting-code-block/actions/workflows/static-analysis.yml)
 [![Built with Grunt](https://gruntjs.com/cdn/builtwith.svg)](http://gruntjs.com)
 
 ## Description
