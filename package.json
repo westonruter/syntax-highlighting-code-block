@@ -54,7 +54,7 @@
 		"check-engines": "wp-scripts check-engines",
 		"check-licenses": "wp-scripts check-licenses",
 		"lint": "npm-run-all --parallel lint:*",
-		"lint:composer": "composer normalize --dry-run",
+		"lint:composer": "composer normalize --dry-run && composer validate --strict --no-check-all",
 		"lint:composer:fix": "composer normalize",
 		"lint:css": "wp-scripts lint-style --allow-empty-input --ignore-path=.gitignore",
 		"lint:css:fix": "npm run lint:css -- --fix",
