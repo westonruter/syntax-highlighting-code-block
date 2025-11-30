@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Coding Standards for Syntax-highlighting Code Block">
+	<config name="text_domain" value="syntax-highlighting-code-block"/>
+	<config name="minimum_wp_version" value="6.6"/>
+
+	<rule ref="vendor/wpackagist-plugin/plugin-check/vendor/plugin-check/phpcs-sniffs/PluginCheck/ruleset.xml" />
+	<rule ref="vendor/wpackagist-plugin/plugin-check/phpcs-rulesets/plugin-check.ruleset.xml" />
+
+	<rule ref="PHPCompatibility"/>
+	<config name="testVersion" value="7.4-"/>
 
 	<rule ref="WordPress-Core">
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
@@ -13,28 +21,23 @@
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
 	</rule>
 	<rule ref="WordPress-Extra" />
+	<rule ref="WordPress.WP.I18n"/>
 
-	<config name="minimum_wp_version" value="6.3"/>
-	<rule ref="WordPress.WP.I18n">
-		<properties>
-			<property name="text_domain" value="syntax-highlighting-code-block" />
-		</properties>
-	</rule>
-
-	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found" />
-
-	<!-- Include sniffs for PHP cross-version compatibility. -->
-	<config name="testVersion" value="7.4-"/>
-	<rule ref="PHPCompatibility"/>
-
-	<arg value="s"/>
+	<arg value="ps"/>
 	<arg name="extensions" value="php"/>
+
 	<file>syntax-highlighting-code-block.php</file>
 	<file>uninstall.php</file>
 	<file>inc/</file>
 
-	<exclude-pattern>*/node_modules/*</exclude-pattern>
-	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<!-- Check up to 20 files simultaneously. -->
+	<arg name="parallel" value="20"/>
+
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found" />
+
+	<!-- Exclude node_modules and vendor directories. -->
+	<exclude-pattern>./node_modules/*</exclude-pattern>
+	<exclude-pattern>./vendor/*</exclude-pattern>
 	<exclude-pattern>*/dist/*</exclude-pattern>
 	<exclude-pattern>*/bin/*</exclude-pattern>
 	<exclude-pattern>*/tools/*</exclude-pattern>

@@ -9,7 +9,6 @@
 .husky
 .markdownlint.json
 .nvmrc
-.phpcs.xml.dist
 .prettierrc
 .wordpress-org
 .wp-env.json
@@ -24,8 +23,10 @@ lint-staged.config.js
 node_modules
 package-lock.json
 package.json
+phpcs.xml.dist
 phpstan.neon.dist
 src
+stylelint.config.js
 tests
 tools
 vendor/scrivo/highlight-php/.php-cs-fixer.dist.php

@@ -3,7 +3,7 @@ const config = {
 	'*.{js,ts,mjs}': ['npm run lint:js'], // TODO: Re-add `() => 'npx tsc'`.
 	'*.css': ['npm run lint:css'],
 	'composer.{json,lock}': [
-		() => 'composer validate --strict',
+		() => 'composer validate --strict --no-check-all',
 		() => 'composer normalize --dry-run',
 	],
 	'*.php': [

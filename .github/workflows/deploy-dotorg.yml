@@ -56,7 +56,12 @@ jobs:
               run: npm run verify-version-consistency
 
             - name: Prepare dist
-              run: npm run plugin-zip && unzip *.zip -d dist
+              run: |
+                  npm run plugin-zip
+                  if [ -e dist ]; then
+                    rm -r dist
+                  fi
+                  unzip *.zip -d dist
 
             - name: WordPress plugin deploy
               uses: 10up/action-wordpress-plugin-deploy@stable
