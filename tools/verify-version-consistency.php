@@ -21,6 +21,22 @@ if ( 'cli' !== php_sapi_name() ) {
 
 $versions = array();
 
+$package_json_contents = file_get_contents( __DIR__ . '/../package.json' );
+if ( false === $package_json_contents ) {
+	echo "Failed to read package.json\n";
+	exit( 1 );
+}
+$package_json = json_decode( $package_json_contents, true );
+if ( ! is_array( $package_json ) ) {
+	echo 'Failed to parse package.json: ' . ( JSON_ERROR_NONE === json_last_error() ? 'Not an array' : json_last_error_msg() ) . "\n";
+	exit( 1 );
+}
+if ( ! array_key_exists( 'version', $package_json ) ) {
+	echo "The 'version' key is missing in package.json\n";
+	exit( 1 );
+}
+$versions['package_json'] = $package_json['version'];
+
 $readme_md = (string) file_get_contents( __DIR__ . '/../README.md' );
 if ( ! preg_match( '/\*\*Stable tag:\*\*\s+(?P<version>\S+)/i', $readme_md, $matches ) ) {
 	echo "Could not find stable tag in readme.\n";
@@ -39,6 +55,7 @@ if ( preg_match( '/^### (?P<latest>\d.+)/', $first_changelog_line, $matches ) ) 
 	echo "Notice: The full changelog appears to not be part of the readme. It may be external: {$matches[0]}\n";
 } else {
 	echo "Could not identify first item of changelog in readme.\n";
+	exit( 1 );
 }
 
 $bootstrap_file = null;
