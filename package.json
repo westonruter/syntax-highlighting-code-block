@@ -25,7 +25,7 @@
 		"@wordpress/blocks": "15.8.0",
 		"@wordpress/components": "30.8.0",
 		"@wordpress/editor": "14.36.0",
-		"@wordpress/element": "6.35.0",
+		"@wordpress/element": "6.36.0",
 		"@wordpress/env": "10.35.0",
 		"@wordpress/eslint-plugin": "22.21.0",
 		"@wordpress/hooks": "4.35.0",
