@@ -28,7 +28,7 @@
 		"@wordpress/element": "6.35.0",
 		"@wordpress/env": "10.35.0",
 		"@wordpress/eslint-plugin": "22.21.0",
-		"@wordpress/hooks": "4.35.0",
+		"@wordpress/hooks": "4.36.0",
 		"@wordpress/i18n": "6.8.0",
 		"@wordpress/scripts": "31.1.0",
 		"eslint": "8.57.1",
