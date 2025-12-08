@@ -30,7 +30,7 @@
 		"@wordpress/eslint-plugin": "22.21.0",
 		"@wordpress/hooks": "4.35.0",
 		"@wordpress/i18n": "6.8.0",
-		"@wordpress/scripts": "31.0.0",
+		"@wordpress/scripts": "31.1.0",
 		"eslint": "8.57.1",
 		"grunt": "1.6.1",
 		"grunt-wp-deploy": "2.1.2",
