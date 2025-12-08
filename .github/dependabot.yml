@@ -28,7 +28,7 @@ updates:
       cooldown:
           default-days: 7
       groups:
-          wordpress-packages:
+          phpstan-packages:
               patterns:
                   - 'phpstan/*'
           wp-cli-packages:
