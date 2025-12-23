@@ -60,7 +60,7 @@ jobs:
             # 4. Cache Composer dependencies.
             # This step speeds up the build by caching the vendor directory.
             - name: Cache Composer dependencies
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: vendor
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}

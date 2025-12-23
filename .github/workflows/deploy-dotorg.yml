@@ -33,7 +33,7 @@ jobs:
                   tools: composer:v2
 
             - name: Cache Composer dependencies
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: vendor
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
