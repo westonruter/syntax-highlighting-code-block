@@ -15,7 +15,7 @@
 		"szepeviktor/phpstan-wordpress": "^2",
 		"wp-cli/dist-archive-command": "dev-main",
 		"wp-coding-standards/wpcs": "3.3.0",
-		"wpackagist-plugin/plugin-check": "1.6.0"
+		"wpackagist-plugin/plugin-check": "1.8.0"
 	},
 	"repositories": [
 		{
