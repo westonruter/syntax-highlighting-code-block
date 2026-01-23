@@ -12,7 +12,7 @@ import {
 	InspectorControls,
 } from '@wordpress/block-editor';
 import {
-	SelectControl,
+	ComboboxControl,
 	TextControl,
 	CheckboxControl,
 	PanelBody,
@@ -188,7 +188,7 @@ export default function CodeEdit({
 					initialOpen={true}
 				>
 					<PanelRow>
-						<SelectControl
+						<ComboboxControl
 							label={__(
 								'Language',
 								'syntax-highlighting-code-block'
