@@ -121,7 +121,7 @@ export default function CodeEdit({
 	const blockProps = useBlockProps();
 
 	const updateLanguage = (language) => {
-		setAttributes({ language });
+		setAttributes({ language: language || '' });
 	};
 
 	const updateHighlightedLines = (highlightedLines) => {
