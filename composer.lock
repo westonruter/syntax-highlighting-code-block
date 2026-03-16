@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d602225082a5e58c62e33221fe7228fa",
+    "content-hash": "585cb06ac0f594f4dbdddfabb6575bd2",
     "packages": [
         {
             "name": "scrivo/highlight.php",
@@ -2121,15 +2121,15 @@
         },
         {
             "name": "wpackagist-plugin/plugin-check",
-            "version": "1.6.0",
+            "version": "1.9.0",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/plugin-check/",
-                "reference": "tags/1.6.0"
+                "reference": "tags/1.9.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/plugin-check.1.6.0.zip"
+                "url": "https://downloads.wordpress.org/plugin/plugin-check.1.9.0.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
