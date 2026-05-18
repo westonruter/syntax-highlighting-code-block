@@ -51,7 +51,7 @@ jobs:
                       ${{ runner.os }}-composer-
 
             - name: Install Composer dependencies
-              run: composer install --prefer-dist --no-progress --no-dev
+              run: composer install --prefer-dist --no-progress
 
             - name: Setup Node.js
               uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
@@ -62,18 +62,19 @@ jobs:
             - name: Install npm dependencies
               run: npm ci
 
-            - name: Build assets
-              run: npm run build
+            # Produce the same distributable that is deployed to WordPress.org so
+            # Plugin Check scans the actual shipped plugin (with .distignore applied
+            # and DEVELOPMENT_MODE disabled), not the development repository.
+            - name: Build distributable
+              run: |
+                  npm run plugin-zip
+                  if [ -e dist ]; then
+                    rm -r dist
+                  fi
+                  unzip *.zip -d dist
 
             - name: Run plugin check
               uses: WordPress/plugin-check-action@18573eb38f13543484a1f095672dae3849a4fbb0 # v1.1.6
               with:
+                  build-dir: './dist'
                   wp-version: 'latest'
-                  # Exclude file_type because of the dev files present in the repository.
-                  exclude-checks: |
-                      file_type
-                  exclude-directories: |
-                      .github
-                      bin
-                      src
-                      tools
