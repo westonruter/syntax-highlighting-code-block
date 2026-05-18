@@ -38,7 +38,7 @@ jobs:
         steps:
             # 1. Check out the repository code.
             - name: Checkout repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
             # 2. Read PHP version from composer.json.
             # This avoids duplicating the version number in the workflow file.
@@ -50,7 +50,7 @@ jobs:
             # The version is sourced from your composer.json to avoid duplication.
             # Caching composer dependencies for faster subsequent runs.
             - name: Setup PHP
-              uses: shivammathur/setup-php@v2
+              uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
               with:
                   php-version: ${{ steps.php-version.outputs.version }}
                   extensions: mbstring, dom, fileinfo, xml, curl # Common extensions for WP development
@@ -60,7 +60,7 @@ jobs:
             # 4. Cache Composer dependencies.
             # This step speeds up the build by caching the vendor directory.
             - name: Cache Composer dependencies
-              uses: actions/cache@v5
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
               with:
                   path: vendor
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -74,7 +74,7 @@ jobs:
             # 6. Set up Node.js environment.
             # This allows us to run npm scripts.
             - name: Setup Node.js
-              uses: actions/setup-node@v6.4.0
+              uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm' # Automatically caches npm dependencies
@@ -123,7 +123,7 @@ jobs:
               if: >
                   ! ( github.event.pull_request.head.repo.fork == true ||
                   github.event.pull_request.user.login == 'dependabot[bot]' )
-              uses: ataylorme/eslint-annotate-action@3.0.0
+              uses: ataylorme/eslint-annotate-action@d57a1193d4c59cbfbf3f86c271f42612f9dbd9e9 # 3.0.0
               with:
                   repo-token: '${{ secrets.GITHUB_TOKEN }}'
                   report-json: 'lint-js-report.json'
