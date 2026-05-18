@@ -145,7 +145,7 @@ export default function CodeEdit({
 	);
 
 	const richTextProps = {
-		// These RichText props must mirror core <https://github.com/WordPress/gutenberg/blob/e95bb8c9530bbdef1db623eca11b80bd73493197/packages/block-library/src/code/edit.js#L19-L31>.
+		// These RichText props must mirror core <https://github.com/WordPress/gutenberg/blob/dc3a03bc744779cb6108bf2d4019550681c45209/packages/block-library/src/code/edit.js#L19-L32>.
 		...{
 			tagName: 'code',
 			identifier: 'content',
@@ -160,6 +160,7 @@ export default function CodeEdit({
 			__unstableOnSplitAtDoubleLineEnd: () => {
 				insertBlocksAfter(createBlock(getDefaultBlockName()));
 			},
+			// TODO? style: { whiteSpace: 'break-spaces' },
 		},
 
 		// Additional props unique to HighlightableTextArea.
