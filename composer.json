@@ -14,19 +14,8 @@
 		"slevomat/coding-standard": "^8",
 		"szepeviktor/phpstan-wordpress": "^2",
 		"wp-cli/dist-archive-command": "dev-main",
-		"wp-coding-standards/wpcs": "3.3.0",
-		"wpackagist-plugin/plugin-check": "1.6.0"
+		"wp-coding-standards/wpcs": "3.3.0"
 	},
-	"repositories": [
-		{
-			"type": "composer",
-			"url": "https://wpackagist.org",
-			"only": [
-				"wpackagist-plugin/*",
-				"wpackagist-theme/*"
-			]
-		}
-	],
 	"config": {
 		"allow-plugins": {
 			"composer/installers": true,
@@ -38,13 +27,6 @@
 			"php": "8.1"
 		},
 		"sort-packages": true
-	},
-	"extra": {
-		"installer-paths": {
-			"vendor/{$vendor}/{$name}/": [
-				"wpackagist-plugin/plugin-check"
-			]
-		}
 	},
 	"scripts": {
 		"phpcbf": "bin/phpcbf.sh",
