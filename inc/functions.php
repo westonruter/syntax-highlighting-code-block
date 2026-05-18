@@ -24,6 +24,10 @@ use function HighlightUtilities\splitCodeIntoArray;
 use function HighlightUtilities\getAvailableStyleSheets;
 use function HighlightUtilities\getThemeBackgroundColor;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Boot the plugin.
  *

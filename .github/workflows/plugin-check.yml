@@ -77,4 +77,11 @@ jobs:
               uses: WordPress/plugin-check-action@18573eb38f13543484a1f095672dae3849a4fbb0 # v1.1.6
               with:
                   build-dir: './dist'
+                  # The action otherwise derives the slug from basename('./dist').
+                  slug: 'syntax-highlighting-code-block'
                   wp-version: 'latest'
+                  # build-dist.sh appends a timestamp/commit suffix to the dev
+                  # version, which intentionally differs from the readme Stable
+                  # Tag; this only matters for actual WordPress.org releases.
+                  ignore-codes: |
+                      stable_tag_mismatch

@@ -17,6 +17,10 @@
 
 namespace Syntax_Highlighting_Code_Block;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 const PLUGIN_VERSION = '1.5.2-alpha';
 
 const PLUGIN_MAIN_FILE = __FILE__;
