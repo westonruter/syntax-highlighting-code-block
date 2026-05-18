@@ -362,7 +362,7 @@ function register_styles(): void {
 	);
 	wp_style_add_data( BLOCK_STYLE_HANDLE, 'path', $block_style_path );
 
-	if ( has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+	if ( has_filter( 'syntax_highlighted_line_background_color' ) ) {
 		$default_line_color = get_default_line_background_color( DEFAULT_THEME );
 		/**
 		 * Filters the background color of a highlighted line.
@@ -374,7 +374,7 @@ function register_styles(): void {
 		 *
 		 * @since 1.1.5
 		 */
-		$line_color = apply_filters( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER, $default_line_color );
+		$line_color = apply_filters( 'syntax_highlighted_line_background_color', $default_line_color );
 		if ( ! is_string( $line_color ) ) {
 			$line_color = $default_line_color;
 		}
@@ -758,7 +758,7 @@ function validate_theme_name( WP_Error $validity, string $input ): WP_Error {
  * @param WP_Customize_Manager $wp_customize The Customizer object.
  */
 function customize_register( WP_Customize_Manager $wp_customize ): void {
-	if ( has_filter( 'syntax_highlighting_code_block_style' ) && has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) ) {
+	if ( has_filter( 'syntax_highlighting_code_block_style' ) && has_filter( 'syntax_highlighted_line_background_color' ) ) {
 		return;
 	}
 
@@ -804,7 +804,7 @@ function customize_register( WP_Customize_Manager $wp_customize ): void {
 		);
 	}
 
-	if ( ! has_filter( HIGHLIGHTED_LINE_BACKGROUND_COLOR_FILTER ) && $theme_name ) {
+	if ( ! has_filter( 'syntax_highlighted_line_background_color' ) && $theme_name ) {
 		$default_color = strtolower( get_default_line_background_color( $theme_name ) );
 		$wp_customize->add_setting(
 			'syntax_highlighting[highlighted_line_background_color]',
