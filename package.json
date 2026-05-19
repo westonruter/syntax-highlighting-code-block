@@ -1,6 +1,6 @@
 {
 	"name": "syntax-highlighting-code-block",
-	"version": "1.5.2-alpha",
+	"version": "1.5.2",
 	"description": "Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.",
 	"private": true,
 	"author": "Weston Ruter",
