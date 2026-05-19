@@ -5,7 +5,7 @@
  * Description:       Extending the Code block with syntax highlighting rendered on the server, thus being AMP-compatible and having faster frontend performance.
  * Requires at least: 6.6
  * Requires PHP:      7.4
- * Version:           1.5.2-alpha
+ * Version:           1.5.2
  * Author:            Weston Ruter
  * Author URI:        https://weston.ruter.net/
  * License:           GPL2
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-const PLUGIN_VERSION = '1.5.2-alpha';
+const PLUGIN_VERSION = '1.5.2';
 
 const PLUGIN_MAIN_FILE = __FILE__;
 
