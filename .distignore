@@ -19,6 +19,7 @@ bin
 block-library.md5
 composer.json
 composer.lock
+eslint.config.js
 lint-staged.config.js
 node_modules
 package-lock.json
