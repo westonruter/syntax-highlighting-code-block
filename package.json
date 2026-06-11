@@ -19,7 +19,6 @@
 		"url": "https://github.com/westonruter/syntax-highlighting-code-block/issues"
 	},
 	"devDependencies": {
-		"date-fns": "^4.0.0",
 		"@wordpress/api-fetch": "7.45.0",
 		"@wordpress/block-editor": "15.18.0",
 		"@wordpress/block-library": "9.45.0",
@@ -32,12 +31,13 @@
 		"@wordpress/hooks": "4.45.0",
 		"@wordpress/i18n": "6.18.0",
 		"@wordpress/scripts": "32.1.0",
+		"date-fns": "^4.0.0",
 		"globals": "17.6.0",
 		"grunt": "1.6.2",
 		"grunt-wp-deploy": "2.1.2",
 		"highlight.js": "git+https://github.com/highlightjs/highlight.js.git#9.18.1",
 		"husky": "9.1.7",
-		"lint-staged": "16.4.0",
+		"lint-staged": "17.0.7",
 		"lodash": "4.18.1",
 		"npm-run-all": "4.1.5"
 	},

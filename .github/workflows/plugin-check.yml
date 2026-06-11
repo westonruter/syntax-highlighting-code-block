@@ -73,20 +73,79 @@ jobs:
                   fi
                   unzip *.zip -d dist
 
-            - name: Run plugin check
-              uses: WordPress/plugin-check-action@18573eb38f13543484a1f095672dae3849a4fbb0 # v1.1.6
+            # The following steps inline wordpress/plugin-check-action to work
+            # around a bug in @wordpress/env on the ubuntu-24.04 runner image
+            # >=20260525.161 (Node.js 24.16.0): including a URL-based plugin in
+            # .wp-env.json causes wp-env start to silently exit 0 without
+            # booting Docker. See:
+            # https://github.com/WordPress/plugin-check-action/issues/579
+            # https://github.com/WordPress/gutenberg/issues/78762
+            # Revert to `uses: WordPress/plugin-check-action@...` once resolved.
+
+            - name: Setup wp-env
+              run: |
+                  PLUGIN_DIR=$(realpath './dist')
+                  PLUGIN_SLUG='syntax-highlighting-code-block'
+                  echo "PLUGIN_DIR=$PLUGIN_DIR" >> "$GITHUB_ENV"
+                  echo "PLUGIN_SLUG=$PLUGIN_SLUG" >> "$GITHUB_ENV"
+
+                  # plugin-check is intentionally NOT listed as a URL plugin —
+                  # that download path triggers the Node 24.16.0 / wp-env bug.
+                  # Installed via wp-cli after the environment starts instead.
+                  cat > .wp-env.json << EOF
+                  {
+                    "core": null,
+                    "port": 8880,
+                    "testsEnvironment": false,
+                    "mappings": { "wp-content/plugins/${PLUGIN_SLUG}": "${PLUGIN_DIR}" }
+                  }
+                  EOF
+
+                  # Pin to a known-good version so a future wp-env regression
+                  # can't silently break CI the same way again.
+                  npm -g --no-fund i @wordpress/env@11.7.0
+
+            - name: Start wp-env
+              uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
               with:
-                  build-dir: './dist'
-                  # The action otherwise derives the slug from basename('./dist').
-                  slug: 'syntax-highlighting-code-block'
-                  wp-version: 'latest'
-                  # stable_tag_mismatch: build-dist.sh appends a timestamp/commit
-                  #   suffix to the dev version, which intentionally differs from
-                  #   the readme Stable Tag; this only matters for .org releases.
-                  # missing_composer_json_file: the plugin intentionally ships
-                  #   vendor/ (the highlight.php runtime dependency) without
-                  #   composer.json, the same as other WordPress.org plugins
-                  #   (e.g. the WordPress/ai plugin).
-                  ignore-codes: |
-                      stable_tag_mismatch
-                      missing_composer_json_file
+                  timeout_minutes: 10
+                  max_attempts: 3
+                  shell: bash
+                  command: wp-env start
+
+            - name: Run plugin check
+              run: |
+                  echo "::group::Debugging information"
+                  wp-env run cli wp cli info
+                  wp-env run cli wp plugin list
+                  echo "::endgroup::"
+
+                  echo "::group::Install plugin-check"
+                  wp-env run cli wp plugin install plugin-check --activate
+                  echo "::endgroup::"
+
+                  wp-env run cli wp plugin activate "$PLUGIN_SLUG"
+
+                  echo "::group::Run Plugin Check"
+                  RESULTS="${RUNNER_TEMP}/plugin-check-results.json"
+                  wp-env run cli wp plugin check "$PLUGIN_SLUG" \
+                    --format=json \
+                    --ignore-codes=stable_tag_mismatch,missing_composer_json_file \
+                    --slug="$PLUGIN_SLUG" \
+                    --require=./wp-content/plugins/plugin-check/cli.php \
+                    > "$RESULTS"
+                  cat "$RESULTS"
+                  echo "::endgroup::"
+
+                  if [ -s "$RESULTS" ] && [ "$(jq 'length' "$RESULTS")" -gt 0 ]; then
+                    echo "::error::Plugin Check reported issues for $PLUGIN_SLUG"
+                    exit 1
+                  fi
+
+            - name: Upload plugin-check results
+              if: always()
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                  name: plugin-check-results-syntax-highlighting-code-block
+                  path: ${{ runner.temp }}/plugin-check-results.json
+                  if-no-files-found: ignore
