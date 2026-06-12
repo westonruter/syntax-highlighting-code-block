@@ -577,14 +577,12 @@ function render_block( array $attributes, string $content ): string {
 	}
 
 	// Migrate legacy attribute names.
-	if ( isset( $attributes['selectedLines'] ) ) {
-		$attributes['highlightedLines'] = $attributes['selectedLines'];
-		unset( $attributes['selectedLines'] );
-	}
-	if ( isset( $attributes['showLines'] ) ) {
-		$attributes['showLineNumbers'] = $attributes['showLines'];
-		unset( $attributes['showLines'] );
-	}
+	$attributes = [
+		'language'         => $attributes['language'],
+		'highlightedLines' => $attributes['selectedLines'] ?? $attributes['highlightedLines'],
+		'showLineNumbers'  => $attributes['showLines'] ?? $attributes['showLineNumbers'],
+		'wrapLines'        => $attributes['wrapLines'],
+	];
 
 	/**
 	 * Filters the list of languages that are used for auto-detection.
@@ -615,7 +613,13 @@ function render_block( array $attributes, string $content ): string {
 		&&
 		isset( $highlighted['attributes']['wrapLines'] ) && is_bool( $highlighted['attributes']['wrapLines'] )
 	) {
-		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $highlighted['attributes'], $highlighted['content'] );
+		$cached_attrs = [
+			'language'         => $highlighted['attributes']['language'],
+			'highlightedLines' => $highlighted['attributes']['highlightedLines'],
+			'showLineNumbers'  => $highlighted['attributes']['showLineNumbers'],
+			'wrapLines'        => $highlighted['attributes']['wrapLines'],
+		];
+		return inject_markup( $matches['pre_start_tag'], $matches['code_start_tag'], $cached_attrs, $highlighted['content'] );
 	}
 
 	try {
