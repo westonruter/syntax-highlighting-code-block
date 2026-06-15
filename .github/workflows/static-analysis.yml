@@ -50,7 +50,7 @@ jobs:
             # The version is sourced from your composer.json to avoid duplication.
             # Caching composer dependencies for faster subsequent runs.
             - name: Setup PHP
-              uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+              uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
               with:
                   php-version: ${{ steps.php-version.outputs.version }}
                   extensions: mbstring, dom, fileinfo, xml, curl # Common extensions for WP development
