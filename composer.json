@@ -14,7 +14,7 @@
 		"slevomat/coding-standard": "^8",
 		"szepeviktor/phpstan-wordpress": "^2",
 		"wp-cli/dist-archive-command": "dev-main",
-		"wp-coding-standards/wpcs": "3.3.0"
+		"wp-coding-standards/wpcs": "3.4.0"
 	},
 	"config": {
 		"allow-plugins": {
