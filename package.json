@@ -32,7 +32,7 @@
 		"@wordpress/i18n": "6.24.0",
 		"@wordpress/scripts": "33.0.0",
 		"date-fns": "^4.0.0",
-		"globals": "17.8.0",
+		"globals": "17.9.0",
 		"grunt": "1.6.2",
 		"grunt-wp-deploy": "2.1.2",
 		"highlight.js": "git+https://github.com/highlightjs/highlight.js.git#9.18.1",
