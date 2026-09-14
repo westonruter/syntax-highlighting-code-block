@@ -17,5 +17,7 @@ parameters:
 	stubFiles:
 		# https://github.com/scrivo/highlight.php/pull/107
 		- tools/phpstan/HighlightAutoloader.stub
+		# Narrows WordPress function types which php-stubs/wordpress-stubs declares more widely than reality.
+		- tools/phpstan/WordPress.stub
 	dynamicConstantNames:
 		- Syntax_Highlighting_Code_Block\DEVELOPMENT_MODE

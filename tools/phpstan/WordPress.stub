@@ -1,0 +1,17 @@
+<?php
+/**
+ * Stubs which narrow WordPress function types beyond what php-stubs/wordpress-stubs declares.
+ */
+
+/**
+ * Retrieves a URL within the plugins or mu-plugins directory.
+ *
+ * The returned URL is always built from the site URL, so it is never an empty
+ * string. This matters because wp_register_script() declares its $src param as
+ * non-empty-string|false, whereas the stubs declare this return as just string.
+ *
+ * @param string $path   Extra path appended to the end of the URL.
+ * @param string $plugin A full path to a file inside a plugin or mu-plugin.
+ * @return non-empty-string Plugins URL link with optional paths appended.
+ */
+function plugins_url($path = '', $plugin = '') {}
