@@ -145,7 +145,7 @@ export default function CodeEdit({
 	);
 
 	const richTextProps = {
-		// These RichText props must mirror core <https://github.com/WordPress/gutenberg/blob/dc3a03bc744779cb6108bf2d4019550681c45209/packages/block-library/src/code/edit.js#L19-L32>.
+		// These RichText props must mirror core <https://github.com/WordPress/gutenberg/blob/7f43eafccea3691044eabf94e94b978435d25bd3/packages/block-library/src/code/edit.js#L16-L34>.
 		...{
 			tagName: 'code',
 			identifier: 'content',
@@ -157,9 +157,14 @@ export default function CodeEdit({
 			'aria-label': __('Code'),
 			preserveWhiteSpace: true,
 			__unstablePastePlainText: true, // See <https://github.com/WordPress/gutenberg/pull/27236>.
-			__unstableOnSplitAtDoubleLineEnd: () => {
-				insertBlocksAfter(createBlock(getDefaultBlockName()));
-			},
+			// Guarded because insertBlocksAfter is undefined when the block is
+			// locked, in which case calling it throws. See
+			// <https://github.com/WordPress/gutenberg/pull/80509>.
+			__unstableOnSplitAtDoubleLineEnd: insertBlocksAfter
+				? () => {
+						insertBlocksAfter(createBlock(getDefaultBlockName()));
+					}
+				: undefined,
 			// TODO? style: { whiteSpace: 'break-spaces' },
 		},
 
