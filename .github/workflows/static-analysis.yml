@@ -34,6 +34,12 @@ jobs:
         runs-on: ubuntu-latest
         # Stop the job early if a previous step fails.
         timeout-minutes: 5
+        # The ESLint annotation step creates a check run, which the default
+        # read-only workflow token cannot do.
+        permissions:
+            contents: read
+            pull-requests: read
+            checks: write
 
         steps:
             # 1. Check out the repository code.
@@ -123,9 +129,9 @@ jobs:
               if: >
                   ! ( github.event.pull_request.head.repo.fork == true ||
                   github.event.pull_request.user.login == 'dependabot[bot]' )
-              uses: ataylorme/eslint-annotate-action@d57a1193d4c59cbfbf3f86c271f42612f9dbd9e9 # 3.0.0
+              uses: ataylorme/eslint-annotate-action@5a8d8ab89a57679e90c32750e0f382e9d8570750 # 4.0.0
               with:
-                  repo-token: '${{ secrets.GITHUB_TOKEN }}'
+                  github-token: '${{ secrets.GITHUB_TOKEN }}'
                   report-json: 'lint-js-report.json'
 
             - name: Run CSS linter
