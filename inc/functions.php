@@ -873,7 +873,14 @@ function register_rest_endpoint(): void {
 			},
 			'callback'            => static function ( WP_REST_Request $request ) {
 				$theme_name = $request['theme_name'];
-				$validity   = validate_theme_name( new WP_Error(), $theme_name );
+				if ( ! is_string( $theme_name ) ) {
+					return new WP_Error(
+						'rest_invalid_param',
+						__( 'The theme_name parameter must be a string.', 'syntax-highlighting-code-block' ),
+						[ 'status' => 400 ]
+					);
+				}
+				$validity = validate_theme_name( new WP_Error(), $theme_name );
 				if ( $validity->errors ) {
 					return $validity;
 				}
